@@ -9,7 +9,7 @@ El equipo está compuesto por un líder de equipo (encargado de coordinación y 
 | Rol | Integrante | Responsabilidad Principal |
 | :--- | :--- | :--- |
 | **Líder de equipo** | Franco Calegari | Coordinación general, gestión de GitHub, revisión de tareas (PRs), definición de prioridades y comunicación. |
-| **Desarrolladora Backend** | Carla Fassaneli | Desarrollo del servidor con Node.js/Express, diseño de base de datos y conexión con SpiderWebAPI. |
+| **Desarrolladora Backend** | Carla Fassanelli | Desarrollo del servidor con Node.js/Express, diseño de base de datos y conexión con SpiderWebAPI. |
 | **Desarrollador Frontend** | Santiago Morales | Interfaz de usuario en HTML/CSS/JavaScript, accesibilidad y diseño responsive. |
 | **Desarrollador Full Stack** | Lucas Profe | Integración frontend-backend, manejo de archivos multimedia (SpiderWeb Storage) y testing general. |
 
