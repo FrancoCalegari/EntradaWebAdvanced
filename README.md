@@ -41,7 +41,7 @@ El equipo está compuesto por un líder de equipo (encargado de coordinación y 
 
 ## 5. Delegación de Tareas por Desarrollador
 
-*   **Carla Fassaneli (Backend & Base de Datos):**
+*   **Carla Fassanelli (Backend & Base de Datos):**
     *   Diseñar el esquema de BD (usuarios, eventos, entradas, compras) en SpiderWeb SQL.
     *   Desarrollar la API interna del proyecto con Node.js y Express.
     *   Conectar el backend con SpiderWebAPI mediante el endpoint de consultas (`/api/v1/query`).
