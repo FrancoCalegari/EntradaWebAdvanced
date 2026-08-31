@@ -290,3 +290,59 @@ a:hover {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+/* ---------------------------------------------------------------
+   9. ACCESIBILIDAD — MOTION Y HIGH CONTRAST
+--------------------------------------------------------------- */
+
+/*
+ * prefers-reduced-motion — Desactiva animaciones para usuarios
+ * que las configuren como problemáticas (mareos, epilepsia).
+ * WCAG 2.3.3 — Animation from Interactions (AAA).
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration:        0.01ms !important;
+    animation-iteration-count: 1      !important;
+    transition-duration:       0.01ms !important;
+    scroll-behavior:           auto   !important;
+  }
+}
+
+/*
+ * keyboard-mode — Clase añadida por a11y.js cuando el usuario
+ * navega con Tab. Refuerza el indicador de foco para navegadores
+ * que no soportan :focus-visible (Safari < 15.4, iOS < 15.4).
+ */
+.keyboard-mode *:focus {
+  outline: 2px solid var(--color-border-focus) !important;
+  outline-offset: 3px !important;
+}
+
+/*
+ * prefers-contrast: more — Aumenta la visibilidad de bordes y foco
+ * para usuarios con alta necesidad de contraste.
+ * WCAG 1.4.11 — Non-text Contrast.
+ */
+@media (prefers-contrast: more) {
+  :focus-visible {
+    outline-width: 3px !important;
+    outline-color: #FFFFFF !important;
+  }
+
+  .btn--primary {
+    border: 2px solid #FFFFFF;
+  }
+
+  .form-input,
+  .form-select,
+  .form-textarea {
+    border-color: #94A3B8 !important;
+  }
+
+  .event-card {
+    border-color: rgba(148, 163, 184, 0.5) !important;
+  }
+}
