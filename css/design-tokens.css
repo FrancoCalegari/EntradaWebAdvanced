@@ -23,6 +23,12 @@
   --color-accent-teal:    #0EA5E9;  /* Secundario / chips / tags */
   --color-accent-teal-hover: #0284C7;
 
+  /* Naranja EntradaWeb — color de marca para logo y acentos de identidad */
+  --color-brand-orange:       #F97316; /* Naranja principal */
+  --color-brand-orange-hover: #EA6C0A; /* Hover */
+  --color-brand-orange-muted: rgba(249, 115, 22, 0.15); /* Fondo suave */
+  --color-brand-orange-light: #FDBA74; /* Versión clara para texto sobre fondo oscuro */
+
   /* Textos */
   --color-text-primary:   #F1F5F9; /* Texto principal sobre fondos oscuros — contraste 15.3:1 */
   --color-text-secondary: #94A3B8; /* Texto secundario — contraste 5.2:1 (pasa AA) */
