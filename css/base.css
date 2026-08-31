@@ -87,6 +87,15 @@ p {
   color: var(--color-text-secondary);
 }
 
+/*
+ * Regla defensiva: garantiza que el atributo HTML [hidden]
+ * siempre oculte el elemento, incluso si otras reglas CSS
+ * asignan un display distinto al elemento.
+ */
+[hidden] {
+  display: none !important;
+}
+
 a {
   color: var(--color-accent-teal);
   text-decoration: none;

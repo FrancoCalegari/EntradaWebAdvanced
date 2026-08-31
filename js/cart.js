@@ -253,7 +253,22 @@
     initRemoveButton(item);
   });
 
-  checkEmptyCart();
+  // Siempre forzamos el estado correcto al cargar la página.
+  // No dependemos únicamente del atributo HTML `hidden` inicial.
+  (function enforceInitialState() {
+    const items = getItems();
+    const hasItems = items.length > 0;
+
+    if (cartLayout) {
+      cartLayout.style.display = hasItems ? '' : 'none';
+    }
+    if (cartEmpty) {
+      // Usamos tanto el atributo como el estilo para máxima compatibilidad
+      cartEmpty.hidden = !hasItems;
+      cartEmpty.style.display = hasItems ? 'none' : '';
+    }
+  })();
+
   updateGlobalSummary();
 
 })();
