@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Comprá entradas para Coldplay — Music of the Spheres World Tour en el Estadio Monumental, Buenos Aires. 15 de octubre de 2026. Entradas desde $35.000.">
+    <title>Coldplay — Music of the Spheres World Tour | EntradaWeb Argentina</title>
+
+    <!-- Design System -->
+    <link rel="stylesheet" href="../css/design-tokens.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <!-- Vista específica de detalle -->
+    <link rel="stylesheet" href="../css/event-detail.css">
+</head>
+<body>
+
+    <!-- ═══════════════════════════════════════════
+         ACCESIBILIDAD: Skip link
+    ═══════════════════════════════════════════ -->
+    <a href="#event-content" class="skip-link">Saltar al detalle del evento</a>
+
+    <!-- ═══════════════════════════════════════════
+         HEADER
+    ═══════════════════════════════════════════ -->
+    <header class="site-header" id="site-header">
+        <div class="container site-header__inner">
+            <a href="../index.html" class="site-header__logo" aria-label="EntradaWeb — Ir al inicio">
+                <div class="site-header__logo-text">
+                    Entrada<span style="color: var(--color-brand-orange);">Web</span>
+                </div>
+            </a>
+
+            <div class="site-header__search">
+                <div class="search-bar" role="search">
+                    <span class="search-bar__icon" aria-hidden="true">🔍</span>
+                    <input
+                        type="search"
+                        class="search-bar__input"
+                        placeholder="Buscar eventos, artistas, lugares..."
+                        aria-label="Buscar eventos"
+                    >
+                </div>
+            </div>
+
+            <nav class="site-nav" aria-label="Navegación principal">
+                <ul class="site-nav__list" role="list">
+                    <li><a href="./eventos.html" class="site-nav__link">Eventos</a></li>
+                    <li><a href="#" class="site-nav__link">Mis entradas</a></li>
+                    <li><a href="#" class="site-nav__link">Vendé</a></li>
+                    <li><a href="#" class="btn btn--secondary btn--sm">Ingresar</a></li>
+                    <li><a href="#" class="btn btn--primary btn--sm">Registrarse</a></li>
+                </ul>
+            </nav>
+
+            <button
+                class="site-header__menu-toggle"
+                aria-label="Abrir menú de navegación"
+                aria-expanded="false"
+                aria-controls="mobile-menu"
+                id="menu-toggle-btn"
+            >
+                <span aria-hidden="true">☰</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Menú móvil -->
+    <div class="mobile-menu" id="mobile-menu" role="dialog" aria-modal="true" aria-label="Menú de navegación">
+        <div class="mobile-menu__overlay" id="menu-overlay" aria-hidden="true"></div>
+        <nav class="mobile-menu__drawer">
+            <button class="mobile-menu__close" aria-label="Cerrar menú" id="menu-close-btn">
+                <span aria-hidden="true">✕</span>
+            </button>
+            <ul class="mobile-nav__list" role="list">
+                <li><a href="./eventos.html" class="mobile-nav__link">🎟 Eventos</a></li>
+                <li><a href="#" class="mobile-nav__link">📋 Mis entradas</a></li>
+                <li><a href="#" class="mobile-nav__link">🎫 Vendé tus entradas</a></li>
+                <li><a href="#" class="mobile-nav__link">👤 Ingresar</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         HERO DEL EVENTO
+    ═══════════════════════════════════════════ -->
+    <section class="event-hero" aria-label="Imagen del evento Coldplay">
+        <img
+            src="https://placehold.co/1440x540/0D1B2A/2563EB?text=Coldplay+%E2%80%94+Music+of+the+Spheres"
+            alt="Escenario iluminado con esferas de luz del tour Music of the Spheres de Coldplay en Argentina"
+            class="event-hero__img"
+            width="1440"
+            height="540"
+        >
+        <div class="event-hero__overlay" aria-hidden="true"></div>
+        <div class="event-hero__content">
+            <div class="container">
+                <div class="event-hero__badges">
+                    <span class="badge badge--primary">🎵 Música / Conciertos</span>
+                    <span class="badge badge--warning">⚡ Últimos lugares</span>
+                </div>
+                <h1 class="event-hero__title">
+                    Coldplay — Music of the Spheres<br>World Tour
+                </h1>
+                <div class="event-hero__meta" role="list">
+                    <div class="event-hero__meta-item" role="listitem">
+                        <span class="event-hero__meta-icon" aria-hidden="true">📅</span>
+                        <time datetime="2026-10-15T21:00">Miércoles 15 de octubre de 2026 — 21:00 hs</time>
+                    </div>
+                    <div class="event-hero__meta-item" role="listitem">
+                        <span class="event-hero__meta-icon" aria-hidden="true">📍</span>
+                        <span>Estadio Monumental Antonio Vespucio Liberti, Buenos Aires</span>
+                    </div>
+                    <div class="event-hero__meta-item" role="listitem">
+                        <span class="event-hero__meta-icon" aria-hidden="true">🎤</span>
+                        <span>Chris Martin, Guy Berryman, Jonny Buckland, Will Champion</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         CONTENIDO PRINCIPAL
+    ═══════════════════════════════════════════ -->
+    <div class="page-wrapper">
+        <main id="event-content">
+
+            <!-- Breadcrumb -->
+            <div class="container">
+                <nav aria-label="Ruta de navegación">
+                    <ol class="breadcrumb" role="list">
+                        <li class="breadcrumb__item" role="listitem">
+                            <a href="../index.html" class="breadcrumb__link">Inicio</a>
+                            <span class="breadcrumb__sep" aria-hidden="true">›</span>
+                        </li>
+                        <li class="breadcrumb__item" role="listitem">
+                            <a href="./eventos.html" class="breadcrumb__link">Eventos</a>
+                            <span class="breadcrumb__sep" aria-hidden="true">›</span>
+                        </li>
+                        <li class="breadcrumb__item" role="listitem">
+                            <a href="./eventos.html#musica" class="breadcrumb__link">Música</a>
+                            <span class="breadcrumb__sep" aria-hidden="true">›</span>
+                        </li>
+                        <li class="breadcrumb__item" role="listitem">
+                            <span class="breadcrumb__current" aria-current="page">Coldplay</span>
+                        </li>
+                    </ol>
+                </nav>
+            </div>
+
+            <!-- Layout 2 columnas -->
+            <div class="container">
+                <div class="event-detail-layout">
+
+                    <!-- ─── COLUMNA IZQUIERDA: Info ─── -->
+                    <div class="event-info">
+
+                        <!-- Datos clave del evento -->
+                        <section class="event-section" aria-labelledby="details-title">
+                            <h2 class="event-section__title" id="details-title">Información del evento</h2>
+                            <div class="event-info-grid">
+                                <div class="event-info-card">
+                                    <span class="event-info-card__icon" aria-hidden="true">📅</span>
+                                    <div>
+                                        <div class="event-info-card__label">Fecha y hora</div>
+                                        <time class="event-info-card__value event-info-card__value--highlight" datetime="2026-10-15T21:00">
+                                            Miércoles 15 de octubre, 2026<br>21:00 hs (puertas: 18:00 hs)
+                                        </time>
+                                    </div>
+                                </div>
+                                <div class="event-info-card">
+                                    <span class="event-info-card__icon" aria-hidden="true">📍</span>
+                                    <div>
+                                        <div class="event-info-card__label">Lugar</div>
+                                        <div class="event-info-card__value event-info-card__value--highlight">
+                                            Estadio Monumental<br>
+                                            <span class="event-info-card__value" style="font-weight: 400;">Av. Figueroa Alcorta 7597, Núñez, CABA</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="event-info-card">
+                                    <span class="event-info-card__icon" aria-hidden="true">👥</span>
+                                    <div>
+                                        <div class="event-info-card__label">Organizado por</div>
+                                        <div class="event-info-card__value">DF Entertainment</div>
+                                    </div>
+                                </div>
+                                <div class="event-info-card">
+                                    <span class="event-info-card__icon" aria-hidden="true">🎟</span>
+                                    <div>
+                                        <div class="event-info-card__label">Entradas disponibles</div>
+                                        <div class="event-info-card__value event-info-card__value--highlight">
+                                            Últimos lugares disponibles
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Descripción -->
+                        <section class="event-section" aria-labelledby="desc-title">
+                            <h2 class="event-section__title" id="desc-title">Sobre el evento</h2>
+                            <div class="event-description" id="event-description">
+                                <p>
+                                    Coldplay regresa a Argentina como parte de su <strong>Music of the Spheres World Tour</strong>, la gira más ambiciosa y espectacular de la banda británica. Con más de 180 shows realizados en todo el mundo, el tour ha deslumbrado a millones de personas con su propuesta visual única y su compromiso con la sostenibilidad.
+                                </p>
+                                <p id="desc-extra" hidden>
+                                    Cada show incluye un despliegue tecnológico de vanguardia: pantallas LED gigantes, pirotecnia de LED, pulseras luminosas para todo el público y una puesta en escena que convierte a cada estadio en un verdadero universo de luz y color.
+                                    La producción respeta estrictos estándares ecológicos: energías renovables, eliminación de plásticos de un solo uso y reducción de la huella de carbono en cada tramo del tour.
+                                </p>
+                                <button
+                                    class="event-description__toggle"
+                                    aria-expanded="false"
+                                    aria-controls="desc-extra"
+                                    id="desc-toggle"
+                                >
+                                    <span id="toggle-label">Leer más</span>
+                                    <span aria-hidden="true" id="toggle-icon">↓</span>
+                                </button>
+                            </div>
+                        </section>
+
+                        <!-- Mapa de ubicación -->
+                        <section class="event-section" aria-labelledby="map-title">
+                            <h2 class="event-section__title" id="map-title">Cómo llegar</h2>
+                            <div class="event-map">
+                                <!-- iframe de Google Maps apuntando al Estadio Monumental -->
+                                <iframe
+                                    class="event-map__iframe"
+                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3285.499745234661!2d-58.45213312356484!3d-34.54544475574437!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bcb5f7d40c3e01%3A0x7e9d4f4a4b7e1a0!2sEstadio%20Monumental!5e0!3m2!1ses!2sar!4v1693000000000"
+                                    title="Mapa de ubicación: Estadio Monumental, Av. Figueroa Alcorta 7597, Núñez, Buenos Aires"
+                                    loading="lazy"
+                                    referrerpolicy="no-referrer-when-downgrade"
+                                    aria-label="Mapa interactivo con la ubicación del Estadio Monumental en Buenos Aires"
+                                ></iframe>
+                                <div class="event-map__address">
+                                    <span aria-hidden="true">📍</span>
+                                    <span class="event-map__address-text">
+                                        Estadio Monumental — Av. Figueroa Alcorta 7597, Núñez, CABA
+                                    </span>
+                                    <a
+                                        href="https://maps.google.com/?q=Estadio+Monumental+Buenos+Aires"
+                                        class="event-map__address-link"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        aria-label="Ver Estadio Monumental en Google Maps (se abre en nueva pestaña)"
+                                    >
+                                        Ver en Maps
+                                    </a>
+                                </div>
+                            </div>
+                        </section>
+
+                    </div><!-- /event-info -->
+
+                    <!-- ─── COLUMNA DERECHA: Panel de compra (sticky) ─── -->
+                    <aside class="event-purchase-panel" aria-label="Compra de entradas">
+                        <div class="purchase-card">
+
+                            <!-- Precio destacado -->
+                            <div class="purchase-card__header">
+                                <div class="purchase-card__price-from">Precio desde</div>
+                                <div class="purchase-card__price" aria-label="Precio desde treinta y cinco mil pesos">
+                                    <sup>$</sup>35.000
+                                </div>
+                                <div class="purchase-card__availability">
+                                    <span class="availability-dot availability-dot--limited" aria-hidden="true"></span>
+                                    <span style="color: var(--color-warning); font-weight: 600;">Últimos lugares disponibles</span>
+                                </div>
+                            </div>
+
+                            <div class="purchase-card__body">
+
+                                <!-- Selector de tipo de entrada -->
+                                <fieldset style="border: none; padding: 0; margin: 0;">
+                                    <legend style="font-size: var(--text-sm); font-weight: 600; color: var(--color-text-primary); margin-bottom: var(--space-3);">
+                                        Seleccioná tu entrada
+                                    </legend>
+                                    <div class="ticket-type-list" role="radiogroup" aria-required="true">
+
+                                        <button
+                                            class="ticket-type ticket-type--selected"
+                                            role="radio"
+                                            aria-checked="true"
+                                            data-price="35000"
+                                            data-ticket-id="field-general"
+                                            id="ticket-field"
+                                        >
+                                            <span class="ticket-type__radio">
+                                                <span class="ticket-type__radio-dot"></span>
+                                            </span>
+                                            <span class="ticket-type__info">
+                                                <span class="ticket-type__name">Campo General</span>
+                                                <span class="ticket-type__desc">Acceso campo. Sin asiento asignado.</span>
+                                            </span>
+                                            <span class="ticket-type__price" aria-label="$35.000">$35.000</span>
+                                        </button>
+
+                                        <button
+                                            class="ticket-type"
+                                            role="radio"
+                                            aria-checked="false"
+                                            data-price="55000"
+                                            data-ticket-id="platea-baja"
+                                            id="ticket-platea-baja"
+                                        >
+                                            <span class="ticket-type__radio">
+                                                <span class="ticket-type__radio-dot"></span>
+                                            </span>
+                                            <span class="ticket-type__info">
+                                                <span class="ticket-type__name">Platea Baja</span>
+                                                <span class="ticket-type__desc">Sector numerado con excelente vista.</span>
+                                            </span>
+                                            <span class="ticket-type__price" aria-label="$55.000">$55.000</span>
+                                        </button>
+
+                                        <button
+                                            class="ticket-type"
+                                            role="radio"
+                                            aria-checked="false"
+                                            data-price="80000"
+                                            data-ticket-id="vip-floor"
+                                            id="ticket-vip"
+                                        >
+                                            <span class="ticket-type__radio">
+                                                <span class="ticket-type__radio-dot"></span>
+                                            </span>
+                                            <span class="ticket-type__info">
+                                                <span class="ticket-type__name">VIP Floor</span>
+                                                <span class="ticket-type__desc">Zona exclusiva frente al escenario.</span>
+                                            </span>
+                                            <span class="ticket-type__price" aria-label="$80.000">$80.000</span>
+                                        </button>
+
+                                    </div>
+                                </fieldset>
+
+                                <!-- Selector de cantidad -->
+                                <div class="quantity-selector">
+                                    <span class="quantity-selector__label" id="qty-label">Cantidad</span>
+                                    <div
+                                        class="quantity-control"
+                                        role="group"
+                                        aria-labelledby="qty-label"
+                                    >
+                                        <button
+                                            class="quantity-control__btn"
+                                            id="qty-decrease"
+                                            aria-label="Disminuir cantidad de entradas"
+                                            disabled
+                                        >−</button>
+                                        <span
+                                            class="quantity-control__value"
+                                            id="qty-value"
+                                            role="spinbutton"
+                                            aria-valuenow="1"
+                                            aria-valuemin="1"
+                                            aria-valuemax="8"
+                                            aria-label="1 entrada seleccionada"
+                                        >1</span>
+                                        <button
+                                            class="quantity-control__btn"
+                                            id="qty-increase"
+                                            aria-label="Aumentar cantidad de entradas"
+                                        >+</button>
+                                    </div>
+                                </div>
+
+                                <!-- Resumen de precio -->
+                                <div class="purchase-summary" aria-live="polite" aria-label="Resumen del precio de compra">
+                                    <div class="purchase-summary__row">
+                                        <span class="purchase-summary__label" id="summary-type-label">Campo General × 1</span>
+                                        <span class="purchase-summary__value" id="summary-subtotal">$35.000</span>
+                                    </div>
+                                    <div class="purchase-summary__row">
+                                        <span class="purchase-summary__label">Cargo por servicio</span>
+                                        <span class="purchase-summary__value" id="summary-fee">$3.500</span>
+                                    </div>
+                                    <hr class="purchase-summary__divider" aria-hidden="true">
+                                    <div class="purchase-summary__row">
+                                        <span class="purchase-summary__total-label">Total</span>
+                                        <span class="purchase-summary__total-value" id="summary-total">$38.500</span>
+                                    </div>
+                                </div>
+
+                                <!-- CTA Principal -->
+                                <button class="btn btn--primary purchase-card__cta" id="buy-btn">
+                                    🎟 Agregar al carrito
+                                </button>
+                                <p class="purchase-card__trust" aria-label="Compra segura garantizada">
+                                    <span aria-hidden="true">🔒</span> Compra segura · Pago encriptado
+                                </p>
+
+                            </div><!-- /purchase-card__body -->
+                        </div><!-- /purchase-card -->
+                    </aside>
+
+                </div><!-- /event-detail-layout -->
+
+                <!-- ─── EVENTOS RELACIONADOS ─── -->
+                <section class="related-events" aria-labelledby="related-title">
+                    <h2 class="related-events__title" id="related-title">También te puede interesar</h2>
+                    <div class="related-events__grid">
+
+                        <article class="event-card" tabindex="0" aria-label="Lollapalooza Argentina 2026">
+                            <div class="event-card__img-wrapper">
+                                <img
+                                    src="https://placehold.co/400x225/132338/22C55E?text=Lollapalooza"
+                                    alt="Multitud durante el festival Lollapalooza Argentina"
+                                    class="event-card__img"
+                                    loading="lazy"
+                                    width="400" height="225"
+                                >
+                                <span class="event-card__category"><span class="badge badge--primary">🎵 Música</span></span>
+                            </div>
+                            <div class="event-card__body">
+                                <h3 class="event-card__title">Lollapalooza Argentina 2026</h3>
+                                <div class="event-card__meta">
+                                    <div class="event-card__meta-item">
+                                        <span aria-hidden="true">📅</span>
+                                        <time class="event-card__date" datetime="2026-11-28">28, 29 y 30 nov 2026</time>
+                                    </div>
+                                    <div class="event-card__meta-item">
+                                        <span aria-hidden="true">📍</span>
+                                        <span>Campo Argentino de Polo, CABA</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="event-card__footer">
+                                <div class="event-card__price-block">
+                                    <span class="event-card__price-label">Desde</span>
+                                    <span class="event-card__price">$45.000</span>
+                                </div>
+                                <a href="#" class="btn btn--primary btn--sm">Comprar</a>
+                            </div>
+                        </article>
+
+                        <article class="event-card" tabindex="0" aria-label="Festival Buenos Aires Beats 2026">
+                            <div class="event-card__img-wrapper">
+                                <img
+                                    src="https://placehold.co/400x225/1E3350/0EA5E9?text=BA+Beats"
+                                    alt="Luces y escenario en el Festival Buenos Aires Beats 2026"
+                                    class="event-card__img"
+                                    loading="lazy"
+                                    width="400" height="225"
+                                >
+                                <span class="event-card__category"><span class="badge badge--primary">🎵 Música</span></span>
+                            </div>
+                            <div class="event-card__body">
+                                <h3 class="event-card__title">Festival Buenos Aires Beats 2026</h3>
+                                <div class="event-card__meta">
+                                    <div class="event-card__meta-item">
+                                        <span aria-hidden="true">📅</span>
+                                        <time class="event-card__date" datetime="2026-10-25">Sáb 25 de octubre</time>
+                                    </div>
+                                    <div class="event-card__meta-item">
+                                        <span aria-hidden="true">📍</span>
+                                        <span>Hipódromo de Palermo, CABA</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="event-card__footer">
+                                <div class="event-card__price-block">
+                                    <span class="event-card__price-label">Desde</span>
+                                    <span class="event-card__price">$18.000</span>
+                                </div>
+                                <a href="#" class="btn btn--primary btn--sm">Comprar</a>
+                            </div>
+                        </article>
+
+                        <article class="event-card" tabindex="0" aria-label="Cirque du Soleil — Alegría">
+                            <div class="event-card__img-wrapper">
+                                <img
+                                    src="https://placehold.co/400x225/1E3350/FDBA74?text=Cirque+du+Soleil"
+                                    alt="Acróbatas del Cirque du Soleil en el show Alegría"
+                                    class="event-card__img"
+                                    loading="lazy"
+                                    width="400" height="225"
+                                >
+                                <span class="event-card__category"><span class="badge badge--default">👨‍👩‍👧 Familia</span></span>
+                            </div>
+                            <div class="event-card__body">
+                                <h3 class="event-card__title">Cirque du Soleil — Alegría</h3>
+                                <div class="event-card__meta">
+                                    <div class="event-card__meta-item">
+                                        <span aria-hidden="true">📅</span>
+                                        <time class="event-card__date" datetime="2026-10-03">3 al 18 oct 2026</time>
+                                    </div>
+                                    <div class="event-card__meta-item">
+                                        <span aria-hidden="true">📍</span>
+                                        <span>Costa Salguero, Buenos Aires</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="event-card__footer">
+                                <div class="event-card__price-block">
+                                    <span class="event-card__price-label">Desde</span>
+                                    <span class="event-card__price">$22.000</span>
+                                </div>
+                                <a href="#" class="btn btn--primary btn--sm">Comprar</a>
+                            </div>
+                        </article>
+
+                    </div>
+                </section>
+
+            </div><!-- /container -->
+        </main>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         FOOTER
+    ═══════════════════════════════════════════ -->
+    <footer class="site-footer">
+        <div class="container site-footer__grid">
+            <div class="site-footer__brand">
+                <h2>Entrada<span style="color: var(--color-brand-orange);">Web</span></h2>
+                <p>La manera más simple y segura de comprar y vender entradas online en Argentina.</p>
+            </div>
+            <div class="site-footer__col">
+                <h3>Categorías</h3>
+                <ul>
+                    <li><a href="#">Música</a></li>
+                    <li><a href="#">Teatro</a></li>
+                    <li><a href="#">Deportes</a></li>
+                    <li><a href="#">Familiares</a></li>
+                </ul>
+            </div>
+            <div class="site-footer__col">
+                <h3>Nosotros</h3>
+                <ul>
+                    <li><a href="#">Acerca de</a></li>
+                    <li><a href="#">Vender entradas</a></li>
+                    <li><a href="#">Términos</a></li>
+                    <li><a href="#">Privacidad</a></li>
+                </ul>
+            </div>
+            <div class="site-footer__col">
+                <h3>Ayuda</h3>
+                <ul>
+                    <li><a href="#">Preguntas frecuentes</a></li>
+                    <li><a href="#">Contacto</a></li>
+                    <li><a href="#">Mis compras</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="container site-footer__bottom">
+            <p>&copy; 2026 EntradaWeb Argentina. Todos los derechos reservados.</p>
+            <div class="site-footer__social">
+                <a href="#" class="site-footer__social-link" aria-label="Facebook">f</a>
+                <a href="#" class="site-footer__social-link" aria-label="Instagram">ig</a>
+                <a href="#" class="site-footer__social-link" aria-label="Twitter">𝕏</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../js/menu.js" defer></script>
+    <script src="../js/event-detail.js" defer></script>
+
+</body>
+</html>
