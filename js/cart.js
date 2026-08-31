@@ -23,18 +23,19 @@
   };
 
   /* ─── REFERENCIAS DOM ────────────────────────────────────────── */
-  const cartItemsList   = document.getElementById('cart-items-list');
-  const cartEmpty       = document.getElementById('cart-empty');
-  const cartLayout      = document.querySelector('.cart-layout');
-  const couponForm      = document.getElementById('coupon-form');
-  const couponInput     = document.getElementById('coupon-input');
-  const couponFeedback  = document.getElementById('coupon-feedback');
-  const sDiscountRow    = document.getElementById('s-discount-row');
-  const sDiscount       = document.getElementById('s-discount');
-  const sSubtotal       = document.getElementById('s-subtotal');
-  const sFee            = document.getElementById('s-fee');
-  const sTotal          = document.getElementById('s-total');
-  const navCartCount    = document.getElementById('nav-cart-count');
+  const cartItemsList      = document.getElementById('cart-items-list');
+  const cartEmpty          = document.getElementById('cart-empty');
+  const cartLayout         = document.querySelector('.cart-layout');
+  const checkoutStepsNav   = document.querySelector('nav[aria-label="Pasos del proceso de compra"]');
+  const couponForm         = document.getElementById('coupon-form');
+  const couponInput        = document.getElementById('coupon-input');
+  const couponFeedback     = document.getElementById('coupon-feedback');
+  const sDiscountRow       = document.getElementById('s-discount-row');
+  const sDiscount          = document.getElementById('s-discount');
+  const sSubtotal          = document.getElementById('s-subtotal');
+  const sFee               = document.getElementById('s-fee');
+  const sTotal             = document.getElementById('s-total');
+  const navCartCount       = document.getElementById('nav-cart-count');
 
   /* ─── ESTADO ─────────────────────────────────────────────────── */
   let discountRate = 0;
@@ -190,13 +191,24 @@
 
   /* ─── VERIFICAR CARRITO VACÍO ────────────────────────────────── */
   function checkEmptyCart() {
-    const items = getItems();
-    if (items.length === 0) {
-      if (cartLayout)      cartLayout.style.display = 'none';
-      if (cartEmpty)       cartEmpty.hidden = false;
-    } else {
-      if (cartLayout)      cartLayout.style.display = '';
-      if (cartEmpty)       cartEmpty.hidden = true;
+    const hasItems = getItems().length > 0;
+
+    // Layout de items + resumen
+    if (cartLayout) {
+      cartLayout.style.display = hasItems ? '' : 'none';
+    }
+
+    // Indicador de pasos del checkout — solo tiene sentido con items
+    if (checkoutStepsNav) {
+      checkoutStepsNav.style.display = hasItems ? '' : 'none';
+    }
+
+    // Estado vacío
+    if (cartEmpty) {
+      // hidden=true oculta, hidden=false muestra
+      // Mostrar (hidden=false) cuando NO hay items
+      cartEmpty.hidden = hasItems;
+      cartEmpty.style.display = hasItems ? 'none' : '';
     }
   }
 
@@ -253,22 +265,9 @@
     initRemoveButton(item);
   });
 
-  // Siempre forzamos el estado correcto al cargar la página.
-  // No dependemos únicamente del atributo HTML `hidden` inicial.
-  (function enforceInitialState() {
-    const items = getItems();
-    const hasItems = items.length > 0;
-
-    if (cartLayout) {
-      cartLayout.style.display = hasItems ? '' : 'none';
-    }
-    if (cartEmpty) {
-      // Usamos tanto el atributo como el estilo para máxima compatibilidad
-      cartEmpty.hidden = !hasItems;
-      cartEmpty.style.display = hasItems ? 'none' : '';
-    }
-  })();
-
+  // checkEmptyCart() es la única fuente de verdad sobre el estado de la UI.
+  // Se llama al cargar y cada vez que se elimina un item.
+  checkEmptyCart();
   updateGlobalSummary();
 
 })();
