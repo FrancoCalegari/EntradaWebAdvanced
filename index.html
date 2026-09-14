@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EntradaWeb - UI Showcase</title>
+    <link rel="stylesheet" href="./css/design-tokens.css">
+    <link rel="stylesheet" href="./css/base.css">
+    <link rel="stylesheet" href="./css/layout.css">
+    <link rel="stylesheet" href="./css/components.css">
+    <style>
+        .showcase-section {
+            margin-bottom: var(--space-12);
+            padding: var(--space-6);
+            background: var(--color-bg-surface);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--color-border);
+        }
+        .showcase-title {
+            margin-bottom: var(--space-6);
+            padding-bottom: var(--space-3);
+            border-bottom: 1px solid var(--color-border);
+            color: var(--color-accent-teal);
+        }
+        .component-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-4);
+            align-items: center;
+        }
+        .spacer { height: var(--space-8); }
+
+        /* Logo con naranja EntradaWeb */
+        .logo-orange { color: var(--color-brand-orange); }
+
+        /* Badge de naranja para mostrar el token */
+        .badge--orange {
+            background: var(--color-brand-orange-muted);
+            color: var(--color-brand-orange-light);
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+
+    <!-- HEADER con logo naranja -->
+    <header class="site-header">
+        <div class="container site-header__inner">
+            <a href="#" class="site-header__logo">
+                <!-- "Entrada" en blanco, "Web" en naranja característico -->
+                <div class="site-header__logo-text">Entrada<span class="logo-orange">Web</span></div>
+            </a>
+
+            <div class="site-header__search">
+                <div class="search-bar">
+                    <span class="search-bar__icon">🔍</span>
+                    <input type="text" class="search-bar__input" placeholder="Buscar eventos, artistas, lugares...">
+                </div>
+            </div>
+
+            <nav class="site-nav" aria-label="Navegación principal">
+                <ul class="site-nav__list">
+                    <li><a href="#" class="site-nav__link" aria-current="page">Inicio</a></li>
+                    <li><a href="#" class="site-nav__link">Conciertos</a></li>
+                    <li><a href="#" class="site-nav__link">Teatro</a></li>
+                    <li><a href="#" class="btn btn--primary btn--sm">Ingresar</a></li>
+                </ul>
+            </nav>
+
+            <button class="site-header__menu-toggle" aria-label="Abrir menú de navegación">
+                ☰
+            </button>
+        </div>
+    </header>
+
+    <div class="page-wrapper">
+        <main id="main-content" class="page-main container">
+            <h1 style="margin-bottom: var(--space-2);">Guía de Estilos — EntradaWeb</h1>
+            <p style="margin-bottom: var(--space-10);">Visualización del Design System. Página temporal de verificación.</p>
+
+            <!-- SECCIÓN 0: NARANJA DE MARCA -->
+            <section class="showcase-section">
+                <h2 class="showcase-title">0. Color Naranja Entradaweb (Nuevo)</h2>
+                <div class="component-grid">
+                    <span class="badge badge--orange">🟠 Brand Orange #F97316</span>
+                    <button class="btn btn--primary btn--sm" style="background: var(--color-brand-orange); border-color: var(--color-brand-orange);">
+                        Botón Naranja
+                    </button>
+                    <span style="font-size: var(--text-2xl); font-weight: var(--font-weight-bold);">
+                        Entrada<span style="color: var(--color-brand-orange);">Web</span>
+                    </span>
+                </div>
+            </section>
+
+            <!-- SECCIÓN 1: BOTONES -->
+            <section class="showcase-section">
+                <h2 class="showcase-title">1. Botones (Área Táctil Mín. 44px)</h2>
+                <div class="component-grid">
+                    <button class="btn btn--primary">Comprar Entradas</button>
+                    <button class="btn btn--secondary">Ver Evento</button>
+                    <button class="btn btn--ghost">Más Info</button>
+                    <button class="btn btn--danger">Cancelar</button>
+                    <button class="btn btn--primary" disabled>Agotado</button>
+                </div>
+                <div class="spacer"></div>
+                <div class="component-grid">
+                    <button class="btn btn--primary btn--sm">Filtrar</button>
+                    <button class="btn btn--primary btn--lg">✦ Comprar Entradas Ahora</button>
+                </div>
+            </section>
+
+            <!-- SECCIÓN 2: FORMULARIOS -->
+            <section class="showcase-section">
+                <h2 class="showcase-title">2. Formularios e Inputs</h2>
+                <div style="max-width: 400px; display: flex; flex-direction: column; gap: var(--space-4);">
+                    <div class="form-group">
+                        <label class="form-label form-label--required" for="input-name">Nombre completo</label>
+                        <input type="text" id="input-name" class="form-input" placeholder="Ej: Santiago Morales" aria-required="true">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="input-email">Email (estado Error)</label>
+                        <input type="email" id="input-email" class="form-input form-input--error" value="correo-invalido" aria-describedby="email-error" aria-invalid="true">
+                        <span id="email-error" class="form-error" role="alert">Ingresá un correo electrónico válido.</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="cat-select">Categoría de evento</label>
+                        <select id="cat-select" class="form-select">
+                            <option>Música / Conciertos</option>
+                            <option>Teatro</option>
+                            <option>Deportes</option>
+                            <option>Familia</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECCIÓN 3: BUSCADOR POR FECHAS (NUEVO) -->
+            <section class="showcase-section">
+                <h2 class="showcase-title">3. Buscador por Fechas</h2>
+                <div class="date-search" role="search" aria-label="Buscador de eventos por fecha">
+                    <div class="date-search__field">
+                        <label class="date-search__label" for="search-event">¿Qué buscás?</label>
+                        <input type="text" id="search-event" class="date-search__input" placeholder="Evento, artista o lugar...">
+                    </div>
+                    <div class="date-search__field" style="flex: 0 0 auto; min-width: 160px;">
+                        <label class="date-search__label" for="search-from">Desde</label>
+                        <input type="date" id="search-from" class="date-search__input">
+                    </div>
+                    <span class="date-search__divider" aria-hidden="true">→</span>
+                    <div class="date-search__field" style="flex: 0 0 auto; min-width: 160px;">
+                        <label class="date-search__label" for="search-to">Hasta</label>
+                        <input type="date" id="search-to" class="date-search__input">
+                    </div>
+                    <div class="date-search__btn">
+                        <button class="btn btn--primary" style="min-height: 48px;">
+                            🔍 Buscar
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECCIÓN 4: BADGES Y CHIPS -->
+            <section class="showcase-section">
+                <h2 class="showcase-title">4. Badges y Chips</h2>
+                <div class="component-grid">
+                    <span class="badge badge--default">General</span>
+                    <span class="badge badge--primary">Destacado</span>
+                    <span class="badge badge--success">Disponible</span>
+                    <span class="badge badge--warning">Últimos lugares</span>
+                    <span class="badge badge--error">Agotado</span>
+                    <span class="badge badge--orange">🟠 Nuevo</span>
+                </div>
+                <div class="spacer"></div>
+                <div class="component-grid">
+                    <button class="chip chip--selected" aria-pressed="true">Todos</button>
+                    <button class="chip" aria-pressed="false">Música</button>
+                    <button class="chip" aria-pressed="false">Teatro</button>
+                    <button class="chip" aria-pressed="false">Deportes</button>
+                    <button class="chip" aria-pressed="false">Familia</button>
+                </div>
+            </section>
+
+            <!-- SECCIÓN 5: SKELETON LOADERS (CORREGIDO) -->
+            <section class="showcase-section">
+                <h2 class="showcase-title">5. Skeletons — Estados de Carga</h2>
+                <p style="margin-bottom: var(--space-4); max-width: none;">Placeholders animados que se muestran mientras se esperan datos del servidor.</p>
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: var(--space-6);">
+                    <!-- Skeleton de tarjeta de evento -->
+                    <div style="display: flex; flex-direction: column; gap: var(--space-3);">
+                        <span class="skeleton skeleton--img"></span>
+                        <span class="skeleton skeleton--title" style="width: 80%;"></span>
+                        <span class="skeleton skeleton--text" style="width: 100%;"></span>
+                        <span class="skeleton skeleton--text" style="width: 60%;"></span>
+                        <div style="display: flex; align-items: center; gap: var(--space-3); margin-top: var(--space-2);">
+                            <span class="skeleton skeleton--avatar"></span>
+                            <div style="flex:1; display:flex; flex-direction:column; gap: var(--space-2);">
+                                <span class="skeleton skeleton--text" style="width:70%;"></span>
+                                <span class="skeleton skeleton--text" style="width:50%;"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: var(--space-3);">
+                        <span class="skeleton skeleton--img"></span>
+                        <span class="skeleton skeleton--title" style="width: 65%;"></span>
+                        <span class="skeleton skeleton--text" style="width: 100%;"></span>
+                        <span class="skeleton skeleton--text" style="width: 45%;"></span>
+                        <div style="display: flex; align-items: center; gap: var(--space-3); margin-top: var(--space-2);">
+                            <span class="skeleton skeleton--avatar"></span>
+                            <div style="flex:1; display:flex; flex-direction:column; gap: var(--space-2);">
+                                <span class="skeleton skeleton--text" style="width:70%;"></span>
+                                <span class="skeleton skeleton--text" style="width:50%;"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="site-footer">
+        <div class="container site-footer__grid">
+            <div class="site-footer__brand">
+                <h2>Entrada<span style="color: var(--color-brand-orange);">Web</span></h2>
+                <p>La manera más simple y segura de comprar y vender entradas online en Argentina.</p>
+            </div>
+            <div class="site-footer__col">
+                <h3>Categorías</h3>
+                <ul>
+                    <li><a href="#">Música</a></li>
+                    <li><a href="#">Teatro</a></li>
+                    <li><a href="#">Deportes</a></li>
+                    <li><a href="#">Familiares</a></li>
+                </ul>
+            </div>
+            <div class="site-footer__col">
+                <h3>Nosotros</h3>
+                <ul>
+                    <li><a href="#">Acerca de</a></li>
+                    <li><a href="#">Vender entradas</a></li>
+                    <li><a href="#">Términos y condiciones</a></li>
+                    <li><a href="#">Privacidad</a></li>
+                </ul>
+            </div>
+            <div class="site-footer__col">
+                <h3>Ayuda</h3>
+                <ul>
+                    <li><a href="#">Preguntas frecuentes</a></li>
+                    <li><a href="#">Contacto</a></li>
+                    <li><a href="#">Mis compras</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="container site-footer__bottom">
+            <p>&copy; 2026 EntradaWeb. Todos los derechos reservados.</p>
+            <div class="site-footer__social">
+                <a href="#" class="site-footer__social-link" aria-label="Facebook">f</a>
+                <a href="#" class="site-footer__social-link" aria-label="Instagram">ig</a>
+                <a href="#" class="site-footer__social-link" aria-label="Twitter / X">𝕏</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
