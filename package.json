@@ -4,7 +4,8 @@
   "description": "Backend para EntradaWeb — Plataforma de venta de entradas para eventos",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "db:init": "node scripts/init-database.js"
   },
   "keywords": [],
   "author": "Carla Fassaneli",

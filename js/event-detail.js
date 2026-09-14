@@ -123,13 +123,14 @@
   }
 
   /* ─── BOTÓN "AGREGAR AL CARRITO" ────────────────────────────── */
-
+  const urlParams = new URLSearchParams(window.location.search);
+  const eventId = urlParams.get('id');
   const buyBtn = document.getElementById('buy-btn');
 
   if (buyBtn) {
     buyBtn.addEventListener('click', () => {
       const cartItem = {
-        eventId:    'coldplay-2026-10-15',
+        eventId:    eventId,
         eventName:  'Coldplay — Music of the Spheres World Tour',
         ticketType: selectedName,
         price:      selectedPrice,

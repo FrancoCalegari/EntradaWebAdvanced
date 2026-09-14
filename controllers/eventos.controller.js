@@ -46,7 +46,7 @@ async function obtenerEventos(req, res) {
       data: resultado.result || [],
     });
   } catch (error) {
-    console.error('Error al obtener eventos:', error.message);
+   console.error('ERROR COMPLETO AL OBTENER EVENTOS:', error);
     return res.status(500).json({
       success: false,
       message: 'Error interno del servidor',

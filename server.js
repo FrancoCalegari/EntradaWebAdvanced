@@ -19,6 +19,7 @@ const PORT = process.env.PORT || 3000;
 
 // Middleware para parsear JSON en el body de las peticiones
 app.use(express.json());
+app.use(express.static(__dirname));
 
 // ────────────────────────────────────────────
 // Rutas base de infraestructura y verificación

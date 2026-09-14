@@ -25,28 +25,6 @@
   // ─── Estado actual ────────────────────────────────────────────
   let activeCategory = 'all';
 
-    // ─── Eventos desde el backend ────────────────────────────────
-  async function cargarEventos() {
-    try {
-      const response = await fetch('/api/eventos');
-
-      if (!response.ok) {
-        throw new Error(`Error HTTP: ${response.status}`);
-      }
-
-      const resultado = await response.json();
-
-      if (!resultado.success) {
-        throw new Error(resultado.message || 'No se pudieron cargar los eventos');
-      }
-
-      console.log('[EntradaWeb] Eventos recibidos:', resultado.data);
-
-    } catch (error) {
-      console.error('[EntradaWeb] Error al cargar eventos:', error);
-    }
-  }
-
   // ─── Chips de categoría ───────────────────────────────────────
   if (categoryChips.length > 0) {
     categoryChips.forEach(chip => {
@@ -179,7 +157,5 @@
       console.info('[EntradaWeb] Búsqueda iniciada:', { query, from: fromVal, to: toVal });
     });
   }
-
-  cargarEventos();
 
 })();
