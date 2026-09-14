@@ -1,0 +1,27 @@
+name: Auto Sync Main to Dev Branches
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sync-branches:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Configurar usuario de Git
+        run: |
+          git config --global user.name 'GitHub Action'
+          git config --global user.email 'action@github.com'
+
+      - name: Fusionar main en la rama de desarrollo
+        run: |
+          git checkout rama-desarrollo
+          git merge origin/main --no-edit
+          git push origin rama-desarrollo
+        continue-on-error: true # Evita que el workflow falle si hay conflictos
