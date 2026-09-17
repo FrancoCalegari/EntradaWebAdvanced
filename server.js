@@ -119,6 +119,17 @@ app.use('/api/entradas', entradasRoutes);
 app.use('/api/compras', comprasRoutes);
 
 // ────────────────────────────────────────────
+// Middleware 404 — debe ir DESPUÉS de todas las rutas
+// ────────────────────────────────────────────
+app.use((req, res) => {
+  // Solo sirve la página HTML para peticiones que NO sean /api/*
+  if (req.path.startsWith('/api/')) {
+    return res.status(404).json({ success: false, error: 'Ruta de API no encontrada' });
+  }
+  res.status(404).sendFile(__dirname + '/404.html');
+});
+
+// ────────────────────────────────────────────
 // Iniciar servidor
 // ────────────────────────────────────────────
 app.listen(PORT, () => {

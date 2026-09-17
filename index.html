@@ -1,265 +1,577 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EntradaWeb - UI Showcase</title>
+    <title>EntradaWeb — Conseguí tus entradas para los mejores eventos de Argentina</title>
+    <meta name="description"
+        content="Comprá entradas para conciertos, teatro, deportes y más eventos en Argentina. Seguro, rápido y con las mejores opciones de pago.">
+    <meta name="theme-color" content="#0D1B2A">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="EntradaWeb — Eventos en Argentina">
+    <meta property="og:description" content="Conseguí tus entradas para los mejores eventos de Argentina.">
+    <meta property="og:type" content="website">
+
+    <!-- Fuente Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Design System -->
     <link rel="stylesheet" href="./css/design-tokens.css">
     <link rel="stylesheet" href="./css/base.css">
     <link rel="stylesheet" href="./css/layout.css">
     <link rel="stylesheet" href="./css/components.css">
-    <style>
-        .showcase-section {
-            margin-bottom: var(--space-12);
-            padding: var(--space-6);
-            background: var(--color-bg-surface);
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--color-border);
-        }
-        .showcase-title {
-            margin-bottom: var(--space-6);
-            padding-bottom: var(--space-3);
-            border-bottom: 1px solid var(--color-border);
-            color: var(--color-accent-teal);
-        }
-        .component-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: var(--space-4);
-            align-items: center;
-        }
-        .spacer { height: var(--space-8); }
 
-        /* Logo con naranja EntradaWeb */
-        .logo-orange { color: var(--color-brand-orange); }
+    <!-- Estilos específicos del Home -->
+    <link rel="stylesheet" href="./css/home.css">
 
-        /* Badge de naranja para mostrar el token */
-        .badge--orange {
-            background: var(--color-brand-orange-muted);
-            color: var(--color-brand-orange-light);
-        }
-    </style>
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous">
 </head>
+
 <body>
+
+    <!-- Skip link accesibilidad -->
     <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
 
-    <!-- HEADER con logo naranja -->
-    <header class="site-header">
+    <!-- =============================================
+       HEADER
+  ============================================= -->
+    <header class="site-header" id="site-header">
         <div class="container site-header__inner">
-            <a href="#" class="site-header__logo">
-                <!-- "Entrada" en blanco, "Web" en naranja característico -->
-                <div class="site-header__logo-text">Entrada<span class="logo-orange">Web</span></div>
+
+            <!-- Logo -->
+            <a href="/" class="site-header__logo" aria-label="EntradaWeb - Inicio">
+                <div class="site-header__logo-text">
+                    Entrada<span class="logo-orange">Web</span>
+                </div>
             </a>
 
-            <div class="site-header__search">
+            <!-- Búsqueda central (desktop) -->
+            <div class="site-header__search" role="search" aria-label="Búsqueda de eventos">
                 <div class="search-bar">
-                    <span class="search-bar__icon">🔍</span>
-                    <input type="text" class="search-bar__input" placeholder="Buscar eventos, artistas, lugares...">
+                    <span class="search-bar__icon" aria-hidden="true">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8" />
+                            <path d="m21 21-4.35-4.35" />
+                        </svg>
+                    </span>
+                    <input type="search" id="header-search" class="search-bar__input"
+                        placeholder="Buscar eventos, artistas, lugares..." autocomplete="off"
+                        aria-label="Buscar eventos">
                 </div>
             </div>
 
+            <!-- Nav desktop -->
             <nav class="site-nav" aria-label="Navegación principal">
-                <ul class="site-nav__list">
-                    <li><a href="#" class="site-nav__link" aria-current="page">Inicio</a></li>
-                    <li><a href="#" class="site-nav__link">Conciertos</a></li>
-                    <li><a href="#" class="site-nav__link">Teatro</a></li>
-                    <li><a href="#" class="btn btn--primary btn--sm">Ingresar</a></li>
+                <ul class="site-nav__list" role="list">
+                    <li><a href="./pages/eventos.html?categoria=musica" class="site-nav__link">Conciertos</a></li>
+                    <li><a href="./pages/eventos.html?categoria=teatro" class="site-nav__link">Teatro</a></li>
+                    <li><a href="./pages/eventos.html?categoria=deportes" class="site-nav__link">Deportes</a></li>
+                    <li><a href="./pages/eventos.html" class="site-nav__link">Ver todo</a></li>
                 </ul>
             </nav>
 
-            <button class="site-header__menu-toggle" aria-label="Abrir menú de navegación">
-                ☰
+            <!-- Acciones usuario -->
+            <div class="site-header__actions">
+                <a href="./pages/login.html" id="btn-login" class="btn btn--ghost btn--sm">Iniciar Sesión</a>
+                <a href="./pages/register.html" id="btn-register" class="btn btn--orange btn--sm">Registrarse</a>
+            </div>
+
+            <!-- Hamburguesa (móvil) -->
+            <button class="site-header__menu-toggle" id="menu-toggle" aria-label="Abrir menú de navegación"
+                aria-expanded="false" aria-controls="mobile-menu">
+                <svg class="hamburger-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                    <line x1="3" y1="6" x2="21" y2="6" />
+                    <line x1="3" y1="12" x2="21" y2="12" />
+                    <line x1="3" y1="18" x2="21" y2="18" />
+                </svg>
             </button>
+
         </div>
     </header>
 
-    <div class="page-wrapper">
-        <main id="main-content" class="page-main container">
-            <h1 style="margin-bottom: var(--space-2);">Guía de Estilos — EntradaWeb</h1>
-            <p style="margin-bottom: var(--space-10);">Visualización del Design System. Página temporal de verificación.</p>
+    <!-- =============================================
+       MENÚ MÓVIL
+  ============================================= -->
+    <div class="mobile-menu" id="mobile-menu" aria-hidden="true" role="dialog" aria-label="Menú de navegación">
+        <div class="mobile-menu__overlay" id="menu-overlay" aria-hidden="true"></div>
+        <div class="mobile-menu__drawer">
+            <button class="mobile-menu__close" id="menu-close" aria-label="Cerrar menú">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" aria-hidden="true">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
 
-            <!-- SECCIÓN 0: NARANJA DE MARCA -->
-            <section class="showcase-section">
-                <h2 class="showcase-title">0. Color Naranja Entradaweb (Nuevo)</h2>
-                <div class="component-grid">
-                    <span class="badge badge--orange">🟠 Brand Orange #F97316</span>
-                    <button class="btn btn--primary btn--sm" style="background: var(--color-brand-orange); border-color: var(--color-brand-orange);">
-                        Botón Naranja
-                    </button>
-                    <span style="font-size: var(--text-2xl); font-weight: var(--font-weight-bold);">
-                        Entrada<span style="color: var(--color-brand-orange);">Web</span>
+            <!-- Buscador en móvil -->
+            <div class="mobile-search" role="search">
+                <div class="search-bar">
+                    <span class="search-bar__icon" aria-hidden="true">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8" />
+                            <path d="m21 21-4.35-4.35" />
+                        </svg>
                     </span>
+                    <input type="search" id="mobile-search-input" class="search-bar__input"
+                        placeholder="Buscar eventos..." aria-label="Buscar eventos">
                 </div>
-            </section>
+            </div>
 
-            <!-- SECCIÓN 1: BOTONES -->
-            <section class="showcase-section">
-                <h2 class="showcase-title">1. Botones (Área Táctil Mín. 44px)</h2>
-                <div class="component-grid">
-                    <button class="btn btn--primary">Comprar Entradas</button>
-                    <button class="btn btn--secondary">Ver Evento</button>
-                    <button class="btn btn--ghost">Más Info</button>
-                    <button class="btn btn--danger">Cancelar</button>
-                    <button class="btn btn--primary" disabled>Agotado</button>
-                </div>
-                <div class="spacer"></div>
-                <div class="component-grid">
-                    <button class="btn btn--primary btn--sm">Filtrar</button>
-                    <button class="btn btn--primary btn--lg">✦ Comprar Entradas Ahora</button>
-                </div>
-            </section>
+            <nav aria-label="Menú principal móvil">
+                <ul class="mobile-nav__list" role="list">
+                    <li>
+                        <a href="./pages/eventos.html" class="mobile-nav__link" aria-current="page">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                                <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                                <polyline points="9 22 9 12 15 12 15 22" />
+                            </svg>
+                            Inicio
+                        </a>
+                    </li>
+                    <li>
+                        <a href="./pages/eventos.html?categoria=musica" class="mobile-nav__link">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                                <path d="M9 18V5l12-2v13" />
+                                <circle cx="6" cy="18" r="3" />
+                                <circle cx="18" cy="16" r="3" />
+                            </svg>
+                            Conciertos
+                        </a>
+                    </li>
+                    <li>
+                        <a href="./pages/eventos.html?categoria=teatro" class="mobile-nav__link">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                                <circle cx="12" cy="12" r="10" />
+                                <path d="M8 14s1.5 2 4 2 4-2 4-2" />
+                                <line x1="9" y1="9" x2="9.01" y2="9" />
+                                <line x1="15" y1="9" x2="15.01" y2="9" />
+                            </svg>
+                            Teatro
+                        </a>
+                    </li>
+                    <li>
+                        <a href="./pages/eventos.html?categoria=deportes" class="mobile-nav__link">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                                <circle cx="12" cy="12" r="10" />
+                                <path d="M4.93 4.93 19.07 19.07" />
+                            </svg>
+                            Deportes
+                        </a>
+                    </li>
+                    <li>
+                        <a href="./pages/eventos.html?categoria=familia" class="mobile-nav__link">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                                <circle cx="9" cy="7" r="4" />
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                            </svg>
+                            Familia
+                        </a>
+                    </li>
+                </ul>
+            </nav>
 
-            <!-- SECCIÓN 2: FORMULARIOS -->
-            <section class="showcase-section">
-                <h2 class="showcase-title">2. Formularios e Inputs</h2>
-                <div style="max-width: 400px; display: flex; flex-direction: column; gap: var(--space-4);">
-                    <div class="form-group">
-                        <label class="form-label form-label--required" for="input-name">Nombre completo</label>
-                        <input type="text" id="input-name" class="form-input" placeholder="Ej: Santiago Morales" aria-required="true">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="input-email">Email (estado Error)</label>
-                        <input type="email" id="input-email" class="form-input form-input--error" value="correo-invalido" aria-describedby="email-error" aria-invalid="true">
-                        <span id="email-error" class="form-error" role="alert">Ingresá un correo electrónico válido.</span>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="cat-select">Categoría de evento</label>
-                        <select id="cat-select" class="form-select">
-                            <option>Música / Conciertos</option>
-                            <option>Teatro</option>
-                            <option>Deportes</option>
-                            <option>Familia</option>
-                        </select>
-                    </div>
-                </div>
-            </section>
-
-            <!-- SECCIÓN 3: BUSCADOR POR FECHAS (NUEVO) -->
-            <section class="showcase-section">
-                <h2 class="showcase-title">3. Buscador por Fechas</h2>
-                <div class="date-search" role="search" aria-label="Buscador de eventos por fecha">
-                    <div class="date-search__field">
-                        <label class="date-search__label" for="search-event">¿Qué buscás?</label>
-                        <input type="text" id="search-event" class="date-search__input" placeholder="Evento, artista o lugar...">
-                    </div>
-                    <div class="date-search__field" style="flex: 0 0 auto; min-width: 160px;">
-                        <label class="date-search__label" for="search-from">Desde</label>
-                        <input type="date" id="search-from" class="date-search__input">
-                    </div>
-                    <span class="date-search__divider" aria-hidden="true">→</span>
-                    <div class="date-search__field" style="flex: 0 0 auto; min-width: 160px;">
-                        <label class="date-search__label" for="search-to">Hasta</label>
-                        <input type="date" id="search-to" class="date-search__input">
-                    </div>
-                    <div class="date-search__btn">
-                        <button class="btn btn--primary" style="min-height: 48px;">
-                            🔍 Buscar
-                        </button>
-                    </div>
-                </div>
-            </section>
-
-            <!-- SECCIÓN 4: BADGES Y CHIPS -->
-            <section class="showcase-section">
-                <h2 class="showcase-title">4. Badges y Chips</h2>
-                <div class="component-grid">
-                    <span class="badge badge--default">General</span>
-                    <span class="badge badge--primary">Destacado</span>
-                    <span class="badge badge--success">Disponible</span>
-                    <span class="badge badge--warning">Últimos lugares</span>
-                    <span class="badge badge--error">Agotado</span>
-                    <span class="badge badge--orange">🟠 Nuevo</span>
-                </div>
-                <div class="spacer"></div>
-                <div class="component-grid">
-                    <button class="chip chip--selected" aria-pressed="true">Todos</button>
-                    <button class="chip" aria-pressed="false">Música</button>
-                    <button class="chip" aria-pressed="false">Teatro</button>
-                    <button class="chip" aria-pressed="false">Deportes</button>
-                    <button class="chip" aria-pressed="false">Familia</button>
-                </div>
-            </section>
-
-            <!-- SECCIÓN 5: SKELETON LOADERS (CORREGIDO) -->
-            <section class="showcase-section">
-                <h2 class="showcase-title">5. Skeletons — Estados de Carga</h2>
-                <p style="margin-bottom: var(--space-4); max-width: none;">Placeholders animados que se muestran mientras se esperan datos del servidor.</p>
-                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: var(--space-6);">
-                    <!-- Skeleton de tarjeta de evento -->
-                    <div style="display: flex; flex-direction: column; gap: var(--space-3);">
-                        <span class="skeleton skeleton--img"></span>
-                        <span class="skeleton skeleton--title" style="width: 80%;"></span>
-                        <span class="skeleton skeleton--text" style="width: 100%;"></span>
-                        <span class="skeleton skeleton--text" style="width: 60%;"></span>
-                        <div style="display: flex; align-items: center; gap: var(--space-3); margin-top: var(--space-2);">
-                            <span class="skeleton skeleton--avatar"></span>
-                            <div style="flex:1; display:flex; flex-direction:column; gap: var(--space-2);">
-                                <span class="skeleton skeleton--text" style="width:70%;"></span>
-                                <span class="skeleton skeleton--text" style="width:50%;"></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div style="display: flex; flex-direction: column; gap: var(--space-3);">
-                        <span class="skeleton skeleton--img"></span>
-                        <span class="skeleton skeleton--title" style="width: 65%;"></span>
-                        <span class="skeleton skeleton--text" style="width: 100%;"></span>
-                        <span class="skeleton skeleton--text" style="width: 45%;"></span>
-                        <div style="display: flex; align-items: center; gap: var(--space-3); margin-top: var(--space-2);">
-                            <span class="skeleton skeleton--avatar"></span>
-                            <div style="flex:1; display:flex; flex-direction:column; gap: var(--space-2);">
-                                <span class="skeleton skeleton--text" style="width:70%;"></span>
-                                <span class="skeleton skeleton--text" style="width:50%;"></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-        </main>
+            <div class="mobile-menu__auth">
+                <a href="./pages/login.html" class="btn btn--ghost" style="width:100%; justify-content:center;">Iniciar
+                    Sesión</a>
+                <a href="./pages/register.html" class="btn btn--orange"
+                    style="width:100%; justify-content:center; margin-top: var(--space-3);">Registrarse</a>
+            </div>
+        </div>
     </div>
 
-    <!-- FOOTER -->
-    <footer class="site-footer">
+    <!-- =============================================
+       MAIN
+  ============================================= -->
+    <main id="main-content">
+
+        <!-- -------------------------------------------
+         HERO
+    ------------------------------------------- -->
+        <section class="hero" aria-labelledby="hero-heading">
+            <!-- Fondo -->
+            <div class="hero__bg" aria-hidden="true">
+                <div class="hero__bg-overlay"></div>
+            </div>
+
+            <div class="hero__content container">
+                <div class="hero__text">
+                    <h1 id="hero-heading" class="hero__title">
+                        Tu próximo evento,<br>
+                        <span class="hero__title-highlight">a un click</span>
+                    </h1>
+                    <p class="hero__subtitle">
+                        Conseguí tus entradas para los mejores eventos de Argentina
+                    </p>
+                </div>
+
+                <!-- Buscador hero (glassmorphism) -->
+                <div class="hero__search" role="search" aria-label="Buscador principal de eventos">
+                    <form class="hero-search-form" id="hero-search-form" action="./pages/eventos.html" method="get">
+                        <div class="hero-search-input-wrap">
+                            <input type="search" id="hero-search-input" name="q" class="hero-search__input"
+                                placeholder="Buscar eventos, artistas, lugares..." autocomplete="off"
+                                aria-label="Buscar eventos">
+                        </div>
+                        <button type="submit" class="hero-search__btn" aria-label="Buscar">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <circle cx="11" cy="11" r="8" />
+                                <path d="m21 21-4.35-4.35" />
+                            </svg>
+                            <span class="hero-search__btn-text">Buscar</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Chips de categoría -->
+                <nav class="category-chips" aria-label="Filtrar por categoría">
+                    <ul class="category-chips__list" role="list">
+                        <li>
+                            <a href="./pages/eventos.html" class="category-chip category-chip--active"
+                                aria-current="page">
+                                <i class="fa-solid fa-ticket-simple" aria-hidden="true"></i> Todos
+                            </a>
+                        </li>
+                        <li>
+                            <a href="./pages/eventos.html?categoria=musica" class="category-chip">
+                                <i class="fa-solid fa-music" aria-hidden="true"></i> Música
+                            </a>
+                        </li>
+                        <li>
+                            <a href="./pages/eventos.html?categoria=teatro" class="category-chip">
+                                <i class="fa-solid fa-masks-theater" aria-hidden="true"></i> Teatro
+                            </a>
+                        </li>
+                        <li>
+                            <a href="./pages/eventos.html?categoria=deportes" class="category-chip">
+                                <i class="fa-solid fa-futbol" aria-hidden="true"></i> Deportes
+                            </a>
+                        </li>
+                        <li>
+                            <a href="./pages/eventos.html?categoria=cine" class="category-chip">
+                                <i class="fa-solid fa-film" aria-hidden="true"></i> Cine
+                            </a>
+                        </li>
+                        <li>
+                            <a href="./pages/eventos.html?categoria=familia" class="category-chip">
+                                <i class="fa-solid fa-people-roof" aria-hidden="true"></i> Familia
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+
+                <!-- Eventos Destacados (dentro del hero) -->
+                <div class="hero__events">
+                    <div class="hero__events-header">
+                        <h2 id="destacados-heading" class="hero__events-title">Eventos Destacados</h2>
+                        <a href="./pages/eventos.html" class="hero__events-link">
+                            Ver todos
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+                                <polyline points="9 18 15 12 9 6" />
+                            </svg>
+                        </a>
+                    </div>
+
+                    <!-- Grid de tarjetas (se llena con JS) -->
+                    <div class="events-grid" id="events-grid" role="list" aria-live="polite"
+                        aria-label="Eventos destacados">
+                        <!-- Skeleton loaders (se reemplazan con datos reales) -->
+                        <div class="event-card event-card--skeleton" role="listitem" aria-label="Cargando evento">
+                            <div class="event-card__img skeleton skeleton--img"></div>
+                            <div class="event-card__body">
+                                <span class="skeleton skeleton--title" style="width:75%;"></span>
+                                <span class="skeleton skeleton--text" style="width:55%;"></span>
+                                <span class="skeleton skeleton--text" style="width:40%;"></span>
+                                <span class="skeleton"
+                                    style="height:36px; border-radius:var(--radius-lg); margin-top:var(--space-2);"></span>
+                            </div>
+                        </div>
+                        <div class="event-card event-card--skeleton" role="listitem" aria-label="Cargando evento">
+                            <div class="event-card__img skeleton skeleton--img"></div>
+                            <div class="event-card__body">
+                                <span class="skeleton skeleton--title" style="width:80%;"></span>
+                                <span class="skeleton skeleton--text" style="width:60%;"></span>
+                                <span class="skeleton skeleton--text" style="width:45%;"></span>
+                                <span class="skeleton"
+                                    style="height:36px; border-radius:var(--radius-lg); margin-top:var(--space-2);"></span>
+                            </div>
+                        </div>
+                        <div class="event-card event-card--skeleton" role="listitem" aria-label="Cargando evento">
+                            <div class="event-card__img skeleton skeleton--img"></div>
+                            <div class="event-card__body">
+                                <span class="skeleton skeleton--title" style="width:65%;"></span>
+                                <span class="skeleton skeleton--text" style="width:50%;"></span>
+                                <span class="skeleton skeleton--text" style="width:35%;"></span>
+                                <span class="skeleton"
+                                    style="height:36px; border-radius:var(--radius-lg); margin-top:var(--space-2);"></span>
+                            </div>
+                        </div>
+                        <div class="event-card event-card--skeleton" role="listitem" aria-label="Cargando evento">
+                            <div class="event-card__img skeleton skeleton--img"></div>
+                            <div class="event-card__body">
+                                <span class="skeleton skeleton--title" style="width:70%;"></span>
+                                <span class="skeleton skeleton--text" style="width:55%;"></span>
+                                <span class="skeleton skeleton--text" style="width:42%;"></span>
+                                <span class="skeleton"
+                                    style="height:36px; border-radius:var(--radius-lg); margin-top:var(--space-2);"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Indicador de scroll -->
+            <div class="hero__scroll-hint" aria-hidden="true">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9" />
+                </svg>
+            </div>
+        </section>
+
+        <!-- -------------------------------------------
+         BENEFICIOS (banda informativa)
+    ------------------------------------------- -->
+        <section class="benefits-band" aria-label="Beneficios de EntradaWeb">
+            <div class="container">
+                <ul class="benefits-band__list" role="list">
+                    <li class="benefits-band__item">
+                        <span class="benefits-band__icon" aria-hidden="true">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                            </svg>
+                        </span>
+                        <div>
+                            <strong>Compra 100% segura</strong>
+                            <span>Tus datos siempre protegidos</span>
+                        </div>
+                    </li>
+                    <li class="benefits-band__item">
+                        <span class="benefits-band__icon" aria-hidden="true">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round">
+                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
+                                <line x1="1" y1="10" x2="23" y2="10" />
+                            </svg>
+                        </span>
+                        <div>
+                            <strong>Hasta 6 cuotas sin interés</strong>
+                            <span>Visa, Mastercard y más</span>
+                        </div>
+                    </li>
+                    <li class="benefits-band__item">
+                        <span class="benefits-band__icon" aria-hidden="true">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round">
+                                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+                            </svg>
+                        </span>
+                        <div>
+                            <strong>Entrega inmediata</strong>
+                            <span>Entrada en tu email al instante</span>
+                        </div>
+                    </li>
+                    <li class="benefits-band__item">
+                        <span class="benefits-band__icon" aria-hidden="true">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round">
+                                <circle cx="12" cy="12" r="10" />
+                                <polyline points="12 6 12 12 16 14" />
+                            </svg>
+                        </span>
+                        <div>
+                            <strong>Soporte 24/7</strong>
+                            <span>Estamos para ayudarte siempre</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+
+        <!-- -------------------------------------------
+         EXPLORAR POR PROVINCIA
+    ------------------------------------------- -->
+        <section class="home-section home-section--alt" aria-labelledby="provincias-heading">
+            <div class="container">
+                <div class="home-section__header">
+                    <h2 id="provincias-heading" class="home-section__title">
+                        Explorá por provincia
+                    </h2>
+                </div>
+
+                <div class="province-scroll-wrap">
+                    <nav class="province-chips" aria-label="Explorar eventos por provincia">
+                        <ul class="province-chips__list" role="list">
+                            <li><a href="./pages/eventos.html?provincia=buenos-aires" class="province-chip">Buenos
+                                    Aires</a></li>
+                            <li><a href="./pages/eventos.html?provincia=caba" class="province-chip">CABA</a></li>
+                            <li><a href="./pages/eventos.html?provincia=cordoba" class="province-chip">Córdoba</a></li>
+                            <li><a href="./pages/eventos.html?provincia=santa-fe" class="province-chip">Santa Fe</a>
+                            </li>
+                            <li><a href="./pages/eventos.html?provincia=mendoza" class="province-chip">Mendoza</a></li>
+                            <li><a href="./pages/eventos.html?provincia=tucuman" class="province-chip">Tucumán</a></li>
+                            <li><a href="./pages/eventos.html?provincia=salta" class="province-chip">Salta</a></li>
+                            <li><a href="./pages/eventos.html?provincia=entre-rios" class="province-chip">Entre Ríos</a>
+                            </li>
+                            <li><a href="./pages/eventos.html?provincia=neuquen" class="province-chip">Neuquén</a></li>
+                            <li><a href="./pages/eventos.html?provincia=rio-negro" class="province-chip">Río Negro</a>
+                            </li>
+                            <li><a href="./pages/eventos.html?provincia=chaco" class="province-chip">Chaco</a></li>
+                            <li><a href="./pages/eventos.html?provincia=misiones" class="province-chip">Misiones</a>
+                            </li>
+                            <li><a href="./pages/eventos.html?provincia=corrientes" class="province-chip">Corrientes</a>
+                            </li>
+                            <li><a href="./pages/eventos.html?provincia=san-juan" class="province-chip">San Juan</a>
+                            </li>
+                            <li><a href="./pages/eventos.html?provincia=jujuy" class="province-chip">Jujuy</a></li>
+                            <li><a href="./pages/eventos.html?provincia=san-luis" class="province-chip">San Luis</a>
+                            </li>
+                            <li><a href="./pages/eventos.html?provincia=la-pampa" class="province-chip">La Pampa</a>
+                            </li>
+                            <li><a href="./pages/eventos.html?provincia=chubut" class="province-chip">Chubut</a></li>
+                            <li><a href="./pages/eventos.html?provincia=catamarca" class="province-chip">Catamarca</a>
+                            </li>
+                            <li><a href="./pages/eventos.html?provincia=la-rioja" class="province-chip">La Rioja</a>
+                            </li>
+                            <li><a href="./pages/eventos.html?provincia=formosa" class="province-chip">Formosa</a></li>
+                            <li><a href="./pages/eventos.html?provincia=santiago-del-estero"
+                                    class="province-chip">Santiago del Estero</a></li>
+                            <li><a href="./pages/eventos.html?provincia=santa-cruz" class="province-chip">Santa Cruz</a>
+                            </li>
+                            <li><a href="./pages/eventos.html?provincia=tierra-del-fuego" class="province-chip">Tierra
+                                    del Fuego</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </section>
+
+        <!-- -------------------------------------------
+         CTA VENDER ENTRADAS
+    ------------------------------------------- -->
+        <section class="cta-section" aria-labelledby="cta-heading">
+            <div class="container">
+                <div class="cta-card">
+                    <div class="cta-card__text">
+                        <h2 id="cta-heading" class="cta-card__title">¿Organizás un evento?</h2>
+                        <p class="cta-card__subtitle">Publicá tus eventos y vendé entradas de forma simple, rápida y
+                            segura con EntradaWeb.</p>
+                    </div>
+                    <a href="./pages/login.html" class="btn btn--orange btn--lg" id="btn-cta-vender">
+                        Empezar a vender
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+                            <polyline points="9 18 15 12 9 6" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- =============================================
+       FOOTER
+  ============================================= -->
+    <footer class="site-footer" role="contentinfo">
         <div class="container site-footer__grid">
+
             <div class="site-footer__brand">
                 <h2>Entrada<span style="color: var(--color-brand-orange);">Web</span></h2>
                 <p>La manera más simple y segura de comprar y vender entradas online en Argentina.</p>
+                <div class="site-footer__social" aria-label="Redes sociales">
+                    <a href="#" class="site-footer__social-link" aria-label="Facebook" rel="noopener noreferrer">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+                        </svg>
+                    </a>
+                    <a href="#" class="site-footer__social-link" aria-label="Instagram" rel="noopener noreferrer">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+                        </svg>
+                    </a>
+                    <a href="#" class="site-footer__social-link" aria-label="Twitter / X" rel="noopener noreferrer">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <path
+                                d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                        </svg>
+                    </a>
+                    <a href="#" class="site-footer__social-link" aria-label="YouTube" rel="noopener noreferrer">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <path
+                                d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.54C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z" />
+                            <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0D1B2A" />
+                        </svg>
+                    </a>
+                </div>
             </div>
+
             <div class="site-footer__col">
                 <h3>Categorías</h3>
                 <ul>
-                    <li><a href="#">Música</a></li>
-                    <li><a href="#">Teatro</a></li>
-                    <li><a href="#">Deportes</a></li>
-                    <li><a href="#">Familiares</a></li>
+                    <li><a href="./pages/eventos.html?categoria=musica">Música</a></li>
+                    <li><a href="./pages/eventos.html?categoria=teatro">Teatro</a></li>
+                    <li><a href="./pages/eventos.html?categoria=deportes">Deportes</a></li>
+                    <li><a href="./pages/eventos.html?categoria=cine">Cine</a></li>
+                    <li><a href="./pages/eventos.html?categoria=familia">Familia</a></li>
                 </ul>
             </div>
+
             <div class="site-footer__col">
                 <h3>Nosotros</h3>
                 <ul>
-                    <li><a href="#">Acerca de</a></li>
+                    <li><a href="#">Acerca de EntradaWeb</a></li>
                     <li><a href="#">Vender entradas</a></li>
                     <li><a href="#">Términos y condiciones</a></li>
-                    <li><a href="#">Privacidad</a></li>
+                    <li><a href="#">Política de privacidad</a></li>
                 </ul>
             </div>
+
             <div class="site-footer__col">
                 <h3>Ayuda</h3>
                 <ul>
                     <li><a href="#">Preguntas frecuentes</a></li>
                     <li><a href="#">Contacto</a></li>
                     <li><a href="#">Mis compras</a></li>
+                    <li><a href="./pages/admin-showcase.html">Admin (UI)</a></li>
                 </ul>
             </div>
+
         </div>
+
         <div class="container site-footer__bottom">
             <p>&copy; 2026 EntradaWeb. Todos los derechos reservados.</p>
-            <div class="site-footer__social">
-                <a href="#" class="site-footer__social-link" aria-label="Facebook">f</a>
-                <a href="#" class="site-footer__social-link" aria-label="Instagram">ig</a>
-                <a href="#" class="site-footer__social-link" aria-label="Twitter / X">𝕏</a>
-            </div>
+            <p class="site-footer__payments" aria-label="Medios de pago aceptados">
+                Visa · Mastercard · Mercado Pago · Mercado Crédito
+            </p>
         </div>
     </footer>
+
+    <!-- Scripts -->
+    <script src="./js/home.js" defer></script>
+
 </body>
+
 </html>

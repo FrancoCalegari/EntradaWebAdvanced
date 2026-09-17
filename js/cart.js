@@ -15,27 +15,27 @@
   'use strict';
 
   /* ─── CONFIGURACIÓN ──────────────────────────────────────────── */
-  const FEE_RATE        = 0.10;  // Cargo por servicio: 10%
-  const VALID_COUPONS   = {      // Cupones válidos (mock — backend los validará realmente)
+  const FEE_RATE = 0.10;  // Cargo por servicio: 10%
+  const VALID_COUPONS = {      // Cupones válidos (mock — backend los validará realmente)
     'ENTRADAS10': 0.10,
-    'EWFEST20':   0.20,
+    'EWFEST20': 0.20,
     'PRIMERAVEZ': 0.15,
   };
 
   /* ─── REFERENCIAS DOM ────────────────────────────────────────── */
-  const cartItemsList      = document.getElementById('cart-items-list');
-  const cartEmpty          = document.getElementById('cart-empty');
-  const cartLayout         = document.querySelector('.cart-layout');
-  const checkoutStepsNav   = document.querySelector('nav[aria-label="Pasos del proceso de compra"]');
-  const couponForm         = document.getElementById('coupon-form');
-  const couponInput        = document.getElementById('coupon-input');
-  const couponFeedback     = document.getElementById('coupon-feedback');
-  const sDiscountRow       = document.getElementById('s-discount-row');
-  const sDiscount          = document.getElementById('s-discount');
-  const sSubtotal          = document.getElementById('s-subtotal');
-  const sFee               = document.getElementById('s-fee');
-  const sTotal             = document.getElementById('s-total');
-  const navCartCount       = document.getElementById('nav-cart-count');
+  const cartItemsList = document.getElementById('cart-items-list');
+  const cartEmpty = document.getElementById('cart-empty');
+  const cartLayout = document.querySelector('.cart-layout');
+  const checkoutStepsNav = document.querySelector('nav[aria-label="Pasos del proceso de compra"]');
+  const couponForm = document.getElementById('coupon-form');
+  const couponInput = document.getElementById('coupon-input');
+  const couponFeedback = document.getElementById('coupon-feedback');
+  const sDiscountRow = document.getElementById('s-discount-row');
+  const sDiscount = document.getElementById('s-discount');
+  const sSubtotal = document.getElementById('s-subtotal');
+  const sFee = document.getElementById('s-fee');
+  const sTotal = document.getElementById('s-total');
+  const navCartCount = document.getElementById('nav-cart-count');
 
   /* ─── ESTADO ─────────────────────────────────────────────────── */
   let discountRate = 0;
@@ -51,23 +51,23 @@
   /* ─── PRECIO DE UN ITEM ──────────────────────────────────────── */
   function getItemTotal(item) {
     const price = parseInt(item.dataset.price, 10) || 0;
-    const qty   = parseInt(item.querySelector('[data-qty]')?.dataset.qty ?? 1, 10);
+    const qty = parseInt(item.querySelector('[data-qty]')?.dataset.qty ?? 1, 10);
     return price * qty;
   }
 
   /* ─── ACTUALIZAR RESUMEN GLOBAL ──────────────────────────────── */
   function updateGlobalSummary() {
-    const items     = getItems();
-    const subtotal  = items.reduce((acc, item) => acc + getItemTotal(item), 0);
-    const discount  = Math.round(subtotal * discountRate);
-    const base      = subtotal - discount;
-    const fee       = Math.round(base * FEE_RATE);
-    const total     = base + fee;
+    const items = getItems();
+    const subtotal = items.reduce((acc, item) => acc + getItemTotal(item), 0);
+    const discount = Math.round(subtotal * discountRate);
+    const base = subtotal - discount;
+    const fee = Math.round(base * FEE_RATE);
+    const total = base + fee;
 
     if (sSubtotal) sSubtotal.textContent = fmt(subtotal);
-    if (sFee)      sFee.textContent      = fmt(fee);
+    if (sFee) sFee.textContent = fmt(fee);
     if (sTotal) {
-      sTotal.textContent  = fmt(total);
+      sTotal.textContent = fmt(total);
       sTotal.setAttribute('aria-label', `Total ${fmt(total)}`);
     }
 
@@ -93,9 +93,9 @@
     // Persistir en sessionStorage
     try {
       const cartData = items.map(item => ({
-        id:    item.dataset.itemId,
+        id: item.dataset.itemId,
         price: parseInt(item.dataset.price, 10),
-        qty:   parseInt(item.querySelector('[data-qty]')?.dataset.qty ?? 1, 10),
+        qty: parseInt(item.querySelector('[data-qty]')?.dataset.qty ?? 1, 10),
       }));
       sessionStorage.setItem('ew_cart', JSON.stringify(cartData));
     } catch (_) { /* silenciar */ }
@@ -103,13 +103,13 @@
 
   /* ─── CONTROLES DE CANTIDAD ──────────────────────────────────── */
   function initQuantityControls(item) {
-    const decreaseBtn  = item.querySelector('[data-action="decrease"]');
-    const increaseBtn  = item.querySelector('[data-action="increase"]');
-    const qtyEl        = item.querySelector('[data-qty]');
-    const itemTotalEl  = item.querySelector('[data-item-total]');
-    const price        = parseInt(item.dataset.price, 10) || 0;
-    const maxQty       = parseInt(item.dataset.maxQty, 10) || 8;
-    const MIN          = 1;
+    const decreaseBtn = item.querySelector('[data-action="decrease"]');
+    const increaseBtn = item.querySelector('[data-action="increase"]');
+    const qtyEl = item.querySelector('[data-qty]');
+    const itemTotalEl = item.querySelector('[data-item-total]');
+    const price = parseInt(item.dataset.price, 10) || 0;
+    const maxQty = parseInt(item.dataset.maxQty, 10) || 8;
+    const MIN = 1;
 
     if (!qtyEl) return;
 
@@ -159,10 +159,10 @@
     removeBtn.addEventListener('click', () => {
       // Animación de salida
       item.style.transition = 'opacity 250ms ease, transform 250ms ease, max-height 350ms ease, margin 350ms ease, padding 350ms ease';
-      item.style.opacity  = '0';
+      item.style.opacity = '0';
       item.style.transform = 'scale(0.96) translateX(8px)';
       item.style.maxHeight = item.offsetHeight + 'px';
-      item.style.overflow  = 'hidden';
+      item.style.overflow = 'hidden';
 
       requestAnimationFrame(() => {
         item.style.maxHeight = '0';
@@ -218,8 +218,8 @@
       e.preventDefault();
       if (!couponFeedback) return;
 
-      const code     = (couponInput?.value || '').trim().toUpperCase();
-      const rate     = VALID_COUPONS[code];
+      const code = (couponInput?.value || '').trim().toUpperCase();
+      const rate = VALID_COUPONS[code];
 
       // Limpiar estado anterior
       couponFeedback.className = '';
