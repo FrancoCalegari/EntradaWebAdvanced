@@ -1,0 +1,11 @@
+PORT=3000
+
+SPIDERWEB_API_URL=https://spiderwebargapi.com.ar/api/v1
+
+SPIDERWEB_API_KEY=9e1f0a404fdb739fc195e4dfb300756865e7b3e693298005ff645ee04ce894f2
+
+SPIDERWEB_DB_NAME=sw_Franco Calegari_entradawebadvanced
+
+JWT_SECRET=wefghiodwiaht6gaousdhw9oisd7g
+
+JWT_EXPIRES_IN=24h

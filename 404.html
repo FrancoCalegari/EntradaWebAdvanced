@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 — Página no encontrada | EntradaWeb</title>
+  <meta name="robots" content="noindex">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous">
+  <style>
+    :root {
+      --bg:        #0D1B2A;
+      --surface:   #132032;
+      --border:    rgba(255,255,255,0.08);
+      --orange:    #F97316;
+      --orange-m:  rgba(249,115,22,0.15);
+      --teal:      #0EA5E9;
+      --text:      #F1F5F9;
+      --muted:     #94A3B8;
+      --radius-xl: 20px;
+      --radius-lg: 12px;
+      --radius-full: 9999px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg);
+      font-family: 'Inter', system-ui, sans-serif;
+      color: var(--text);
+      overflow: hidden;
+      padding: 1.5rem;
+    }
+
+    /* ── Fondo animado ── */
+    .bg-blobs {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .bg-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(90px);
+      opacity: 0.18;
+    }
+    .bg-blob--orange {
+      width: 520px; height: 520px;
+      background: var(--orange);
+      top: -120px; left: -120px;
+      animation: float1 12s ease-in-out infinite alternate;
+    }
+    .bg-blob--teal {
+      width: 400px; height: 400px;
+      background: var(--teal);
+      bottom: -80px; right: -80px;
+      animation: float2 10s ease-in-out infinite alternate;
+    }
+    @keyframes float1 { to { transform: translate(60px, 80px) scale(1.1); } }
+    @keyframes float2 { to { transform: translate(-60px, -60px) scale(1.15); } }
+
+    /* ── Card ── */
+    .card {
+      position: relative;
+      z-index: 1;
+      background: rgba(19, 32, 50, 0.8);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: clamp(2rem, 6vw, 4rem) clamp(1.5rem, 6vw, 3.5rem);
+      max-width: 600px;
+      width: 100%;
+      text-align: center;
+      animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.04) inset;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(32px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Número 404 ── */
+    .error-code {
+      font-size: clamp(5rem, 20vw, 9rem);
+      font-weight: 800;
+      line-height: 1;
+      background: linear-gradient(135deg, var(--orange) 0%, #FB923C 50%, var(--teal) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.04em;
+      animation: pulse404 3s ease-in-out infinite alternate;
+    }
+    @keyframes pulse404 {
+      from { filter: brightness(1); }
+      to   { filter: brightness(1.15); }
+    }
+
+    /* ── Ícono ── */
+    .error-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 72px;
+      height: 72px;
+      background: var(--orange-m);
+      border: 1px solid rgba(249,115,22,0.3);
+      border-radius: var(--radius-full);
+      margin: 1.25rem auto;
+      color: var(--orange);
+      font-size: 1.75rem;
+    }
+
+    /* ── Texto ── */
+    .error-title {
+      font-size: clamp(1.3rem, 4vw, 1.75rem);
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      color: var(--text);
+    }
+    .error-subtitle {
+      font-size: clamp(0.875rem, 2.5vw, 1rem);
+      color: var(--muted);
+      max-width: 42ch;
+      margin: 0 auto 2rem;
+      line-height: 1.6;
+    }
+
+    /* ── Acciones ── */
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      justify-content: center;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: inherit;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      border-radius: var(--radius-full);
+      padding: 0.75rem 1.5rem;
+      min-height: 48px;
+      transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn:active { transform: translateY(0); }
+
+    .btn--primary {
+      background: var(--orange);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(249,115,22,0.4);
+    }
+    .btn--primary:hover { background: #EA6A10; box-shadow: 0 6px 28px rgba(249,115,22,0.55); }
+
+    .btn--ghost {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(8px);
+    }
+    .btn--ghost:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.2); }
+
+    /* ── Separador ── */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin: 2rem 0 1.25rem;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+    .divider span { font-size: 0.75rem; color: var(--muted); white-space: nowrap; }
+
+    /* ── Sugerencias ── */
+    .suggestions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: center;
+    }
+    .suggestion-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.4rem 0.875rem;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-full);
+      font-size: 0.8125rem;
+      color: var(--muted);
+      text-decoration: none;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+    .suggestion-chip:hover {
+      background: var(--orange-m);
+      border-color: rgba(249,115,22,0.3);
+      color: var(--text);
+    }
+
+    /* ── Footer mínimo ── */
+    .mini-footer {
+      position: fixed;
+      bottom: 1.25rem;
+      font-size: 0.75rem;
+      color: var(--muted);
+      z-index: 1;
+    }
+    .mini-footer a { color: var(--orange); text-decoration: none; }
+    .mini-footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 480px) {
+      .actions { flex-direction: column; }
+      .btn { justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Blobs de fondo -->
+  <div class="bg-blobs" aria-hidden="true">
+    <div class="bg-blob bg-blob--orange"></div>
+    <div class="bg-blob bg-blob--teal"></div>
+  </div>
+
+  <!-- Card principal -->
+  <main class="card" role="main">
+    <p class="error-code" aria-label="Error 404">404</p>
+
+    <div class="error-icon" aria-hidden="true">
+      <i class="fa-solid fa-ticket-simple"></i>
+    </div>
+
+    <h1 class="error-title">Página no encontrada</h1>
+    <p class="error-subtitle">
+      La página que buscás no existe o fue movida.<br>
+      Puede que la URL esté mal escrita o el evento ya no esté disponible.
+    </p>
+
+    <div class="actions">
+      <a href="/" class="btn btn--primary">
+        <i class="fa-solid fa-house" aria-hidden="true"></i>
+        Volver al inicio
+      </a>
+      <a href="/pages/eventos.html" class="btn btn--ghost">
+        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+        Ver eventos
+      </a>
+    </div>
+
+    <div class="divider"><span>O explorá estas secciones</span></div>
+
+    <nav class="suggestions" aria-label="Páginas sugeridas">
+      <a href="/pages/eventos.html?categoria=musica" class="suggestion-chip">
+        <i class="fa-solid fa-music" aria-hidden="true"></i> Música
+      </a>
+      <a href="/pages/eventos.html?categoria=teatro" class="suggestion-chip">
+        <i class="fa-solid fa-masks-theater" aria-hidden="true"></i> Teatro
+      </a>
+      <a href="/pages/eventos.html?categoria=deportes" class="suggestion-chip">
+        <i class="fa-solid fa-futbol" aria-hidden="true"></i> Deportes
+      </a>
+      <a href="/pages/eventos.html?categoria=cine" class="suggestion-chip">
+        <i class="fa-solid fa-film" aria-hidden="true"></i> Cine
+      </a>
+      <a href="/pages/eventos.html?categoria=familia" class="suggestion-chip">
+        <i class="fa-solid fa-people-roof" aria-hidden="true"></i> Familia
+      </a>
+    </nav>
+  </main>
+
+  <footer class="mini-footer">
+    <a href="/">Entrada<strong>Web</strong></a> &mdash; Error 404
+  </footer>
+
+</body>
+</html>

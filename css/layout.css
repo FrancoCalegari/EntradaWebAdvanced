@@ -53,15 +53,12 @@
   letter-spacing: var(--tracking-tight);
 }
 
-.site-header__logo-text span {
-  color: var(--color-accent-teal);
-}
-
 /* Barra de búsqueda (centro) */
 .site-header__search {
   flex: 1;
   max-width: 480px;
-  display: none; /* Oculta en móvil, se muestra en tablet+ */
+  display: none;
+  /* Oculta en móvil, se muestra en tablet+ */
 }
 
 @media (min-width: 768px) {
@@ -83,7 +80,8 @@
   align-items: center;
   justify-content: center;
   width: 44px;
-  height: 44px; /* Mínimo área táctil WCAG */
+  height: 44px;
+  /* Mínimo área táctil WCAG */
   background: transparent;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
@@ -99,7 +97,8 @@
 
 @media (min-width: 1024px) {
   .site-header__menu-toggle {
-    display: none; /* Oculto en desktop, se muestra la nav directamente */
+    display: none;
+    /* Oculto en desktop, se muestra la nav directamente */
   }
 }
 
@@ -172,11 +171,12 @@
   max-width: 85vw;
   height: 100%;
   background: var(--color-bg-surface);
-  border-right: 1px solid var(--color-border);
+  border-left: 1px solid var(--color-border);  /* borde izquierdo, ya que está pegado a la derecha */
   padding: var(--space-6) var(--space-4);
-  transform: translateX(-100%);
+  transform: translateX(100%);                  /* empieza fuera por la derecha */
   transition: transform var(--transition-slow);
   overflow-y: auto;
+  margin-left: auto;                            /* lo pega al borde derecho */
 }
 
 .mobile-menu--open .mobile-menu__drawer {
@@ -189,7 +189,7 @@
   justify-content: center;
   width: 44px;
   height: 44px;
-  margin-left: auto;
+  margin-right: auto;                           /* cierre a la izquierda del panel */
   background: transparent;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
