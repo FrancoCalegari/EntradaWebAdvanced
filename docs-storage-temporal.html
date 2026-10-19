@@ -1,0 +1,405 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <title>Documentación API — SpiderWeb Private System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;800;900&family=Share+Tech+Mono&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/tactical.css">
+  <link rel="stylesheet" href="/css/index.css">
+  <script src="/theme.js"></script>
+  <style>
+    body { background: var(--bg-primary) !important; color: var(--text-primary); font-family: 'Inter', sans-serif; }
+    body::before { display: none !important; }
+    .sw-nav.scrolled { background: var(--bg-primary) !important; border-color: var(--border-color) !important; }
+    .docs-wrap { max-width: 1380px; margin: 0 auto; padding: 6rem clamp(1rem, 3vw, 2rem) 4rem; display: grid; grid-template-columns: 260px 1fr; gap: 2.5rem; }
+    @media (max-width: 900px) {
+      .docs-wrap { grid-template-columns: 1fr; padding: 6rem clamp(1rem, 3vw, 2rem) 1rem; }
+      .docs-sidebar { position: static !important; margin-bottom: 2rem; }
+    }
+    /* ── Sidebar Nav ── */
+    .docs-sidebar { background: var(--bg-secondary); border: 1px solid var(--border-color); padding: 1.5rem; align-self: start; position: sticky; top: 6rem; clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px)); z-index: 10; }
+    .docs-nav-title { font-family: 'Share Tech Mono', monospace; font-size: 0.65rem; letter-spacing: 0.18em; color: #A30000; text-transform: uppercase; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+    .docs-nav-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.35rem; }
+    .docs-nav-item a { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; color: var(--text-secondary); text-decoration: none; font-family: 'Share Tech Mono', monospace; font-size: 0.8rem; border-left: 2px solid transparent; transition: all 0.2s; }
+    .docs-nav-item a:hover { background: rgba(163,0,0,0.08); color: var(--text-primary); border-left-color: rgba(163,0,0,0.5); }
+    .docs-nav-item a.active { background: rgba(163,0,0,0.15); color: var(--text-primary); border-left-color: #A30000; font-weight: 600; }
+    .docs-nav-item i { width: 18px; text-align: center; color: #A30000; }
+    
+    /* ── Content Area ── */
+    .docs-content { min-width: 0; }
+    .docs-header { border-bottom: 1px solid rgba(163,0,0,0.25); padding-bottom: 1.5rem; margin-bottom: 2rem; }
+    .docs-title { font-family: 'Barlow Condensed', sans-serif; font-size: 2.5rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-primary); margin: 0 0 0.5rem 0; display: flex; align-items: center; gap: 0.75rem; }
+    .docs-title i { color: #A30000; }
+    .docs-subtitle { font-size: 0.95rem; color: var(--text-muted); line-height: 1.6; max-width: 800px; margin: 0; }
+    
+    /* ── Tactical Cards ── */
+    .tac-card { background: var(--bg-secondary); border: 1px solid rgba(163,0,0,0.15); margin-bottom: 1.75rem; position: relative; }
+    .tac-card-header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.5rem; border-bottom: 1px solid rgba(163,0,0,0.12); background: rgba(0,0,0,0.2); }
+    .tac-card-title { font-family: 'Barlow Condensed', sans-serif; font-size: 1.15rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-primary); display: flex; align-items: center; gap: 0.6rem; }
+    .tac-card-title i { color: #A30000; }
+    .tac-card-body { padding: 1.5rem; font-size: 0.9rem; line-height: 1.7; color: var(--text-primary); }
+    .tac-card-body p { margin-top: 0; margin-bottom: 1rem; }
+    .tac-card-body p:last-child { margin-bottom: 0; }
+    
+    /* ── Code Blocks & Badges ── */
+    pre { background: #07070a; border: 1px solid rgba(163,0,0,0.2); padding: 1.25rem; font-family: 'Share Tech Mono', monospace; font-size: 0.82rem; color: #38bdf8; overflow-x: auto; border-radius: 2px; margin: 1rem 0; line-height: 1.5; }
+    code { font-family: 'Share Tech Mono', monospace; font-size: 0.85em; background: rgba(163,0,0,0.12); color: #f59e0b; padding: 0.2em 0.4em; border-radius: 2px; }
+    pre code { background: transparent; padding: 0; color: inherit; font-size: 1em; }
+    .method-badge { font-family: 'Share Tech Mono', monospace; font-size: 0.72rem; font-weight: 700; padding: 0.25rem 0.6rem; border-radius: 2px; letter-spacing: 0.1em; display: inline-block; }
+    .method-badge.get { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4); }
+    .method-badge.post { background: rgba(74, 222, 128, 0.15); color: #4ade80; border: 1px solid rgba(74, 222, 128, 0.4); }
+    .method-badge.put { background: rgba(251, 191, 36, 0.15); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.4); }
+    .method-badge.delete { background: rgba(248, 113, 113, 0.15); color: #f87171; border: 1px solid rgba(248, 113, 113, 0.4); }
+    
+    /* ── Tables ── */
+    .tac-table-wrap { overflow-x: auto; margin: 1rem 0; }
+    .tac-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; text-align: left; }
+    .tac-table th { font-family: 'Share Tech Mono', monospace; font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; color: #A30000; padding: 0.75rem 1rem; border-bottom: 2px solid rgba(163,0,0,0.3); background: var(--bg-glass); }
+    .tac-table td { padding: 0.85rem 1rem; border-bottom: 1px solid var(--border-color); color: var(--text-secondary); vertical-align: top; }
+    .tac-table tr:hover td { background: rgba(163,0,0,0.05); color: var(--text-primary); }
+    
+    /* ── Alerts / Notes ── */
+    .alert-box { padding: 1rem 1.25rem; border-left: 4px solid #A30000; background: rgba(163,0,0,0.08); margin: 1.25rem 0; font-size: 0.88rem; display: flex; gap: 0.85rem; align-items: flex-start; }
+    .alert-box.info { border-color: #38bdf8; background: rgba(56,189,248,0.08); }
+    .alert-box.warning { border-color: #f59e0b; background: rgba(245,158,11,0.08); }
+    .alert-box i { font-size: 1.1rem; margin-top: 0.1rem; flex-shrink: 0; }
+    .alert-box.info i { color: #38bdf8; }
+    .alert-box.warning i { color: #f59e0b; }
+    .alert-box i.fa-shield-halved, .alert-box i.fa-triangle-exclamation { color: #A30000; }
+
+    /* ── Test Card Specifics ── */
+    .test-step { display: flex; gap: 1rem; margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px dashed var(--border-color); }
+    .test-step > div:last-child { min-width: 0; width: 100%; }
+    .test-step:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+    .test-num { font-family: 'Share Tech Mono', monospace; font-size: 0.9rem; font-weight: 700; width: 32px; height: 32px; border-radius: 50%; background: rgba(163,0,0,0.2); border: 1px solid #A30000; display: flex; align-items: center; justify-content: center; color: var(--text-primary); flex-shrink: 0; }
+
+    /* ── Light Mode Overrides ── */
+    [data-theme="light"] pre { background: #ffffff; border-color: var(--border-color); color: #121212; }
+    [data-theme="light"] pre code { color: #121212; }
+    [data-theme="light"] code { background: rgba(163,0,0,0.08); color: #A30000; }
+    [data-theme="light"] .sw-nav__logo,
+    [data-theme="light"] .footer-tac__logo img,
+    [data-theme="light"] .footer-bottom-logo { 
+      content: url('/img/logo negro.png'); 
+      filter: none !important; 
+    }
+  </style>
+</head>
+<body class="tactical-body tac-page">
+  <div class="sw-scanlines" aria-hidden="true"></div>
+
+  <!-- ░░ NAV ░░ -->
+  <nav class="sw-nav tac-nav" id="mainNavbar">
+    <div class="sw-nav__inner tac-nav__inner">
+      <a href="/" class="sw-nav__brand tac-nav__brand">
+        <img src="/img/logo blanco.png" alt="Spider-Web ARG" class="sw-nav__logo"><span class="sw-nav__api-badge">API</span>
+      </a>
+      <button class="sw-nav__toggle tac-nav__toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="navMenu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="sw-nav__links tac-nav__links" id="navMenu">
+        <li><a href="/#hero" class="sw-nav__link">INICIO</a></li>
+        <li><a href="https://spider-web-test.vercel.app/" target="_blank" rel="noopener noreferrer" class="sw-nav__link">PORTFOLIO</a></li>
+        <li><a href="/pricing" class="sw-nav__link">PRECIOS</a></li>
+        <li><a href="/docs" class="sw-nav__link" style="color:#A30000;">DOCS</a></li>
+        <li class="sw-nav__sep tac-nav__sep"></li>
+        
+          <li><a href="/login" class="sw-btn sw-btn--ghost sw-btn--sm tac-btn tac-btn--ghost">ACCEDER</a></li>
+          <li><a href="/register" class="sw-btn sw-btn--primary sw-btn--sm tac-btn tac-btn--primary">REGISTRARSE</a></li>
+        
+      </ul>
+    </div>
+  </nav>
+
+  <div class="docs-wrap">
+    <!-- Sidebar Navigation -->
+    <aside class="docs-sidebar">
+      <div class="docs-nav-title"><i class="fa-solid fa-terminal"></i> MÓDULOS API</div>
+      <ul class="docs-nav-list">
+        <li class="docs-nav-item">
+          <a href="/docs/intro" class="">
+            <i class="fa-solid fa-book"></i> Introducción & RBAC
+          </a>
+        </li>
+        <li class="docs-nav-item">
+          <a href="/docs/sql" class="">
+            <i class="fa-solid fa-database"></i> SQL Database API
+          </a>
+        </li>
+        <li class="docs-nav-item">
+          <a href="/docs/storage" class="active">
+            <i class="fa-solid fa-hard-drive"></i> Cloud Storage API
+          </a>
+        </li>
+        <li class="docs-nav-item">
+          <a href="/docs/ia" class="">
+            <i class="fa-solid fa-brain"></i> SpiderIA LLM API
+          </a>
+        </li>
+        <li class="docs-nav-item">
+          <a href="/docs/tests" class="">
+            <i class="fa-solid fa-vial-circle-check"></i> Casos de Prueba
+          </a>
+        </li>
+      </ul>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="docs-content">
+      
+        <!-- ── STORAGE API ── -->
+        <div class="docs-header">
+          <h1 class="docs-title"><i class="fa-solid fa-hard-drive"></i> Cloud Storage API</h1>
+          <p class="docs-subtitle">Sube, lista, reemplaza y descarga archivos en la nube con compatibilidad S3/MinIO y almacenamiento local. Proporciona URLs públicas instantáneas y flujos protegidos por proyecto.</p>
+        </div>
+
+        <div class="tac-card">
+          <div class="tac-card-header">
+            <div class="tac-card-title"><i class="fa-solid fa-file-shield"></i> Reglas de Subida y Multipart Form</div>
+          </div>
+          <div class="tac-card-body">
+            <div class="alert-box info">
+              <i class="fa-solid fa-circle-info"></i>
+              <div>
+                <strong>Nombre de Campo Obligatorio en Multer:</strong><br>
+                &bull; Para subidas masivas o creaciones en un proyecto (<code>POST /projects/:id/files</code>), el campo multipart/form-data debe llamarse exactamente <strong><code>files</code></strong> (plural, permite hasta 10 archivos simultáneos).<br>
+                &bull; Para reemplazar un archivo existente (<code>PUT /files/:id</code>), el campo del formulario debe llamarse <strong><code>file</code></strong> (singular).
+              </div>
+            </div>
+            <p><strong>Límite de Tamaño:</strong> Cada archivo individual tiene un tope fijado en <strong>50 MB</strong> por seguridad del servidor. El sistema verifica la cuota de almacenamiento acumulada del usuario (1 GB Free / 120 GB User Only / 500 GB Premium) antes de consolidar la escritura.</p>
+          </div>
+        </div>
+
+        <div class="tac-card">
+          <div class="tac-card-header">
+            <div class="tac-card-title"><i class="fa-solid fa-list-ol"></i> Endpoints de Almacenamiento</div>
+          </div>
+          <div class="tac-card-body">
+            <div class="tac-table-wrap">
+              <table class="tac-table">
+                <thead>
+                  <tr><th>Método</th><th>Endpoint</th><th>Descripción</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="method-badge get">GET</span></td>
+                    <td><code>/api/v1/storage/projects</code></td>
+                    <td>Lista los proyectos de almacenamiento accesibles.</td>
+                  </tr>
+                  <tr>
+                    <td><span class="method-badge post">POST</span></td>
+                    <td><code>/api/v1/storage/projects</code></td>
+                    <td>Crea un nuevo proyecto contenedor de archivos.</td>
+                  </tr>
+                  <tr>
+                    <td><span class="method-badge get">GET</span></td>
+                    <td><code>/api/v1/storage/projects/:id/files</code></td>
+                    <td>Inventario de archivos en el proyecto, adjuntando la <code>url</code> pública de cada uno.</td>
+                  </tr>
+                  <tr>
+                    <td><span class="method-badge post">POST</span></td>
+                    <td><code>/api/v1/storage/projects/:id/files</code></td>
+                    <td>Subida multipart (campo <code>files</code>) de hasta 10 archivos al proyecto.</td>
+                  </tr>
+                  <tr>
+                    <td><span class="method-badge get">GET</span></td>
+                    <td><code>/api/v1/storage/files/:id</code></td>
+                    <td>Descarga o reproducción en flujo (*stream*) del archivo físico.</td>
+                  </tr>
+                  <tr>
+                    <td><span class="method-badge put">PUT</span></td>
+                    <td><code>/api/v1/storage/files/:id</code></td>
+                    <td>Reemplazo de archivo existente (campo <code>file</code>).</td>
+                  </tr>
+                  <tr>
+                    <td><span class="method-badge delete">DEL</span></td>
+                    <td><code>/api/v1/storage/files/:id</code></td>
+                    <td>Borrado permanente del archivo del clúster y base de datos.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="tac-card">
+          <div class="tac-card-header">
+            <div class="tac-card-title"><i class="fa-solid fa-terminal"></i> Subida de Archivos desde cURL y Python</div>
+          </div>
+          <div class="tac-card-body">
+            <p><strong>Ejemplo en cURL:</strong> Adjuntando archivos usando el flag <code>-F</code> indicando el campo <code>files</code>:</p>
+            <pre>curl -X POST "https://spiderwebargapi.com.ar/api/v1/storage/projects/1/files" \
+  -H "X-API-Key: tu_api_key_aqui" \
+  -F "files=@/ruta/local/documento.pdf" \
+  -F "files=@/ruta/local/imagen.png"</pre>
+            <p><strong>Ejemplo en Python (requests):</strong></p>
+            <pre>import requests
+
+headers = { "X-API-Key": "tu_api_key_aqui" }
+url = "https://spiderwebargapi.com.ar/api/v1/storage/projects/1/files"
+
+with open("manual_tecnico.pdf", "rb") as f:
+    # El tuplo requiere la clave "files" para coincidir con el backend
+    archivos = [("files", ("manual_tecnico.pdf", f, "application/pdf"))]
+    res = requests.post(url, headers=headers, files=archivos)
+    
+if res.status_code == 201:
+    info = res.json()["files"][0]
+    print(f"Subido con éxito. URL pública: {info['url']}")
+else:
+    print(f"Error: {res.json().get('error')}")</pre>
+          </div>
+        </div>
+
+      
+    </main>
+  </div>
+
+  <!-- ░░ FOOTER ░░ -->
+  <footer class="footer-tac" style="margin-top:3rem;">
+    <div class="tac-container">
+      <div class="footer-tac__grid">
+        <div class="footer-brand-col">
+          <div class="footer-tac__logo">
+            <img src="/img/logo blanco.png" alt="Spider-Web.ARG API" style="height:40px; object-fit:contain;">
+          </div>
+          <p class="footer-tac__tagline">Infraestructura API global que conecta negocios, sistemas y flujos de automatización a través de una red inteligente unificada.</p>
+          <div class="footer-tech-row">
+            <span class="tech-tag"><i class="fa-brands fa-node-js"></i> Node.js</span>
+            <span class="tech-tag"><i class="fa-solid fa-database"></i> MariaDB</span>
+            <span class="tech-tag"><i class="fa-solid fa-cloud"></i> MinIO</span>
+            <span class="tech-tag"><i class="fa-brands fa-docker"></i> Docker</span>
+          </div>
+        </div>
+        <div class="footer-col-tac">
+          <h4 class="footer-col-title">PLATAFORMA</h4>
+          <ul>
+            
+              <li><a href="/register"><i class="fa-solid fa-user-plus fa-fw"></i> Registro gratuito</a></li>
+              <li><a href="/login"><i class="fa-solid fa-right-to-bracket fa-fw"></i> Iniciar sesión</a></li>
+            
+            <li><a href="/#features"><i class="fa-solid fa-list fa-fw"></i> Módulos</a></li>
+            <li><a href="/docs"><i class="fa-solid fa-book fa-fw"></i> Documentación API</a></li>
+          </ul>
+        </div>
+        <div class="footer-col-tac">
+          <h4 class="footer-col-title">ENDPOINTS API</h4>
+          <ul>
+            <li><span class="footer-endpoint"><code>POST /api/v1/query</code></span></li>
+            <li><span class="footer-endpoint"><code>GET /api/v1/storage</code></span></li>
+            <li><span class="footer-endpoint"><code>POST /api/v1/ia</code></span></li>
+            <li><span class="footer-endpoint"><code>GET /api/v1/status</code></span></li>
+            <li><span class="footer-endpoint"><code>POST /api/v1/keys</code></span></li>
+          </ul>
+        </div>
+        <div class="footer-col-tac">
+          <h4 class="footer-col-title">LEGAL</h4>
+          <ul>
+            <li>
+              <button class="footer-legal-btn" onclick="document.getElementById('footerTermsModal').style.display='flex'">
+                <i class="fa-solid fa-file-contract fa-fw footer-legal-icon"></i> Términos y Condiciones
+              </button>
+            </li>
+            <li>
+              <button class="footer-legal-btn" onclick="document.getElementById('footerTermsModal').style.display='flex'">
+                <i class="fa-solid fa-shield-halved fa-fw footer-legal-icon"></i> Política de Privacidad
+              </button>
+            </li>
+            <li class="footer-legal-meta">
+              <i class="fa-solid fa-scale-balanced fa-fw footer-legal-icon"></i>
+              <span>Ley 25.326 &middot; ISO/IEC 27001 &middot; Buenos Aires, Argentina</span>
+            </li>
+            <li class="footer-legal-meta">
+              <i class="fa-solid fa-envelope fa-fw footer-legal-icon"></i>
+              <a href="/cdn-cgi/l/email-protection#670801010e040e060b14170e0302151002050302140e000927000a060e0b4904080a" class="footer-legal-mail"><span class="__cf_email__" data-cfemail="721d14141b111b131e01021b1617000517101617011b151c32151f131b1e5c111d1f">[email&#160;protected]</span></a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-tac__bottom">
+        <span><img src="/img/logo blanco.png" alt="" class="footer-bottom-logo" style="height:16px;vertical-align:middle;margin-right:6px;"> Spider-Web API &copy; 2026 — Todos los derechos reservados. &nbsp;|
+          <button onclick="document.getElementById('footerTermsModal').style.display='flex'" class="footer-bottom-btn">
+            Términos y Condiciones
+          </button>
+          &nbsp;| Desarrollado por <a href="https://spider-web-test.vercel.app/" target="_blank" rel="noopener noreferrer" class="footer-bottom-link">Spider Web ARG</a>
+        </span>
+        <div class="footer-status-row"><span class="pulse-dot small"></span><span>TODOS LOS SISTEMAS EN LÍNEA</span></div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ░░ MODAL T&C FOOTER ░░ -->
+  <div id="footerTermsModal" class="terms-modal-overlay" style="display:none;">
+    <div class="terms-modal-box">
+      <div class="terms-modal-header">
+        <div>
+          <div class="terms-modal-eyebrow">▶ DOCUMENTO LEGAL</div>
+          <h2 class="terms-modal-title">TÉRMINOS Y CONDICIONES</h2>
+          <div class="terms-modal-subtitle">Spider-Web API · República Argentina · Versión 1.0 · Junio 2026</div>
+        </div>
+        <button class="terms-modal-close" onclick="document.getElementById('footerTermsModal').style.display='none'">✕ CERRAR</button>
+      </div>
+      <div class="terms-modal-body">
+        <div class="terms-section-title">§ MARCO NORMATIVO APLICABLE</div>
+        <p>Ley N° 25.326 (Datos Personales), Ley N° 25.506 (Firma Digital), Ley N° 24.240 (Defensa del Consumidor), Ley N° 11.723 (Propiedad Intelectual), ISO/IEC 27001:2022 e IRAM-ISO/IEC 27701:2021.</p>
+        <div class="terms-section-title" style="margin:1rem 0 0.5rem;">§ 1. OBJETO</div>
+        <p>Al registrarse, el Usuario acepta la totalidad de estos Términos. La Plataforma es operada por Spider-Web Argentina con sede en la República Argentina.</p>
+        <div class="terms-section-title" style="margin:1rem 0 0.5rem;">§ 2. DATOS PERSONALES (Ley 25.326)</div>
+        <p>Los datos recabados son tratados confidencialmente y con fines exclusivos de prestación del servicio. El Usuario puede ejercer derechos ARAUS enviando correo a <span class="terms-link-text"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="8fe0e9e9e6ece6eee3fcffe6ebeafdf8eaedebeafce6e8e1cfe8e2eee6e3a1ece0e2">[email&#160;protected]</a></span>. Organismo de control: AAIP (<span class="terms-link-text">www.argentina.gob.ar/aaip</span>).</p>
+        <div class="terms-section-title" style="margin:1rem 0 0.5rem;">§ 3. SEGURIDAD (ISO 27001:2022)</div>
+        <p>Cifrado AES-256-GCM, hashing bcrypt, control de acceso por API Keys y auditoría de sesiones. No se garantiza seguridad absoluta frente a ataques externos.</p>
+        <div class="terms-section-title" style="margin:1rem 0 0.5rem;">§ 4. USO ACEPTABLE</div>
+        <p>Queda prohibido el uso ilícito, almacenamiento de datos de terceros sin consentimiento, ataques de intrusión, distribución de malware y cualquier actividad que viole la legislación argentina vigente.</p>
+        <div class="terms-section-title" style="margin:1rem 0 0.5rem;">§ 5. PLANES Y FACTURACIÓN</div>
+        <p>Plan gratuito: 500 MB DB / 1 GB storage. Modificaciones de precios con preaviso de 30 días por email.</p>
+        <div class="terms-section-title" style="margin:1rem 0 0.5rem;">§ 6-10. PROPIEDAD INTELECTUAL · RESPONSABILIDAD · RESCISIÓN · JURISDICCIÓN · MODIFICACIONES</div>
+        <p>Propiedad intelectual protegida por Ley 11.723. Jurisdicción: Tribunales de CABA. Modificaciones con preaviso de 15 días. Ley aplicable: República Argentina.</p>
+        <div class="terms-footnote-box">
+          <p class="terms-footnote-text">Versión 1.0 — Junio 2026 · <span class="terms-link-text"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="3d525b5b545e545c514e4d5459584f4a585f59584e545a537d5a505c5451135e5250">[email&#160;protected]</a></span></p>
+        </div>
+      </div>
+      <div class="terms-modal-footer">
+        <button class="terms-confirm-btn" onclick="document.getElementById('footerTermsModal').style.display='none'">
+          <i class="fa-solid fa-check"></i> ENTENDIDO
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    // ── Navbar scroll ──
+    const navbar = document.getElementById('mainNavbar');
+    window.addEventListener('scroll', () => navbar.classList.toggle('scrolled', window.scrollY > 40), { passive: true });
+
+    // ── Menú mobile ──
+    const navToggle = document.getElementById('navToggle');
+    const navMenu   = document.getElementById('navMenu');
+    if (navToggle && navMenu) {
+      navToggle.addEventListener('click', () => {
+        const open = navMenu.classList.toggle('open');
+        navToggle.classList.toggle('open', open);
+        navToggle.setAttribute('aria-expanded', open);
+      });
+      navMenu.querySelectorAll('a').forEach(l => l.addEventListener('click', () => {
+        navMenu.classList.remove('open');
+        navToggle.classList.remove('open');
+        navToggle.setAttribute('aria-expanded', 'false');
+      }));
+      document.addEventListener('click', e => {
+        if (!navToggle.contains(e.target) && !navMenu.contains(e.target)) {
+          navMenu.classList.remove('open'); navToggle.classList.remove('open');
+          navToggle.setAttribute('aria-expanded', 'false');
+        }
+      });
+    }
+  </script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092" integrity="sha512-UKNk8GbxkABxKcXYuLkO16EleLGUkcvJWtpSNmExE0Too3ZaFAxTscNWEc1OdAv5/BikHawapSCaiD2XCmp+Bw==" data-cf-beacon='{"version":"2024.11.0","token":"a8fefce6fbb748a580605ddd1bb8637e","r":1,"spa":2}' crossorigin="anonymous"></script>
+</body>
+</html>
+
