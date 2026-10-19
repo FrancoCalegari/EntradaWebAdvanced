@@ -12,6 +12,9 @@ router.get('/', entradasController.obtenerEntradas);
 // GET /api/entradas/:id — Detalle público de una entrada por ID
 router.get('/:id', entradasController.obtenerEntradaPorId);
 
+// POST /api/entradas — Crear una entrada (Admin)
+router.post('/', authenticate, authorize('admin'), entradasController.crearEntrada);
+
 // PUT /api/entradas/:id — Modificar una entrada existente (Admin)
 router.put('/:id', authenticate, authorize('admin'), entradasController.actualizarEntrada);
 
