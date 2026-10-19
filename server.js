@@ -1,137 +1,165 @@
-// server.js
-// Servidor principal de EntradaWeb Backend — Carla Fassaneli (Backend & Base de Datos)
 
-// Cargar variables de entorno antes que cualquier otro módulo
+'use strict';
+
+// Servidor principal de EntradaWeb
+// Backend de Carla + servicio del frontend existente.
+
+// Cargar variables de entorno antes de importar los servicios.
 require('dotenv').config();
 
 const express = require('express');
+const path = require('path');
+
 const spiderwebClient = require('./services/spiderweb.client');
 const databaseService = require('./services/database');
+
 const usuariosRoutes = require('./routes/usuarios.routes');
 const authRoutes = require('./routes/auth.routes');
 const eventosRoutes = require('./routes/eventos.routes');
 const entradasRoutes = require('./routes/entradas.routes');
 const comprasRoutes = require('./routes/compras.routes');
-const { authenticate, authorize } = require('./middleware/auth.middleware');
+
+const {
+  authenticate,
+  authorize
+} = require('./middleware/auth.middleware');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware para parsear JSON en el body de las peticiones
+// Permitir recibir peticiones JSON.
 app.use(express.json());
+
+// Servir archivos estáticos del frontend existente.
 app.use(express.static(__dirname));
 
-// ────────────────────────────────────────────
-// Rutas base de infraestructura y verificación
-// ────────────────────────────────────────────
+// --------------------------------------------------
+// RUTAS DE VERIFICACIÓN DE INFRAESTRUCTURA
+// --------------------------------------------------
 
-// GET /api/test/spiderweb — Verificar conexión con Spider-Web ARG API
+// GET /api/test/spiderweb
+// Comprueba la comunicación con SpiderWebAPI.
 app.get('/api/test/spiderweb', async (req, res) => {
   try {
     const data = await spiderwebClient.get('/databases');
 
     return res.json({
       success: true,
-      data,
+      data
     });
   } catch (error) {
+    console.error('Error al verificar SpiderWebAPI:', error.message);
+
     let statusCode = 500;
-    if (error.message.includes('no está configurada')) {
-      statusCode = 500;
-    } else if (error.message.includes('status 401') || error.message.includes('status 403')) {
+
+    if (/status 401|status 403/i.test(error.message)) {
       statusCode = 401;
-    } else if (error.message.includes('status 4')) {
+    } else if (/status 4\d\d/i.test(error.message)) {
       statusCode = 400;
-    } else if (error.message.includes('Timeout')) {
+    } else if (/timeout/i.test(error.message)) {
       statusCode = 504;
     }
 
     return res.status(statusCode).json({
       success: false,
-      error: error.message,
+      error: error.message
     });
   }
 });
 
-// GET /api/test/database — Verificar Database Service (SHOW TABLES)
+// GET /api/test/database
+// Comprueba el acceso a la base de datos.
 app.get('/api/test/database', async (req, res) => {
   try {
     const resultado = await databaseService.query('SHOW TABLES');
 
     return res.json({
       success: true,
-      data: resultado,
+      data: resultado
     });
   } catch (error) {
+    console.error('Error al verificar la base de datos:', error.message);
+
     let statusCode = 500;
-    if (error.message.includes('no está configurada')) {
-      statusCode = 500;
-    } else if (error.message.includes('status 401') || error.message.includes('status 403')) {
+
+    if (/status 401|status 403/i.test(error.message)) {
       statusCode = 401;
-    } else if (error.message.includes('status 4')) {
+    } else if (/status 4\d\d/i.test(error.message)) {
       statusCode = 400;
-    } else if (error.message.includes('Timeout')) {
+    } else if (/timeout/i.test(error.message)) {
       statusCode = 504;
     }
 
     return res.status(statusCode).json({
       success: false,
-      error: error.message,
+      error: error.message
     });
   }
 });
 
-// GET /api/test/auth — Verificar autenticación JWT
+// GET /api/test/auth
+// Requiere un token JWT válido.
 app.get('/api/test/auth', authenticate, (req, res) => {
   return res.json({
     success: true,
     message: 'Token válido',
-    user: req.user,
+    user: req.user
   });
 });
 
-// GET /api/test/admin — Verificar autorización por rol admin
-app.get('/api/test/admin', authenticate, authorize('admin'), (req, res) => {
-  return res.json({
-    success: true,
-    message: 'Acceso concedido a admin',
-    user: req.user,
-  });
-});
+// GET /api/test/admin
+// Requiere autenticación y rol administrador.
+app.get(
+  '/api/test/admin',
+  authenticate,
+  authorize('admin'),
+  (req, res) => {
+    return res.json({
+      success: true,
+      message: 'Acceso concedido a admin',
+      user: req.user
+    });
+  }
+);
 
-// ────────────────────────────────────────────
-// Rutas oficiales del Backend de EntradaWeb
-// ────────────────────────────────────────────
+// --------------------------------------------------
+// RUTAS PRINCIPALES DE LA API
+// --------------------------------------------------
 
-// Módulo de Usuarios (/api/usuarios)
 app.use('/api/usuarios', usuariosRoutes);
-
-// Módulo de Autenticación (/api/auth)
 app.use('/api/auth', authRoutes);
-
-// Módulo de Eventos (/api/eventos)
 app.use('/api/eventos', eventosRoutes);
-
-// Módulo de Entradas (/api/entradas)
 app.use('/api/entradas', entradasRoutes);
-
-// Módulo de Compras (/api/compras)
 app.use('/api/compras', comprasRoutes);
 
-// ────────────────────────────────────────────
-// Middleware 404 — debe ir DESPUÉS de todas las rutas
-// ────────────────────────────────────────────
+// --------------------------------------------------
+// MANEJO DE ERRORES Y RUTAS INEXISTENTES
+// --------------------------------------------------
+
+// Las rutas /api inexistentes devuelven JSON.
+// Las demás muestran la página 404 del frontend.
 app.use((req, res) => {
-  // Solo sirve la página HTML para peticiones que NO sean /api/*
   if (req.path.startsWith('/api/')) {
-    return res.status(404).json({ success: false, error: 'Ruta de API no encontrada' });
+    return res.status(404).json({
+      success: false,
+      error: 'Ruta de API no encontrada'
+    });
   }
-  res.status(404).sendFile(__dirname + '/404.html');
+
+  return res.status(404).sendFile(
+    path.join(__dirname, '404.html'),
+    (error) => {
+      if (error && !res.headersSent) {
+        res.status(404).send('Página no encontrada');
+      }
+    }
+  );
 });
 
-// ────────────────────────────────────────────
-// Iniciar servidor
-// ────────────────────────────────────────────
+// --------------------------------------------------
+// INICIAR SERVIDOR
+// --------------------------------------------------
+
 app.listen(PORT, () => {
   console.log(`Servidor iniciado en http://localhost:${PORT}`);
 });

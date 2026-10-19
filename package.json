@@ -1,7 +1,8 @@
+
 {
   "name": "entradaweb-backend",
   "version": "1.0.0",
-  "description": "Backend para EntradaWeb — Plataforma de venta de entradas para eventos",
+  "description": "Backend para EntradaWeb - Plataforma de venta de entradas para eventos",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
