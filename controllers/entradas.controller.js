@@ -121,8 +121,8 @@ async function obtenerEntradasPorEvento(req, res) {
  */
 async function crearEntrada(req, res) {
   try {
-    const { eventoId } = req.params;
-    const eventoIdNumero = parseInt(eventoId, 10);
+    const rawEventoId = req.params.eventoId || req.body.evento_id || req.body.eventoId;
+    const eventoIdNumero = parseInt(rawEventoId, 10);
 
     if (isNaN(eventoIdNumero) || eventoIdNumero <= 0) {
       return res.status(400).json({

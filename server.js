@@ -2,7 +2,7 @@
 'use strict';
 
 // Servidor principal de EntradaWeb
-// Backend de Carla + servicio del frontend existente.
+// Backend + frontend estático, compatible con ejecución local y Vercel.
 
 // Cargar variables de entorno antes de importar los servicios.
 require('dotenv').config();
@@ -21,7 +21,7 @@ const comprasRoutes = require('./routes/compras.routes');
 
 const {
   authenticate,
-  authorize
+  authorize,
 } = require('./middleware/auth.middleware');
 
 const app = express();
@@ -30,9 +30,8 @@ const PORT = process.env.PORT || 3000;
 // Permitir recibir peticiones JSON.
 app.use(express.json());
 
-// Servir archivos estáticos del frontend existente.
-app.use(express.static(__dirname));
-
+// Servir los archivos estáticos del frontend existente.
+app.use(express.static(path.join(__dirname, 'public')));
 // --------------------------------------------------
 // RUTAS DE VERIFICACIÓN DE INFRAESTRUCTURA
 // --------------------------------------------------
@@ -45,7 +44,7 @@ app.get('/api/test/spiderweb', async (req, res) => {
 
     return res.json({
       success: true,
-      data
+      data,
     });
   } catch (error) {
     console.error('Error al verificar SpiderWebAPI:', error.message);
@@ -62,7 +61,7 @@ app.get('/api/test/spiderweb', async (req, res) => {
 
     return res.status(statusCode).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -75,7 +74,7 @@ app.get('/api/test/database', async (req, res) => {
 
     return res.json({
       success: true,
-      data: resultado
+      data: resultado,
     });
   } catch (error) {
     console.error('Error al verificar la base de datos:', error.message);
@@ -92,7 +91,7 @@ app.get('/api/test/database', async (req, res) => {
 
     return res.status(statusCode).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -103,7 +102,7 @@ app.get('/api/test/auth', authenticate, (req, res) => {
   return res.json({
     success: true,
     message: 'Token válido',
-    user: req.user
+    user: req.user,
   });
 });
 
@@ -117,7 +116,7 @@ app.get(
     return res.json({
       success: true,
       message: 'Acceso concedido a admin',
-      user: req.user
+      user: req.user,
     });
   }
 );
@@ -136,18 +135,18 @@ app.use('/api/compras', comprasRoutes);
 // MANEJO DE ERRORES Y RUTAS INEXISTENTES
 // --------------------------------------------------
 
-// Las rutas /api inexistentes devuelven JSON.
+// Las rutas de API inexistentes devuelven JSON.
 // Las demás muestran la página 404 del frontend.
 app.use((req, res) => {
   if (req.path.startsWith('/api/')) {
     return res.status(404).json({
       success: false,
-      error: 'Ruta de API no encontrada'
+      error: 'Ruta de API no encontrada',
     });
   }
 
   return res.status(404).sendFile(
-    path.join(__dirname, '404.html'),
+    path.join(__dirname, 'public', '404.html'),
     (error) => {
       if (error && !res.headersSent) {
         res.status(404).send('Página no encontrada');
@@ -157,9 +156,16 @@ app.use((req, res) => {
 });
 
 // --------------------------------------------------
-// INICIAR SERVIDOR
+// INICIO LOCAL Y EXPORTACIÓN PARA VERCEL
 // --------------------------------------------------
 
-app.listen(PORT, () => {
-  console.log(`Servidor iniciado en http://localhost:${PORT}`);
-});
+// Al ejecutar npm start, inicia el servidor local.
+// Cuando Vercel importa este archivo, no abre un puerto.
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Servidor iniciado en http://localhost:${PORT}`);
+  });
+}
+
+// Permite que api/index.js importe la aplicación Express.
+module.exports = app;

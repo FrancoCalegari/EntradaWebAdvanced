@@ -18,6 +18,10 @@ CREATE TABLE IF NOT EXISTS eventos (
   descripcion TEXT NULL,
   lugar VARCHAR(200) NULL,
   fecha DATETIME NOT NULL,
+  imagen VARCHAR(500) NULL,
+  categoria VARCHAR(50) NULL,
+  precio_min DECIMAL(10, 2) NOT NULL DEFAULT 0,
+  estado ENUM('disponible', 'agotado', 'proximo', 'cancelado') NOT NULL DEFAULT 'disponible',
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
   KEY idx_eventos_fecha (fecha)
