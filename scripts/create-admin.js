@@ -1,5 +1,5 @@
-// scripts/create-admin.js
-// Script seguro para crear o actualizar un usuario administrador con contraseña hasheada (bcrypt).
+﻿// scripts/create-admin.js
+// Script seguro para crear o actualizar un usuario administrador con contrase├▒a hasheada (bcrypt).
 // No hardcodea credenciales: las toma de variables de entorno, argumentos CLI o prompt interactivo.
 //
 // Uso:
@@ -50,7 +50,7 @@ async function main() {
     ).trim().toLowerCase();
 
     if (!email || !email.includes('@')) {
-      console.error('❌ Error: El email proporcionado no es válido.');
+      console.error('ÔØî Error: El email proporcionado no es v├ílido.');
       process.exit(1);
     }
 
@@ -63,15 +63,15 @@ async function main() {
 
     let password = args.password || process.env.ADMIN_PASSWORD;
     if (!password) {
-      password = await prompt('Contraseña del administrador (mínimo 6 caracteres): ');
+      password = await prompt('Contrase├▒a del administrador (m├¡nimo 6 caracteres): ');
     }
 
     if (!password || password.length < 6) {
-      console.error('❌ Error: La contraseña debe tener al menos 6 caracteres.');
+      console.error('ÔØî Error: La contrase├▒a debe tener al menos 6 caracteres.');
       process.exit(1);
     }
 
-    console.log('\nHasheando contraseña con bcrypt...');
+    console.log('\nHasheando contrase├▒a con bcrypt...');
     const saltRounds = 10;
     const passwordHash = await bcrypt.hash(password, saltRounds);
 
@@ -82,28 +82,28 @@ async function main() {
     );
 
     if (usuarioExistente.result && usuarioExistente.result.length > 0) {
-      console.log(`El usuario ${email} ya existe (ID: ${usuarioExistente.result[0].id}). Actualizando rol a admin y contraseña...`);
+      console.log(`El usuario ${email} ya existe (ID: ${usuarioExistente.result[0].id}). Actualizando rol a admin y contrase├▒a...`);
       await databaseService.queryParams(
         'UPDATE usuarios SET nombre = ?, password = ?, rol = ? WHERE email = ?',
         [nombre, passwordHash, 'admin', email]
       );
-      console.log(`✅ Administrador actualizado exitosamente.`);
+      console.log(`Ô£à Administrador actualizado exitosamente.`);
     } else {
       console.log(`Insertando nuevo administrador en la base de datos...`);
       const insertResult = await databaseService.queryParams(
         'INSERT INTO usuarios (nombre, email, password, rol) VALUES (?, ?, ?, ?)',
         [nombre, email, passwordHash, 'admin']
       );
-      console.log(`✅ Administrador creado exitosamente (ID: ${insertResult.result.insertId}).`);
+      console.log(`Ô£à Administrador creado exitosamente (ID: ${insertResult.result.insertId}).`);
     }
 
     console.log(`\nEmail: ${email}`);
     console.log(`Nombre: ${nombre}`);
     console.log(`Rol: admin`);
-    console.log('Contraseña almacenada en formato hash bcrypt (irreversible).');
-    console.log('\nListo para iniciar sesión en EntradaWeb.');
+    console.log('Contrase├▒a almacenada en formato hash bcrypt (irreversible).');
+    console.log('\nListo para iniciar sesi├│n en EntradaWeb.');
   } catch (error) {
-    console.error('❌ Error al crear usuario administrador:', error.message);
+    console.error('ÔØî Error al crear usuario administrador:', error.message);
     process.exit(1);
   }
 }

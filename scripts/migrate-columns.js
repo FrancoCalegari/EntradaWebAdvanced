@@ -1,4 +1,4 @@
-// scripts/migrate-columns.js
+﻿// scripts/migrate-columns.js
 // Agrega de forma segura las columnas necesarias a la tabla eventos si no existen.
 
 require('dotenv').config();
@@ -22,16 +22,16 @@ async function migrarColumnas() {
       if (!existingCols.includes(col.name)) {
         console.log(`Agregando columna ${col.name}...`);
         await databaseService.query(`ALTER TABLE eventos ADD COLUMN ${col.name} ${col.def}`);
-        console.log(`✅ Columna ${col.name} agregada.`);
+        console.log(`Ô£à Columna ${col.name} agregada.`);
       } else {
-        console.log(`ℹ️ Columna ${col.name} ya existe.`);
+        console.log(`Ôä╣´©Å Columna ${col.name} ya existe.`);
       }
     }
 
     const descFinal = await databaseService.query('DESCRIBE eventos');
     console.log('Columnas finales en eventos:', (descFinal.result || []).map((c) => c.Field));
   } catch (error) {
-    console.error('Error durante la migración:', error.message);
+    console.error('Error durante la migraci├│n:', error.message);
     process.exitCode = 1;
   }
 }

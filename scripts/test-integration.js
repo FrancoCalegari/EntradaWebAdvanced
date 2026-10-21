@@ -1,5 +1,5 @@
-// scripts/test-integration.js
-// Prueba de integración completa de punta a punta (End-to-End).
+﻿// scripts/test-integration.js
+// Prueba de integraci├│n completa de punta a punta (End-to-End).
 
 require('dotenv').config();
 const http = require('http');
@@ -13,7 +13,7 @@ const entradasRoutes = require('../routes/entradas.routes');
 const databaseService = require('../services/database');
 
 async function ejecutarPruebas() {
-  console.log('🧪 Iniciando Suite de Pruebas de Integración E2E EntradaWeb...\n');
+  console.log('­ƒº¬ Iniciando Suite de Pruebas de Integraci├│n E2E EntradaWeb...\n');
 
   // 1. Configurar app express de test
   const app = express();
@@ -32,35 +32,35 @@ async function ejecutarPruebas() {
   let totalPasadas = 0;
   let totalFalladas = 0;
 
-  // Credenciales generadas dinámicamente en tiempo de ejecución (sin secretos fijos)
+  // Credenciales generadas din├ímicamente en tiempo de ejecuci├│n (sin secretos fijos)
   const dynamicAdminEmail = `test.admin.${Date.now()}@example.com`;
   const dynamicAdminSecret = `DynamicAuth_${Date.now()}_Key`;
 
   function assert(cond, msg) {
     if (cond) {
-      console.log(`  ✅ PASÓ: ${msg}`);
+      console.log(`  Ô£à PAS├ô: ${msg}`);
       totalPasadas++;
     } else {
-      console.error(`  ❌ FALLÓ: ${msg}`);
+      console.error(`  ÔØî FALL├ô: ${msg}`);
       totalFalladas++;
     }
   }
 
   try {
-    // ── Test 1: Conexión con SpiderWeb y Base de datos ──
-    console.log('1️⃣ Conectividad de Base de Datos y Variables de Entorno:');
+    // ÔöÇÔöÇ Test 1: Conexi├│n con SpiderWeb y Base de datos ÔöÇÔöÇ
+    console.log('1´©ÅÔâú Conectividad de Base de Datos y Variables de Entorno:');
     const dbTest = await databaseService.query('SELECT 1 AS ok');
-    assert(dbTest && dbTest.success, 'Conexión exitosa a SpiderWeb ARG API');
+    assert(dbTest && dbTest.success, 'Conexi├│n exitosa a SpiderWeb ARG API');
 
-    // Crear usuario admin dinámico para la suite de pruebas
+    // Crear usuario admin din├ímico para la suite de pruebas
     const hashedSecret = await bcrypt.hash(dynamicAdminSecret, 10);
     await databaseService.queryParams(
       'INSERT INTO usuarios (nombre, email, password, rol) VALUES (?, ?, ?, ?)',
       ['Admin Test E2E', dynamicAdminEmail, hashedSecret, 'admin']
     );
 
-    // ── Test 2: Login con credenciales de Administrador ──
-    console.log('\n2️⃣ Autenticación y Generación de JWT:');
+    // ÔöÇÔöÇ Test 2: Login con credenciales de Administrador ÔöÇÔöÇ
+    console.log('\n2´©ÅÔâú Autenticaci├│n y Generaci├│n de JWT:');
     const loginRes = await fetch(`${baseUrl}/api/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -75,7 +75,7 @@ async function ejecutarPruebas() {
     assert(loginData.data.user && loginData.data.user.rol === 'admin', 'El rol del usuario es "admin"');
     tokenAdmin = loginData.data.token;
 
-    // ── Test 3: Rechazo de login inválido ──
+    // ÔöÇÔöÇ Test 3: Rechazo de login inv├ílido ÔöÇÔöÇ
     const loginInvalidoRes = await fetch(`${baseUrl}/api/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -86,8 +86,8 @@ async function ejecutarPruebas() {
     });
     assert(loginInvalidoRes.status === 401, 'Rechazo de credenciales incorrectas (HTTP 401)');
 
-    // ── Test 4: Endpoint público de eventos ──
-    console.log('\n3️⃣ Módulo de Eventos (Público y Compatibilidad):');
+    // ÔöÇÔöÇ Test 4: Endpoint p├║blico de eventos ÔöÇÔöÇ
+    console.log('\n3´©ÅÔâú M├│dulo de Eventos (P├║blico y Compatibilidad):');
     const eventosRes = await fetch(`${baseUrl}/api/eventos`);
     const eventosData = await eventosRes.json();
     assert(eventosRes.ok && eventosData.success, 'GET /api/eventos responde exitosamente');
@@ -96,10 +96,10 @@ async function ejecutarPruebas() {
     const primerEvento = eventosData.data[0];
     assert(primerEvento.titulo && primerEvento.nombre, 'Compatibilidad dual: el evento posee tanto "titulo" como "nombre"');
     assert(primerEvento.precio !== undefined && primerEvento.precio_min !== undefined, 'Compatibilidad dual: posee tanto "precio" como "precio_min"');
-    assert('imagen' in primerEvento && 'categoria' in primerEvento && 'estado' in primerEvento, 'Contiene campos de diseño: imagen, categoria, estado');
+    assert('imagen' in primerEvento && 'categoria' in primerEvento && 'estado' in primerEvento, 'Contiene campos de dise├▒o: imagen, categoria, estado');
 
-    // ── Test 5: Crear Evento con JWT (POST /api/eventos) ──
-    console.log('\n4️⃣ CRUD de Eventos (Protegido por Admin JWT):');
+    // ÔöÇÔöÇ Test 5: Crear Evento con JWT (POST /api/eventos) ÔöÇÔöÇ
+    console.log('\n4´©ÅÔâú CRUD de Eventos (Protegido por Admin JWT):');
     const crearRes = await fetch(`${baseUrl}/api/eventos`, {
       method: 'POST',
       headers: {
@@ -122,8 +122,8 @@ async function ejecutarPruebas() {
     testEventoId = crearData.data.id;
     assert(testEventoId > 0, `Evento creado con ID: ${testEventoId}`);
 
-    // ── Test 6: Crear Entrada para el Evento ──
-    console.log('\n5️⃣ CRUD de Entradas / Tickets:');
+    // ÔöÇÔöÇ Test 6: Crear Entrada para el Evento ÔöÇÔöÇ
+    console.log('\n5´©ÅÔâú CRUD de Entradas / Tickets:');
     const crearEntradaRes = await fetch(`${baseUrl}/api/eventos/${testEventoId}/entradas`, {
       method: 'POST',
       headers: {
@@ -141,12 +141,12 @@ async function ejecutarPruebas() {
     testEntradaId = crearEntradaData.data.id;
     assert(testEntradaId > 0, `Entrada creada con ID: ${testEntradaId}`);
 
-    // ── Test 7: Listar Entradas del Evento ──
+    // ÔöÇÔöÇ Test 7: Listar Entradas del Evento ÔöÇÔöÇ
     const entradasEventoRes = await fetch(`${baseUrl}/api/eventos/${testEventoId}/entradas`);
     const entradasEventoData = await entradasEventoRes.json();
     assert(entradasEventoRes.ok && entradasEventoData.data.length === 1, 'GET /api/eventos/:id/entradas devuelve las entradas del evento');
 
-    // ── Test 8: Actualizar Evento con JWT ──
+    // ÔöÇÔöÇ Test 8: Actualizar Evento con JWT ÔöÇÔöÇ
     const updateRes = await fetch(`${baseUrl}/api/eventos/${testEventoId}`, {
       method: 'PUT',
       headers: {
@@ -161,14 +161,14 @@ async function ejecutarPruebas() {
     const updateData = await updateRes.json();
     assert(updateRes.ok && updateData.data.titulo === 'Evento de Prueba E2E Actualizado', 'PUT /api/eventos/:id actualiza el evento');
 
-    // ── Test 9: Eliminar Entrada ──
+    // ÔöÇÔöÇ Test 9: Eliminar Entrada ÔöÇÔöÇ
     const delEntradaRes = await fetch(`${baseUrl}/api/entradas/${testEntradaId}`, {
       method: 'DELETE',
       headers: { 'Authorization': `Bearer ${tokenAdmin}` },
     });
     assert(delEntradaRes.ok, 'DELETE /api/entradas/:id elimina el ticket');
 
-    // ── Test 10: Eliminar Evento ──
+    // ÔöÇÔöÇ Test 10: Eliminar Evento ÔöÇÔöÇ
     const delEventoRes = await fetch(`${baseUrl}/api/eventos/${testEventoId}`, {
       method: 'DELETE',
       headers: { 'Authorization': `Bearer ${tokenAdmin}` },
