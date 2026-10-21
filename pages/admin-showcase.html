@@ -376,6 +376,16 @@
       Eventos
     </button>
     <button
+      id="tab-entradas"
+      class="admin-tab"
+      role="tab"
+      aria-selected="false"
+      aria-controls="panel-entradas"
+    >
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/><line x1="9" y1="15" x2="9.01" y2="15"/><line x1="15" y1="15" x2="15.01" y2="15"/></svg>
+      Entradas / Tipos
+    </button>
+    <button
       id="tab-config"
       class="admin-tab"
       role="tab"
@@ -738,11 +748,17 @@
         tab.setAttribute('aria-selected', 'true');
         const target = document.getElementById(tab.getAttribute('aria-controls'));
         target?.classList.add('is-active');
+
+        // Si cambia a la pestaña de entradas, refrescar lista
+        if (tab.id === 'tab-entradas') {
+          cargarEntradas();
+        }
       });
     });
 
     /* â”€â”€â”€ ESTADO LOCAL (mock de eventos) â”€â”€â”€ */
     let eventos = [];
+    let entradas = [];
 
     /* â”€â”€â”€ TABLA DE EVENTOS â”€â”€â”€ */
     const tbody     = document.getElementById('admin-eventos-tbody');
@@ -869,23 +885,26 @@
 
     /* â”€â”€â”€ CARGA DESDE API â”€â”€â”€ */
     async function cargarEventos() {
-      tbody.innerHTML = `<tr><td colspan="8"><div class="admin-table__empty"><p>Cargando...</p></div></td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="8"><div class="admin-table__empty"><p>Cargando eventos...</p></div></td></tr>`;
       try {
-        const res = await fetch('/api/eventos?limit=50', { signal: AbortSignal.timeout(8000) });
+        const res = await fetch('/api/eventos?limit=100', { signal: AbortSignal.timeout(8000) });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         eventos = (Array.isArray(data) ? data : (data.eventos || data.data || [])).map((ev, i) => ({
           id: ev.id || ev._id || i,
           nombre: ev.nombre || ev.titulo || 'Sin nombre',
+          titulo: ev.titulo || ev.nombre || 'Sin nombre',
           categoria: ev.categoria || '',
           fecha: ev.fecha || ev.fecha_inicio || '',
           lugar: ev.lugar || ev.ubicacion || '',
-          precio: ev.precio_min || ev.precio || 0,
+          precio: ev.precio_min !== undefined ? Number(ev.precio_min) : (Number(ev.precio) || 0),
+          precio_min: ev.precio_min !== undefined ? Number(ev.precio_min) : (Number(ev.precio) || 0),
           estado: ev.estado || 'disponible',
           imagen: ev.imagen || ev.imagen_url || '',
           descripcion: ev.descripcion || '',
         }));
         renderTabla(eventos);
+        actualizarSelectEventos();
       } catch (err) {
         console.warn('[Admin] No se pudieron cargar eventos:', err.message);
         tbody.innerHTML = `
@@ -896,6 +915,15 @@
             </div>
           </td></tr>`;
       }
+    }
+
+    function actualizarSelectEventos() {
+      const select = document.getElementById('entrada-evento-id');
+      if (!select) return;
+      const currentVal = select.value;
+      select.innerHTML = `<option value="">Seleccionar un evento...</option>` +
+        eventos.map(e => `<option value="${e.id}">${e.nombre} (#${e.id})</option>`).join('');
+      if (currentVal) select.value = currentVal;
     }
 
     window.__adminCargarEventos = cargarEventos;
@@ -994,11 +1022,21 @@
     document.getElementById('evento-form-submit')?.addEventListener('click', async () => {
       const nombre = document.getElementById('evento-nombre').value.trim();
       if (!nombre) {
-        formError.textContent = 'El nombre del evento es obligatorio.';
+        formError.textContent = 'El nombre o título del evento es obligatorio.';
         formError.style.display = 'block';
         document.getElementById('evento-nombre').focus();
         return;
       }
+
+      const fecha = document.getElementById('evento-fecha').value;
+      if (!fecha) {
+        formError.textContent = 'La fecha del evento es obligatoria.';
+        formError.style.display = 'block';
+        document.getElementById('evento-fecha').focus();
+        return;
+      }
+
+      const precio = Number(document.getElementById('evento-precio').value) || 0;
 
       const payload = {
         titulo: nombre,
@@ -1015,7 +1053,7 @@
         const id = document.getElementById('evento-id').value;
         let res;
         if (modoEdicion && id) {
-          res = await fetch(`/api/eventos/${id}`, {
+          res = await authFetch(`/api/eventos/${id}`, {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
@@ -1023,7 +1061,7 @@
             body: JSON.stringify(payload),
           });
         } else {
-          res = await fetch('/api/eventos', {
+          res = await authFetch('/api/eventos', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -1099,7 +1137,6 @@
 
     /* â”€â”€â”€ CONFIGURACIÃ“N: GUARDAR â”€â”€â”€ */
     document.getElementById('btn-config-save')?.addEventListener('click', () => {
-      // Por ahora guarda en localStorage como demo
       const config = {
         colorPrimary: colorPrimary?.value,
         colorSecondary: colorSecondary?.value,

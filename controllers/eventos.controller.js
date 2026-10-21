@@ -186,6 +186,19 @@ function validarCamposEvento(body, { crear = false } = {}) {
 }
 
 /**
+ * Normaliza el objeto evento para que sea 100% compatible con cualquier frontend
+ * que espere 'titulo' o 'nombre', 'precio_min' o 'precio'.
+ */
+function formatearEventoParaRespuesta(ev) {
+  if (!ev) return ev;
+  return {
+    ...ev,
+    nombre: ev.titulo,
+    precio: ev.precio_min !== undefined ? Number(ev.precio_min) : 0,
+  };
+}
+
+/**
  * GET /api/eventos
  * Lista eventos por fecha; admite ?limit=N.
  */
