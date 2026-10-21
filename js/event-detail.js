@@ -1,313 +1,542 @@
-/**
- * ENTRADAWEB — Interacciones de la Ficha de Evento
- * Rol: Santiago Morales (Frontend)
- *
- * Implementa:
- * - Selector de tipo de entrada con aria-checked y radio group accesible
- * - Selector de cantidad con spinbutton ARIA y límites (1–8)
- * - Cálculo dinámico de resumen de precio (cargo por servicio 10%)
- * - Toggle de descripción "leer más / leer menos"
- * - Botón "Agregar al carrito" (preparado para integración backend)
- */
 
+/**
+ * ENTRADAWEB - Ficha de evento
+ * Integración con la API de eventos y entradas.
+ *
+ * GET  /api/eventos/:id
+ * GET  /api/eventos/:id/entradas
+ *
+ * El carrito se guarda temporalmente en sessionStorage.
+ * La compra final se procesa desde el carrito.
+ */
 (function () {
   'use strict';
 
-  /* ─── CARGA DINÁMICA DESDE EL BACKEND ──────────────────────── */
+  const API = '/api';
+  const CART_KEY = 'ew_cart';
+  const FEE_RATE = 0.10;
+  const MIN_QTY = 1;
+  const MAX_QTY = 8;
 
-  const urlParams = new URLSearchParams(window.location.search);
-  const eventId = urlParams.get('id');
+  const params = new URLSearchParams(window.location.search);
+  const eventId = params.get('id');
 
-  // Nombre del evento: se actualiza dinámicamente si hay datos del backend
-  let loadedEventName = null;
+  const ticketButtons = () =>
+    [...document.querySelectorAll('.ticket-type[role="radio"]')];
 
-  /**
-   * Formatea una fecha ISO a texto legible en español argentino.
-   */
-  function formatDateLong(fechaISO) {
-    if (!fechaISO) return '';
-    try {
-      return new Intl.DateTimeFormat('es-AR', {
-        weekday: 'long',
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-      }).format(new Date(fechaISO));
-    } catch {
-      return fechaISO;
-    }
-  }
+  const qtyDecreaseBtn = document.getElementById('qty-decrease');
+  const qtyIncreaseBtn = document.getElementById('qty-increase');
+  const qtyValueEl = document.getElementById('qty-value');
 
-  /**
-   * Formatea un precio en pesos argentinos.
-   */
-  function formatPriceARS(precio) {
-    if (!precio || precio === 0) return 'Gratis';
+  const summaryTypeLabel = document.getElementById('summary-type-label');
+  const summarySubtotal = document.getElementById('summary-subtotal');
+  const summaryFee = document.getElementById('summary-fee');
+  const summaryTotal = document.getElementById('summary-total');
+
+  const buyBtn = document.getElementById('buy-btn');
+
+  let eventData = null;
+  let tickets = [];
+  let selectedTicket = null;
+  let quantity = 1;
+
+  const originalButtonText = buyBtn
+    ? buyBtn.textContent.trim()
+    : 'Agregar al carrito';
+
+  function formatCurrency(value) {
     return new Intl.NumberFormat('es-AR', {
       style: 'currency',
       currency: 'ARS',
       maximumFractionDigits: 0
-    }).format(precio);
+    }).format(Number(value) || 0);
   }
 
-  /**
-   * Carga los datos del evento desde /api/eventos/:id y actualiza el DOM.
-   * Si falla o no hay id, se mantienen los datos estáticos del HTML.
-   */
-  async function loadEventFromAPI() {
-    if (!eventId) return;
+  async function apiGet(path) {
+    const response = await fetch(`${API}${path}`, {
+      headers: { Accept: 'application/json' }
+    });
+
+    let result;
 
     try {
-      const res = await fetch(`/api/eventos/${eventId}`, {
-        signal: AbortSignal.timeout(8000)
-      });
+      result = await response.json();
+    } catch {
+      throw new Error('El servidor devolvió una respuesta inválida.');
+    }
 
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    if (!response.ok || result.success === false) {
+      throw new Error(
+        result.message || `Error del servidor: ${response.status}`
+      );
+    }
 
-      const data = await res.json();
-      if (!data.success || !data.data) return;
+    return result.data;
+  }
 
-      const evento = data.data;
-      loadedEventName = evento.titulo;
+  function showMessage(message, type = 'info') {
+    let notice = document.getElementById('event-api-notice');
 
-      // Actualizar título del hero
-      const heroTitle = document.querySelector('.event-hero__title');
-      if (heroTitle) heroTitle.textContent = evento.titulo;
+    if (!notice) {
+      notice = document.createElement('p');
+      notice.id = 'event-api-notice';
+      notice.setAttribute(
+        'role',
+        type === 'error' ? 'alert' : 'status'
+      );
 
-      // Actualizar fecha del hero
-      const heroDate = document.querySelector('.event-hero__meta-item time');
-      if (heroDate && evento.fecha) {
-        heroDate.textContent = formatDateLong(evento.fecha);
-        heroDate.setAttribute('datetime', evento.fecha);
-      }
+      notice.style.cssText =
+        'margin:16px 0;padding:12px;border-radius:8px;' +
+        'background:var(--color-surface,#f3f4f6);' +
+        'color:var(--color-text,#222);';
 
-      // Actualizar lugar del hero
-      const heroMeta = document.querySelectorAll('.event-hero__meta-item');
-      if (heroMeta[1] && evento.lugar) {
-        const lugarSpan = heroMeta[1].querySelector('span:not(.event-hero__meta-icon)');
-        if (lugarSpan) lugarSpan.textContent = evento.lugar;
-      }
+      const target =
+        document.querySelector('.purchase-panel') ||
+        document.querySelector('main') ||
+        document.body;
 
-      // Actualizar info cards (fecha y lugar)
-      const infoCards = document.querySelectorAll('.event-info-card');
-      if (infoCards[0] && evento.fecha) {
-        const timeEl = infoCards[0].querySelector('time, .event-info-card__value--highlight');
-        if (timeEl) {
-          timeEl.textContent = formatDateLong(evento.fecha);
-        }
-      }
-      if (infoCards[1] && evento.lugar) {
-        const lugarVal = infoCards[1].querySelector('.event-info-card__value--highlight');
-        if (lugarVal) lugarVal.textContent = evento.lugar;
-      }
+      target.prepend(notice);
+    }
 
-      // Actualizar descripción
-      if (evento.descripcion) {
-        const descEl = document.querySelector('#event-description > p');
-        if (descEl) descEl.textContent = evento.descripcion;
-      }
+    notice.textContent = message;
+    notice.dataset.type = type;
+  }
 
-      // Actualizar breadcrumb
-      const breadcrumbCurrent = document.querySelector('.breadcrumb__current');
-      if (breadcrumbCurrent) breadcrumbCurrent.textContent = evento.titulo;
+  function setText(selector, value) {
+    const element = document.querySelector(selector);
 
-      // Actualizar <title>
-      document.title = `${evento.titulo} | EntradaWeb Argentina`;
-
-      console.info('[EntradaWeb] Evento cargado desde API:', evento.titulo);
-
-    } catch (err) {
-      console.warn('[EntradaWeb] No se pudo cargar evento desde API, usando datos estáticos:', err.message);
+    if (
+      element &&
+      value !== undefined &&
+      value !== null &&
+      String(value).trim() !== ''
+    ) {
+      element.textContent = String(value);
     }
   }
 
-  /**
-   * Carga las entradas del evento desde /api/eventos/:id/entradas y
-   * genera los botones de tipo de entrada dinámicamente.
-   * Si falla o no hay entradas, se mantienen los botones estáticos del HTML.
-   */
-  async function loadEntradasFromAPI() {
-    if (!eventId) return;
+  function renderEvent(event) {
+    const title = event.titulo || event.nombre || 'Evento';
 
-    try {
-      const res = await fetch(`/api/eventos/${eventId}/entradas`, {
-        signal: AbortSignal.timeout(8000)
-      });
+    setText(
+      '#event-title, .event-detail__title, .event-title',
+      title
+    );
 
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    setText(
+      '#event-location, .event-location, [data-event-location]',
+      event.lugar
+    );
 
-      const data = await res.json();
-      if (!data.success || !Array.isArray(data.data) || data.data.length === 0) return;
+    setText(
+      '#event-description, .event-description, [data-event-description]',
+      event.descripcion
+    );
 
-      const entradas = data.data;
-      const ticketList = document.querySelector('.ticket-type-list');
-      if (!ticketList) return;
+    if (event.fecha) {
+      const date = new Date(event.fecha);
 
-      // Reemplazar botones estáticos con los del backend
-      ticketList.innerHTML = '';
+      if (!Number.isNaN(date.getTime())) {
+        const formattedDate = new Intl.DateTimeFormat('es-AR', {
+          dateStyle: 'full',
+          timeStyle: 'short'
+        }).format(date);
 
-      entradas.forEach((entrada, index) => {
-        const precio = parseFloat(entrada.precio);
-        const precioFormateado = formatPriceARS(precio);
-        const isFirst = index === 0;
-        const stockInfo = entrada.stock > 0
-          ? `${entrada.stock} disponibles`
-          : 'Agotado';
-
-        const btn = document.createElement('button');
-        btn.className = 'ticket-type' + (isFirst ? ' ticket-type--selected' : '');
-        btn.setAttribute('role', 'radio');
-        btn.setAttribute('aria-checked', isFirst ? 'true' : 'false');
-        btn.dataset.price = precio;
-        btn.dataset.ticketId = `entrada-${entrada.id}`;
-        btn.dataset.entradaId = entrada.id;
-        btn.id = `ticket-${entrada.id}`;
-
-        if (entrada.stock <= 0) {
-          btn.disabled = true;
-          btn.style.opacity = '0.5';
-        }
-
-        btn.innerHTML = `
-          <span class="ticket-type__radio">
-            <span class="ticket-type__radio-dot"></span>
-          </span>
-          <span class="ticket-type__info">
-            <span class="ticket-type__name">${entrada.tipo}</span>
-            <span class="ticket-type__desc">${stockInfo}</span>
-          </span>
-          <span class="ticket-type__price" aria-label="${precioFormateado}">${precioFormateado}</span>
-        `;
-
-        ticketList.appendChild(btn);
-
-        // Seleccionar la primera como default
-        if (isFirst) {
-          selectedPrice = precio;
-          selectedName = entrada.tipo;
-        }
-      });
-
-      // Actualizar el precio destacado del panel
-      const minPrecio = Math.min(...entradas.map(e => parseFloat(e.precio)));
-      const priceEl = document.querySelector('.purchase-card__price');
-      if (priceEl) {
-        priceEl.innerHTML = `<sup>$</sup>${Math.round(minPrecio).toLocaleString('es-AR')}`;
+        setText(
+          '#event-date, .event-date, [data-event-date]',
+          formattedDate
+        );
       }
+    }
 
-      // Re-vincular event listeners de los nuevos botones
-      rebindTicketButtons();
-      updateSummary();
+    document.title = `${title} | EntradaWeb`;
+  }
 
-      console.info('[EntradaWeb] Entradas cargadas desde API:', entradas.length, 'tipos');
+  function updateSummary() {
+    if (!selectedTicket) return;
 
-    } catch (err) {
-      console.warn('[EntradaWeb] No se pudieron cargar entradas desde API, usando datos estáticos:', err.message);
+    const price = Number(selectedTicket.precio);
+    const subtotal = price * quantity;
+    const fee = Math.round(subtotal * FEE_RATE);
+    const total = subtotal + fee;
+
+    if (summaryTypeLabel) {
+      summaryTypeLabel.textContent =
+        `${selectedTicket.tipo} × ${quantity}`;
+    }
+
+    if (summarySubtotal) {
+      summarySubtotal.textContent = formatCurrency(subtotal);
+    }
+
+    if (summaryFee) {
+      summaryFee.textContent = formatCurrency(fee);
+    }
+
+    if (summaryTotal) {
+      summaryTotal.textContent = formatCurrency(total);
     }
   }
-
-  /**
-   * Re-vincula los listeners de selección en los botones de tipo de entrada.
-   * Se usa después de regenerar los botones dinámicamente.
-   */
-  function rebindTicketButtons() {
-    const buttons = document.querySelectorAll('.ticket-type[role="radio"]');
-    buttons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        if (btn.disabled) return;
-        buttons.forEach(b => {
-          b.classList.remove('ticket-type--selected');
-          b.setAttribute('aria-checked', 'false');
-        });
-        btn.classList.add('ticket-type--selected');
-        btn.setAttribute('aria-checked', 'true');
-        selectedPrice = parseInt(btn.dataset.price, 10);
-        selectedName = btn.querySelector('.ticket-type__name').textContent;
-        updateSummary();
-      });
-
-      btn.addEventListener('keydown', (e) => {
-        const items = [...buttons];
-        const idx = items.indexOf(btn);
-        if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
-          e.preventDefault();
-          items[(idx + 1) % items.length].focus();
-          items[(idx + 1) % items.length].click();
-        }
-        if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
-          e.preventDefault();
-          items[(idx - 1 + items.length) % items.length].focus();
-          items[(idx - 1 + items.length) % items.length].click();
-        }
-      });
-    });
-  }
-
-  /* ─── SELECTOR DE TIPO DE ENTRADA ──────────────────────────── */
-
-  const ticketButtons = document.querySelectorAll('.ticket-type[role="radio"]');
-  let selectedPrice   = 35000;
-  let selectedName    = 'Campo General';
-
-  ticketButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      // Desmarcar todos
-      ticketButtons.forEach(b => {
-        b.classList.remove('ticket-type--selected');
-        b.setAttribute('aria-checked', 'false');
-      });
-
-      // Marcar el seleccionado
-      btn.classList.add('ticket-type--selected');
-      btn.setAttribute('aria-checked', 'true');
-
-      selectedPrice = parseInt(btn.dataset.price, 10);
-      selectedName  = btn.querySelector('.ticket-type__name').textContent;
-
-      updateSummary();
-    });
-
-    // Navegación por teclado en el radiogroup (flechas)
-    btn.addEventListener('keydown', (e) => {
-      const items = [...ticketButtons];
-      const idx   = items.indexOf(btn);
-      if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
-        e.preventDefault();
-        items[(idx + 1) % items.length].focus();
-        items[(idx + 1) % items.length].click();
-      }
-      if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
-        e.preventDefault();
-        items[(idx - 1 + items.length) % items.length].focus();
-        items[(idx - 1 + items.length) % items.length].click();
-      }
-    });
-  });
-
-  /* ─── SELECTOR DE CANTIDAD ──────────────────────────────────── */
-
-  const qtyDecreaseBtn = document.getElementById('qty-decrease');
-  const qtyIncreaseBtn = document.getElementById('qty-increase');
-  const qtyValueEl     = document.getElementById('qty-value');
-  const MIN_QTY        = 1;
-  const MAX_QTY        = 8;
-  let quantity         = 1;
 
   function updateQuantityUI() {
-    qtyValueEl.textContent = quantity;
-    qtyValueEl.setAttribute('aria-valuenow', quantity);
-    qtyValueEl.setAttribute('aria-label', `${quantity} entrada${quantity !== 1 ? 's' : ''} seleccionada${quantity !== 1 ? 's' : ''}`);
-    qtyDecreaseBtn.disabled = quantity <= MIN_QTY;
-    qtyIncreaseBtn.disabled = quantity >= MAX_QTY;
+    if (qtyValueEl) {
+      qtyValueEl.textContent = String(quantity);
+
+      qtyValueEl.setAttribute('aria-valuenow', String(quantity));
+
+      qtyValueEl.setAttribute(
+        'aria-label',
+        `${quantity} entrada${quantity !== 1 ? 's' : ''}`
+      );
+    }
+
+    if (qtyDecreaseBtn) {
+      qtyDecreaseBtn.disabled = quantity <= MIN_QTY;
+    }
+
+    if (qtyIncreaseBtn) {
+      const stock = selectedTicket
+        ? Number(selectedTicket.stock)
+        : 0;
+
+      qtyIncreaseBtn.disabled =
+        quantity >= Math.min(MAX_QTY, stock);
+    }
+
     updateSummary();
+  }
+
+  function selectTicket(ticket, button) {
+    if (!ticket || Number(ticket.stock) <= 0) return;
+
+    selectedTicket = ticket;
+
+    ticketButtons().forEach((item) => {
+      const selected = item === button;
+
+      item.classList.toggle('ticket-type--selected', selected);
+      item.setAttribute('aria-checked', String(selected));
+    });
+
+    quantity = Math.min(
+      quantity,
+      MAX_QTY,
+      Number(ticket.stock)
+    );
+
+    quantity = Math.max(MIN_QTY, quantity);
+
+    if (buyBtn) buyBtn.disabled = false;
+
+    updateQuantityUI();
+  }
+
+  function renderTickets(data) {
+    tickets = Array.isArray(data) ? data : [];
+
+    const buttons = ticketButtons();
+
+    if (tickets.length === 0) {
+      buttons.forEach((button) => {
+        button.disabled = true;
+        button.setAttribute('aria-disabled', 'true');
+      });
+
+      if (buyBtn) buyBtn.disabled = true;
+
+      showMessage(
+        'Este evento todavía no tiene entradas cargadas.'
+      );
+
+      return;
+    }
+
+    if (buttons.length === 0) {
+      if (buyBtn) buyBtn.disabled = true;
+
+      showMessage(
+        'No se encontró el selector de entradas en la página.',
+        'error'
+      );
+
+      return;
+    }
+
+    tickets.forEach((ticket, index) => {
+      const button = buttons[index];
+
+      // El HTML actual contiene tres opciones.
+      // Si la API devuelve más tipos, no inventamos botones ni precios.
+      if (!button) return;
+
+      button.dataset.ticketId = String(ticket.id);
+      button.dataset.price = String(ticket.precio);
+      button.dataset.stock = String(ticket.stock);
+
+      button.disabled = Number(ticket.stock) <= 0;
+      button.setAttribute(
+        'aria-disabled',
+        String(button.disabled)
+      );
+
+      const name = button.querySelector('.ticket-type__name');
+
+      if (name) {
+        name.textContent = ticket.tipo;
+      }
+
+      const priceElement = button.querySelector(
+        '.ticket-type__price, .ticket-type__amount, [data-ticket-price]'
+      );
+
+      if (priceElement) {
+        priceElement.textContent = formatCurrency(ticket.precio);
+      }
+
+      const stockElement = button.querySelector(
+        '.ticket-type__stock, [data-ticket-stock]'
+      );
+
+      if (stockElement) {
+        stockElement.textContent =
+          Number(ticket.stock) > 0
+            ? `${ticket.stock} disponibles`
+            : 'Agotadas';
+      }
+
+      // Reemplazamos el botón para evitar acumular eventos.
+      const refreshedButton = button.cloneNode(true);
+      button.replaceWith(refreshedButton);
+
+      refreshedButton.addEventListener('click', () => {
+        selectTicket(ticket, refreshedButton);
+      });
+
+      refreshedButton.addEventListener('keydown', (event) => {
+        handleTicketKeyboard(event, refreshedButton);
+      });
+    });
+
+    // Ocultar las opciones de ejemplo que no existan en la API.
+    ticketButtons().forEach((button, index) => {
+      button.hidden = index >= tickets.length;
+    });
+
+    const availableIndex = tickets.findIndex(
+      (ticket) => Number(ticket.stock) > 0
+    );
+
+    if (availableIndex === -1) {
+      if (buyBtn) buyBtn.disabled = true;
+
+      showMessage('Las entradas de este evento están agotadas.');
+
+      return;
+    }
+
+    selectTicket(
+      tickets[availableIndex],
+      ticketButtons()[availableIndex]
+    );
+  }
+
+  function handleTicketKeyboard(event, button) {
+    const buttons = ticketButtons().filter(
+      (item) => !item.disabled && !item.hidden
+    );
+
+    const index = buttons.indexOf(button);
+
+    if (index < 0 || buttons.length < 2) return;
+
+    let nextIndex;
+
+    if (
+      event.key === 'ArrowDown' ||
+      event.key === 'ArrowRight'
+    ) {
+      nextIndex = (index + 1) % buttons.length;
+    } else if (
+      event.key === 'ArrowUp' ||
+      event.key === 'ArrowLeft'
+    ) {
+      nextIndex = (index - 1 + buttons.length) % buttons.length;
+    } else {
+      return;
+    }
+
+    event.preventDefault();
+    buttons[nextIndex].focus();
+    buttons[nextIndex].click();
+  }
+
+  function getCart() {
+    try {
+      const cart = JSON.parse(
+        sessionStorage.getItem(CART_KEY) || '[]'
+      );
+
+      return Array.isArray(cart) ? cart : [];
+    } catch {
+      return [];
+    }
+  }
+
+  function addToCart() {
+    if (!eventData || !selectedTicket) {
+      showMessage(
+        'No se puede agregar la entrada porque no se cargó el evento.',
+        'error'
+      );
+
+      return;
+    }
+
+    const stock = Number(selectedTicket.stock);
+
+    if (quantity < MIN_QTY || quantity > MAX_QTY || quantity > stock) {
+      showMessage(
+        'La cantidad supera el stock disponible.',
+        'error'
+      );
+
+      return;
+    }
+
+    const item = {
+      eventId: Number(eventData.id),
+      eventName: eventData.titulo || eventData.nombre || 'Evento',
+      entradaId: Number(selectedTicket.id),
+      ticketType: selectedTicket.tipo,
+      price: Number(selectedTicket.precio),
+      quantity,
+      total: Number(selectedTicket.precio) * quantity
+    };
+
+    try {
+      const cart = getCart();
+
+      const existingIndex = cart.findIndex((existing) =>
+        Number(existing.entradaId ?? existing.entrada_id) === item.entradaId
+      );
+
+      if (existingIndex >= 0) {
+        const previousQuantity = Number(
+          cart[existingIndex].quantity ??
+          cart[existingIndex].qty ??
+          0
+        );
+
+        const newQuantity = previousQuantity + quantity;
+
+        if (newQuantity > Math.min(MAX_QTY, stock)) {
+          showMessage(
+            'No podés agregar más unidades que las disponibles.',
+            'error'
+          );
+
+          return;
+        }
+
+        cart[existingIndex] = {
+          ...cart[existingIndex],
+          ...item,
+          quantity: newQuantity,
+          total: item.price * newQuantity
+        };
+      } else {
+        cart.push(item);
+      }
+
+      sessionStorage.setItem(CART_KEY, JSON.stringify(cart));
+
+      showMessage(
+        'Entrada agregada al carrito correctamente.',
+        'success'
+      );
+
+      if (buyBtn) {
+        buyBtn.textContent = '✓ Agregado al carrito';
+        buyBtn.disabled = true;
+
+        window.setTimeout(() => {
+          buyBtn.textContent =
+            originalButtonText || 'Agregar al carrito';
+
+          buyBtn.disabled =
+            !selectedTicket || Number(selectedTicket.stock) <= 0;
+        }, 1800);
+      }
+    } catch (error) {
+      console.error(
+        '[EntradaWeb] No se pudo guardar el carrito:',
+        error
+      );
+
+      showMessage(
+        'No se pudo guardar el carrito de esta sesión.',
+        'error'
+      );
+    }
+  }
+
+  async function loadEvent() {
+    if (!eventId || !/^\d+$/.test(eventId)) {
+      showMessage(
+        'Falta un ID válido del evento en la dirección de la página.',
+        'error'
+      );
+
+      if (buyBtn) buyBtn.disabled = true;
+
+      return;
+    }
+
+    try {
+      const eventResult = await apiGet(
+        `/eventos/${encodeURIComponent(eventId)}`
+      );
+
+      eventData = eventResult?.evento || eventResult;
+
+      if (!eventData || !eventData.id) {
+        throw new Error('No se encontró el evento solicitado.');
+      }
+
+      renderEvent(eventData);
+
+      const ticketsResult = await apiGet(
+        `/eventos/${encodeURIComponent(eventId)}/entradas`
+      );
+
+      const ticketData = Array.isArray(ticketsResult)
+        ? ticketsResult
+        : (
+            ticketsResult?.entradas ||
+            ticketsResult?.data ||
+            []
+          );
+
+      renderTickets(ticketData);
+    } catch (error) {
+      console.error(
+        '[EntradaWeb] Error cargando evento:',
+        error
+      );
+
+      showMessage(
+        error.message || 'No se pudo cargar el evento.',
+        'error'
+      );
+
+      if (buyBtn) buyBtn.disabled = true;
+    }
   }
 
   if (qtyDecreaseBtn) {
     qtyDecreaseBtn.addEventListener('click', () => {
       if (quantity > MIN_QTY) {
-        quantity--;
+        quantity -= 1;
         updateQuantityUI();
       }
     });
@@ -315,131 +544,51 @@
 
   if (qtyIncreaseBtn) {
     qtyIncreaseBtn.addEventListener('click', () => {
-      if (quantity < MAX_QTY) {
-        quantity++;
+      const stock = selectedTicket
+        ? Number(selectedTicket.stock)
+        : 0;
+
+      if (quantity < Math.min(MAX_QTY, stock)) {
+        quantity += 1;
         updateQuantityUI();
       }
     });
   }
 
-  /* ─── CÁLCULO DINÁMICO DEL RESUMEN ─────────────────────────── */
-
-  const summaryTypeLabel = document.getElementById('summary-type-label');
-  const summarySubtotal  = document.getElementById('summary-subtotal');
-  const summaryFee       = document.getElementById('summary-fee');
-  const summaryTotal     = document.getElementById('summary-total');
-
-  const FEE_RATE = 0.10; // 10% de cargo por servicio
-
-  function formatCurrency(value) {
-    return `$${value.toLocaleString('es-AR')}`;
-  }
-
-  function updateSummary() {
-    const subtotal = selectedPrice * quantity;
-    const fee      = Math.round(subtotal * FEE_RATE);
-    const total    = subtotal + fee;
-
-    if (summaryTypeLabel) {
-      summaryTypeLabel.textContent = `${selectedName} × ${quantity}`;
-    }
-    if (summarySubtotal) {
-      summarySubtotal.textContent = formatCurrency(subtotal);
-    }
-    if (summaryFee) {
-      summaryFee.textContent = formatCurrency(fee);
-    }
-    if (summaryTotal) {
-      summaryTotal.textContent = formatCurrency(total);
-    }
-  }
-
-  /* ─── BOTÓN "AGREGAR AL CARRITO" ────────────────────────────── */
-  const buyBtn = document.getElementById('buy-btn');
-
   if (buyBtn) {
-    buyBtn.addEventListener('click', () => {
-      // Usar el nombre real del evento cargado desde la API, o el título del hero como fallback
-      const eventName = loadedEventName
-        || document.querySelector('.event-hero__title')?.textContent?.trim()
-        || 'Evento';
-
-      const cartItem = {
-        eventId:    eventId,
-        eventName:  eventName,
-        ticketType: selectedName,
-        price:      selectedPrice,
-        quantity:   quantity,
-        total:      selectedPrice * quantity + Math.round(selectedPrice * quantity * FEE_RATE),
-      };
-
-      // Guardar en sessionStorage para el carrito (Lucas lo conectará al backend)
-      try {
-        const cart = JSON.parse(sessionStorage.getItem('ew_cart') || '[]');
-        const existing = cart.findIndex(i => i.eventId === cartItem.eventId && i.ticketType === cartItem.ticketType);
-
-        if (existing >= 0) {
-          // Si ya existe esa combinación, actualizar cantidad
-          cart[existing].quantity = Math.min(cart[existing].quantity + cartItem.quantity, MAX_QTY);
-          cart[existing].total    = cart[existing].price * cart[existing].quantity +
-                                    Math.round(cart[existing].price * cart[existing].quantity * FEE_RATE);
-        } else {
-          cart.push(cartItem);
-        }
-        sessionStorage.setItem('ew_cart', JSON.stringify(cart));
-      } catch (err) {
-        console.warn('[EntradaWeb] No se pudo guardar en sessionStorage:', err);
-      }
-
-      // Feedback visual del botón
-      buyBtn.textContent = '✓ Agregado al carrito';
-      buyBtn.disabled    = true;
-      buyBtn.style.background    = 'var(--color-success)';
-      buyBtn.style.borderColor   = 'var(--color-success)';
-
-      setTimeout(() => {
-        buyBtn.textContent           = '🎟 Agregar al carrito';
-        buyBtn.disabled              = false;
-        buyBtn.style.background      = '';
-        buyBtn.style.borderColor     = '';
-      }, 2500);
-
-      // TODO: Integrar con la API del carrito (Lucas Profe - Estación 4)
-      console.info('[EntradaWeb] Carrito actualizado:', cartItem);
-    });
+    buyBtn.disabled = true;
+    buyBtn.addEventListener('click', addToCart);
   }
 
-  /* ─── TOGGLE "LEER MÁS" DE DESCRIPCIÓN ─────────────────────── */
-
+  // Control "Leer más / Leer menos".
   const descToggle = document.getElementById('desc-toggle');
-  const descExtra  = document.getElementById('desc-extra');
+  const descExtra = document.getElementById('desc-extra');
   const toggleLabel = document.getElementById('toggle-label');
-  const toggleIcon  = document.getElementById('toggle-icon');
+  const toggleIcon = document.getElementById('toggle-icon');
 
   if (descToggle && descExtra) {
     descToggle.addEventListener('click', () => {
-      const isExpanded = descToggle.getAttribute('aria-expanded') === 'true';
+      const expanded =
+        descToggle.getAttribute('aria-expanded') === 'true';
 
-      if (isExpanded) {
-        descExtra.hidden = true;
-        descToggle.setAttribute('aria-expanded', 'false');
-        toggleLabel.textContent = 'Leer más';
-        toggleIcon.textContent  = '↓';
-      } else {
-        descExtra.hidden = false;
-        descToggle.setAttribute('aria-expanded', 'true');
-        toggleLabel.textContent = 'Leer menos';
-        toggleIcon.textContent  = '↑';
+      descExtra.hidden = expanded;
+      descToggle.setAttribute(
+        'aria-expanded',
+        String(!expanded)
+      );
+
+      if (toggleLabel) {
+        toggleLabel.textContent = expanded
+          ? 'Leer más'
+          : 'Leer menos';
+      }
+
+      if (toggleIcon) {
+        toggleIcon.textContent = expanded ? '↓' : '↑';
       }
     });
   }
 
-  /* ─── INICIALIZACIÓN ────────────────────────────────────────── */
-  updateSummary();
-
-  // Cargar datos reales del backend (si hay ?id= en la URL)
-  // Si la API no responde, se mantienen los datos estáticos del HTML
-  loadEventFromAPI();
-  loadEntradasFromAPI();
-
+  updateQuantityUI();
+  loadEvent();
 })();
