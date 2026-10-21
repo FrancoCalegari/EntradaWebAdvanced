@@ -1,5 +1,5 @@
-// scripts/seed-events.js
-// Carga eventos iniciales y sus entradas en la base de datos si la tabla eventos está vacía.
+﻿// scripts/seed-events.js
+// Carga eventos iniciales y sus entradas en la base de datos si la tabla eventos est├í vac├¡a.
 
 require('dotenv').config();
 const databaseService = require('../services/database');
@@ -19,8 +19,8 @@ async function seed() {
 
     const eventosIniciales = [
       {
-        titulo: 'Coldplay — Music of the Spheres World Tour',
-        descripcion: 'La banda británica liderada por Chris Martin regresa a Buenos Aires para una serie de conciertos históricos en el Estadio River Plate con una puesta en escena inmersiva y sustentable.',
+        titulo: 'Coldplay ÔÇö Music of the Spheres World Tour',
+        descripcion: 'La banda brit├ínica liderada por Chris Martin regresa a Buenos Aires para una serie de conciertos hist├│ricos en el Estadio River Plate con una puesta en escena inmersiva y sustentable.',
         lugar: 'Estadio River Plate, Buenos Aires',
         fecha: '2026-11-15 21:00:00',
         imagen: 'https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?auto=format&fit=crop&w=800&q=80',
@@ -34,21 +34,21 @@ async function seed() {
         ],
       },
       {
-        titulo: 'Lollapalooza Argentina 2027 — Preventa Exclusiva',
-        descripcion: 'El festival más importante del país vuelve al Hipódromo de San Isidro con más de 100 bandas internacionales y nacionales en 5 escenarios durante 3 días.',
-        lugar: 'Hipódromo de San Isidro, Buenos Aires',
+        titulo: 'Lollapalooza Argentina 2027 ÔÇö Preventa Exclusiva',
+        descripcion: 'El festival m├ís importante del pa├¡s vuelve al Hip├│dromo de San Isidro con m├ís de 100 bandas internacionales y nacionales en 5 escenarios durante 3 d├¡as.',
+        lugar: 'Hip├│dromo de San Isidro, Buenos Aires',
         fecha: '2027-03-20 15:00:00',
         imagen: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=800&q=80',
         categoria: 'musica',
         precio_min: 65000,
         estado: 'disponible',
         entradas: [
-          { tipo: 'Abono 3 Días General', precio: 65000, stock: 1000 },
-          { tipo: 'Abono 3 Días VIP Lolla Lounge', precio: 150000, stock: 200 },
+          { tipo: 'Abono 3 D├¡as General', precio: 65000, stock: 1000 },
+          { tipo: 'Abono 3 D├¡as VIP Lolla Lounge', precio: 150000, stock: 200 },
         ],
       },
       {
-        titulo: 'Hernán Cattaneo — Sunsetstrip Sunset Session',
+        titulo: 'Hern├ín Cattaneo ÔÇö Sunsetstrip Sunset Session',
         descripcion: 'El maestro del progressive house presenta su aclamado concepto Sunsetstrip en Ciudad Universitaria, bailando desde el atardecer con sonido de alta fidelidad.',
         lugar: 'Ciudad Universitaria, CABA',
         fecha: '2026-12-05 17:00:00',
@@ -63,16 +63,16 @@ async function seed() {
         ],
       },
       {
-        titulo: 'Piazzolla Inmortal — Orquesta Estable del Teatro Colón',
-        descripcion: 'Un homenaje sinfónico irrepetible a la obra cumbre de Astor Piazzolla con solistas de renombre internacional en la sala principal del Teatro Colón.',
-        lugar: 'Teatro Colón, CABA',
+        titulo: 'Piazzolla Inmortal ÔÇö Orquesta Estable del Teatro Col├│n',
+        descripcion: 'Un homenaje sinf├│nico irrepetible a la obra cumbre de Astor Piazzolla con solistas de renombre internacional en la sala principal del Teatro Col├│n.',
+        lugar: 'Teatro Col├│n, CABA',
         fecha: '2026-11-28 20:30:00',
         imagen: 'https://images.unsplash.com/photo-1465847899084-d164df4dedc6?auto=format&fit=crop&w=800&q=80',
         categoria: 'teatro',
         precio_min: 15000,
         estado: 'disponible',
         entradas: [
-          { tipo: 'Paraíso / Galería', precio: 15000, stock: 120 },
+          { tipo: 'Para├¡so / Galer├¡a', precio: 15000, stock: 120 },
           { tipo: 'Tertulia', precio: 22000, stock: 90 },
           { tipo: 'Platea Central', precio: 45000, stock: 60 },
         ],
@@ -85,18 +85,18 @@ async function seed() {
         [ev.titulo, ev.descripcion, ev.lugar, ev.fecha, ev.imagen, ev.categoria, ev.precio_min, ev.estado]
       );
       const eventoId = res.result.insertId;
-      console.log(`✅ Evento creado: "${ev.titulo}" (ID: ${eventoId})`);
+      console.log(`Ô£à Evento creado: "${ev.titulo}" (ID: ${eventoId})`);
 
       for (const ent of ev.entradas) {
         await databaseService.queryParams(
           'INSERT INTO entradas (evento_id, tipo, precio, stock) VALUES (?, ?, ?, ?)',
           [eventoId, ent.tipo, ent.precio, ent.stock]
         );
-        console.log(`   🎟️ Entrada agregada: ${ent.tipo} ($${ent.precio}, stock ${ent.stock})`);
+        console.log(`   ­ƒÄƒ´©Å Entrada agregada: ${ent.tipo} ($${ent.precio}, stock ${ent.stock})`);
       }
     }
 
-    console.log('\n🎉 Base de datos poblada exitosamente.');
+    console.log('\n­ƒÄë Base de datos poblada exitosamente.');
   } catch (error) {
     console.error('Error al poblar datos:', error.message);
     process.exit(1);

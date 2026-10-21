@@ -1,0 +1,280 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mis compras | EntradaWeb</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, sans-serif;
+      background: #f5f7fb;
+      color: #172033;
+    }
+    header {
+      background: #fff;
+      border-bottom: 1px solid #e2e8f0;
+      padding: 18px 24px;
+    }
+    .nav {
+      max-width: 1000px;
+      margin: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .brand {
+      color: #ea580c;
+      font-size: 22px;
+      font-weight: 800;
+      text-decoration: none;
+    }
+    a { color: #c2410c; }
+    main { max-width: 1000px; margin: 36px auto; padding: 0 20px; }
+    h1 { margin-bottom: 8px; }
+    .muted { color: #64748b; }
+    .panel {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 22px;
+      margin-top: 24px;
+    }
+    .purchase {
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 18px;
+      margin-top: 14px;
+    }
+    .purchase-head {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .status {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: #dcfce7;
+      color: #166534;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .status.pendiente { background: #fef3c7; color: #92400e; }
+    .status.cancelada { background: #fee2e2; color: #991b1b; }
+    button {
+      border: 0;
+      border-radius: 9px;
+      padding: 10px 14px;
+      background: #ea580c;
+      color: white;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    button:disabled { opacity: .6; cursor: wait; }
+    .details {
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid #e2e8f0;
+    }
+    .message { padding: 12px 0; line-height: 1.5; }
+    .error { color: #b91c1c; }
+    .empty { text-align: center; padding: 30px 10px; }
+    @media (max-width: 600px) {
+      main { margin-top: 24px; }
+      .panel { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="nav" aria-label="Navegación principal">
+      <a class="brand" href="../index.html">EntradaWeb</a>
+      <a href="../index.html">Volver al inicio</a>
+    </nav>
+  </header>
+
+  <main>
+    <h1>Mis compras</h1>
+    <p class="muted">Consultá tus compras y el detalle de tus entradas.</p>
+
+    <section class="panel" aria-live="polite">
+      <div id="message" class="message">Cargando tus compras...</div>
+      <div id="purchases"></div>
+    </section>
+  </main>
+
+  <script>
+    const API_URL = '/api';
+    const message = document.getElementById('message');
+    const purchasesContainer = document.getElementById('purchases');
+
+    function getToken() {
+      for (const storage of [sessionStorage, localStorage]) {
+        for (const key of ['ew_token', 'token', 'authToken', 'jwt', 'access_token']) {
+          const value = storage.getItem(key);
+          if (value && value.trim()) return value.trim();
+        }
+        for (const key of ['ew_user', 'user', 'auth']) {
+          try {
+            const saved = JSON.parse(storage.getItem(key) || 'null');
+            const token = saved?.token || saved?.data?.token;
+            if (token) return token;
+          } catch (_) {}
+        }
+      }
+      return null;
+    }
+
+    function money(value) {
+      return '$' + Number(value || 0).toLocaleString('es-AR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
+
+    function date(value) {
+      if (!value) return 'Fecha no disponible';
+      const parsed = new Date(value);
+      return Number.isNaN(parsed.getTime())
+        ? String(value)
+        : parsed.toLocaleString('es-AR');
+    }
+
+    function showMessage(text, isError = false) {
+      message.textContent = text;
+      message.className = 'message' + (isError ? ' error' : '');
+    }
+
+    async function loadPurchaseDetails(id, button, container) {
+      button.disabled = true;
+      button.textContent = 'Cargando...';
+      container.hidden = false;
+      container.textContent = 'Consultando el detalle...';
+
+      try {
+        const response = await fetch(`${API_URL}/compras/${encodeURIComponent(id)}`, {
+          headers: { Authorization: `Bearer ${getToken()}` }
+        });
+        const result = await response.json();
+
+        if (!response.ok || result.success !== true) {
+          throw new Error(result.message || 'No se pudo cargar el detalle.');
+        }
+
+        const details = result.data?.detalles || [];
+        container.replaceChildren();
+
+        if (!details.length) {
+          container.textContent = 'Esta compra no tiene detalles disponibles.';
+          return;
+        }
+
+        for (const detail of details) {
+          const line = document.createElement('p');
+          const title = detail.evento_titulo || 'Evento';
+          const ticket = detail.entrada_tipo || 'Entrada';
+          line.textContent =
+            `${title} — ${ticket} · Cantidad: ${detail.cantidad} · ` +
+            `${money(detail.subtotal)}`;
+          container.appendChild(line);
+        }
+      } catch (error) {
+        container.textContent = error.message || 'Error al consultar el detalle.';
+      } finally {
+        button.disabled = false;
+        button.textContent = 'Ocultar detalle';
+      }
+    }
+
+    async function loadPurchases() {
+      const token = getToken();
+
+      if (!token) {
+        showMessage('Necesitás iniciar sesión para consultar tus compras.', true);
+        const link = document.createElement('a');
+        link.href = './login.html?returnTo=mis-compras.html';
+        link.textContent = 'Iniciar sesión';
+        purchasesContainer.appendChild(link);
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_URL}/compras`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const result = await response.json();
+
+        if (response.status === 401) {
+          throw new Error('Tu sesión venció. Iniciá sesión nuevamente.');
+        }
+        if (!response.ok || result.success !== true) {
+          throw new Error(result.message || 'No se pudieron cargar tus compras.');
+        }
+
+        const purchases = result.data || [];
+        if (!purchases.length) {
+          showMessage('Todavía no tenés compras registradas.');
+          return;
+        }
+
+        showMessage(`Encontramos ${purchases.length} compra(s).`);
+
+        for (const purchase of purchases) {
+          const card = document.createElement('article');
+          card.className = 'purchase';
+
+          const head = document.createElement('div');
+          head.className = 'purchase-head';
+
+          const info = document.createElement('div');
+          const title = document.createElement('h2');
+          title.textContent = `Compra #${purchase.id}`;
+          const created = document.createElement('p');
+          created.className = 'muted';
+          created.textContent = date(purchase.created_at);
+          info.append(title, created);
+
+          const right = document.createElement('div');
+          const status = document.createElement('span');
+          status.className = 'status ' + String(purchase.estado || '').toLowerCase();
+          status.textContent = purchase.estado || 'Sin estado';
+          const total = document.createElement('p');
+          total.innerHTML = '<strong></strong>';
+          total.querySelector('strong').textContent = money(purchase.total);
+          right.append(status, total);
+          head.append(info, right);
+
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.textContent = 'Ver detalle';
+          const details = document.createElement('div');
+          details.className = 'details';
+          details.hidden = true;
+
+          button.addEventListener('click', () => {
+            if (!details.hidden) {
+              details.hidden = true;
+              button.textContent = 'Ver detalle';
+              return;
+            }
+            button.textContent = 'Ocultar detalle';
+            loadPurchaseDetails(purchase.id, button, details);
+          });
+
+          card.append(head, button, details);
+          purchasesContainer.appendChild(card);
+        }
+      } catch (error) {
+        showMessage(error.message || 'No se pudieron cargar las compras.', true);
+      }
+    }
+
+    loadPurchases();
+  </script>
+</body>
+</html>

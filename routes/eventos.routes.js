@@ -1,35 +1,39 @@
-// routes/eventos.routes.js
-// Rutas del módulo de eventos y rutas anidadas de entradas.
-
-const express = require('express');
+﻿const express = require('express');
 const router = express.Router();
+
 const eventosController = require('../controllers/eventos.controller');
 const entradasController = require('../controllers/entradas.controller');
+
+const localEventAdmin = require('../middleware/local-event-admin.middleware');
 const { authenticate, authorize } = require('../middleware/auth.middleware');
 
-// GET /api/eventos — Listado público de eventos
+// Listar eventos (publico)
 router.get('/', eventosController.obtenerEventos);
 
-// GET /api/eventos/:id — Detalle público de un evento
+// Obtener un evento por ID (publico)
 router.get('/:id', eventosController.obtenerEventoPorId);
 
-// POST /api/eventos — Crear un nuevo evento (Admin)
-router.post('/', authenticate, authorize('admin'), eventosController.crearEvento);
+// Crear evento (administracion local o administrador autenticado)
+router.post('/', localEventAdmin, eventosController.crearEvento);
 
-// PUT /api/eventos/:id — Modificar un evento existente (Admin)
-router.put('/:id', authenticate, authorize('admin'), eventosController.actualizarEvento);
+// Actualizar evento (administracion local o administrador autenticado)
+router.put('/:id', localEventAdmin, eventosController.actualizarEvento);
 
-// DELETE /api/eventos/:id — Eliminar un evento (Admin)
-router.delete('/:id', authenticate, authorize('admin'), eventosController.eliminarEvento);
+// Eliminar evento (administracion local o administrador autenticado)
+router.delete('/:id', localEventAdmin, eventosController.eliminarEvento);
 
-// ────────────────────────────────────────────
-// Rutas anidadas de entradas asociadas a eventos
-// ────────────────────────────────────────────
+// Listar entradas de un evento (publico)
+router.get(
+  '/:eventoId/entradas',
+  entradasController.obtenerEntradasPorEvento
+);
 
-// GET /api/eventos/:eventoId/entradas — Listado de entradas de un evento
-router.get('/:eventoId/entradas', entradasController.obtenerEntradasPorEvento);
-
-// POST /api/eventos/:eventoId/entradas — Crear una entrada para un evento (Admin)
-router.post('/:eventoId/entradas', authenticate, authorize('admin'), entradasController.crearEntrada);
+// Crear entradas: sigue requiriendo administrador autenticado
+router.post(
+  '/:eventoId/entradas',
+  authenticate,
+  authorize('admin'),
+  entradasController.crearEntrada
+);
 
 module.exports = router;

@@ -1,28 +1,22 @@
 
  // controllers/eventos.controller.js
-// Controlador CRUD del módulo de eventos.
+// CRUD de eventos con compatibilidad para titulo/nombre y precio_min/precio.
 
 const databaseService = require('../services/database');
 
-/**
- * Comprueba si una fecha es válida.
- */
+const ESTADOS_EVENTO = ['disponible', 'agotado', 'proximo', 'cancelado'];
+
+const COLUMNAS_EVENTO = `
+  id, titulo, descripcion, lugar, fecha,
+  imagen, categoria, precio_min, estado, created_at
+`;
+
 function esFechaValida(fecha) {
-  if (typeof fecha !== 'string' && !(fecha instanceof Date)) {
-    return false;
-  }
-
-  if (typeof fecha === 'string' && !fecha.trim()) {
-    return false;
-  }
-
-  const timestamp = Date.parse(fecha);
-  return !Number.isNaN(timestamp);
+  if (!(typeof fecha === 'string' || fecha instanceof Date)) return false;
+  if (typeof fecha === 'string' && !fecha.trim()) return false;
+  return !Number.isNaN(Date.parse(fecha));
 }
 
-/**
- * Convierte una fecha al formato SQL YYYY-MM-DD HH:MM:SS.
- */
 function formatearFechaSQL(fecha) {
   const d = new Date(fecha);
 
@@ -32,11 +26,163 @@ function formatearFechaSQL(fecha) {
 
   const pad = (n) => String(n).padStart(2, '0');
 
-  return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(
-    d.getUTCDate()
-  )} ${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}:${pad(
-    d.getUTCSeconds()
-  )}`;
+  return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())} ${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}:${pad(d.getUTCSeconds())}`;
+}
+
+function formatearEventoParaRespuesta(ev) {
+  if (!ev) return ev;
+
+  return {
+    ...ev,
+    nombre: ev.titulo,
+    precio: ev.precio_min !== undefined && ev.precio_min !== null
+      ? Number(ev.precio_min)
+      : 0,
+  };
+}
+
+function validarIdEvento(id) {
+  const numero = Number.parseInt(id, 10);
+  return Number.isInteger(numero) && numero > 0 ? numero : null;
+}
+
+function normalizarTextoOpcional(valor) {
+  if (valor === undefined) return undefined;
+  if (valor === null) return null;
+  if (typeof valor !== 'string') return null;
+
+  return valor.trim() || null;
+}
+
+function validarPrecio(valor) {
+  if (valor === undefined) return { valido: true, valor: undefined };
+  if (valor === null || valor === '') return { valido: false };
+
+  const numero = Number(valor);
+
+  if (!Number.isFinite(numero) || numero < 0) {
+    return { valido: false };
+  }
+
+  return { valido: true, valor: numero };
+}
+
+function validarCamposEvento(body, { crear = false } = {}) {
+  const tituloEntrada = body.titulo !== undefined
+    ? body.titulo
+    : body.nombre;
+
+  if (
+    crear &&
+    (typeof tituloEntrada !== 'string' || !tituloEntrada.trim())
+  ) {
+    return { error: 'El campo "titulo" o "nombre" es obligatorio' };
+  }
+
+  if (tituloEntrada !== undefined) {
+    if (typeof tituloEntrada !== 'string' || !tituloEntrada.trim()) {
+      return { error: 'El título no puede estar vacío' };
+    }
+
+    if (tituloEntrada.trim().length > 200) {
+      return { error: 'El título no puede superar los 200 caracteres' };
+    }
+  }
+
+  if (crear && !body.fecha) {
+    return { error: 'El campo "fecha" es obligatorio' };
+  }
+
+  if (body.fecha !== undefined && !esFechaValida(body.fecha)) {
+    return { error: 'El campo "fecha" debe contener una fecha válida' };
+  }
+
+  if (
+    body.lugar !== undefined &&
+    body.lugar !== null &&
+    typeof body.lugar !== 'string'
+  ) {
+    return { error: 'El lugar debe ser una cadena de texto' };
+  }
+
+  if (typeof body.lugar === 'string' && body.lugar.trim().length > 200) {
+    return { error: 'El lugar no puede superar los 200 caracteres' };
+  }
+
+  if (
+    body.imagen !== undefined &&
+    body.imagen !== null &&
+    typeof body.imagen !== 'string'
+  ) {
+    return { error: 'La imagen debe ser una cadena de texto' };
+  }
+
+  if (typeof body.imagen === 'string' && body.imagen.trim().length > 500) {
+    return { error: 'La imagen no puede superar los 500 caracteres' };
+  }
+
+  if (
+    body.categoria !== undefined &&
+    body.categoria !== null &&
+    typeof body.categoria !== 'string'
+  ) {
+    return { error: 'La categoría debe ser una cadena de texto' };
+  }
+
+  if (
+    typeof body.categoria === 'string' &&
+    body.categoria.trim().length > 50
+  ) {
+    return { error: 'La categoría no puede superar los 50 caracteres' };
+  }
+
+  const precioEntrada = body.precio_min !== undefined
+    ? body.precio_min
+    : body.precio;
+
+  const precioValidado = validarPrecio(precioEntrada);
+
+  if (!precioValidado.valido) {
+    return {
+      error: 'El precio mínimo debe ser un número mayor o igual a cero',
+    };
+  }
+
+  if (
+    body.estado !== undefined &&
+    !ESTADOS_EVENTO.includes(body.estado)
+  ) {
+    return {
+      error: `El estado debe ser uno de estos valores: ${ESTADOS_EVENTO.join(', ')}`,
+    };
+  }
+
+  return {
+    valor: {
+      titulo: tituloEntrada !== undefined
+        ? tituloEntrada.trim()
+        : undefined,
+
+      descripcion: body.descripcion !== undefined
+        ? (body.descripcion == null
+          ? null
+          : String(body.descripcion).trim() || null)
+        : undefined,
+
+      lugar: body.lugar !== undefined
+        ? (body.lugar === null ? null : body.lugar.trim() || null)
+        : undefined,
+
+      fecha: body.fecha !== undefined
+        ? formatearFechaSQL(body.fecha)
+        : undefined,
+
+      imagen: normalizarTextoOpcional(body.imagen),
+      categoria: normalizarTextoOpcional(body.categoria),
+      precio_min: precioValidado.valor,
+      estado: body.estado,
+    },
+  };
 }
 
 /**
@@ -54,32 +200,29 @@ function formatearEventoParaRespuesta(ev) {
 
 /**
  * GET /api/eventos
- * Lista todos los eventos ordenados por fecha.
+ * Lista eventos por fecha; admite ?limit=N.
  */
 async function obtenerEventos(req, res) {
   try {
-    // Soporte para ?limit=N desde el frontend (ej: home.js pide ?limit=8)
-    let sql = 'SELECT id, titulo, descripcion, lugar, fecha, imagen, categoria, precio_min, estado, created_at FROM eventos ORDER BY fecha ASC';
+    let sql = `SELECT ${COLUMNAS_EVENTO} FROM eventos ORDER BY fecha ASC`;
     const params = [];
+    const limit = Number.parseInt(req.query.limit, 10);
 
-    const limit = parseInt(req.query.limit, 10);
-    if (!isNaN(limit) && limit > 0) {
+    if (Number.isInteger(limit) && limit > 0) {
       sql += ' LIMIT ?';
       params.push(limit);
     }
 
-    const resultado = params.length > 0
+    const resultado = params.length
       ? await databaseService.queryParams(sql, params)
       : await databaseService.query(sql);
 
-    const eventos = (resultado.result || []).map(formatearEventoParaRespuesta);
-
     return res.json({
       success: true,
-      data: eventos,
+      data: (resultado.result || []).map(formatearEventoParaRespuesta),
     });
   } catch (error) {
-    console.error('ERROR COMPLETO AL OBTENER EVENTOS:', error);
+    console.error('Error al obtener eventos:', error);
 
     return res.status(500).json({
       success: false,
@@ -88,15 +231,12 @@ async function obtenerEventos(req, res) {
   }
 }
 
-/**
- * GET /api/eventos/:id
- * Obtiene un evento por su ID.
- */
+/** GET /api/eventos/:id */
 async function obtenerEventoPorId(req, res) {
   try {
-    const idNumero = Number.parseInt(req.params.id, 10);
+    const idNumero = validarIdEvento(req.params.id);
 
-    if (!Number.isInteger(idNumero) || idNumero <= 0) {
+    if (!idNumero) {
       return res.status(400).json({
         success: false,
         message: 'El ID del evento debe ser un número válido',
@@ -104,7 +244,7 @@ async function obtenerEventoPorId(req, res) {
     }
 
     const resultado = await databaseService.queryParams(
-      'SELECT id, titulo, descripcion, lugar, fecha, imagen, categoria, precio_min, estado, created_at FROM eventos WHERE id = ?',
+      `SELECT ${COLUMNAS_EVENTO} FROM eventos WHERE id = ?`,
       [idNumero]
     );
 
@@ -129,93 +269,34 @@ async function obtenerEventoPorId(req, res) {
   }
 }
 
-/**
- * POST /api/eventos
- * Crea un evento.
- * La protección de acceso depende de la configuración de las rutas.
- */
+/** POST /api/eventos */
 async function crearEvento(req, res) {
   try {
-    const {
-      titulo,
-      nombre,
-      descripcion,
-      lugar,
-      fecha,
-      imagen,
-      categoria,
-      precio,
-      precio_min,
-      estado,
-    } = req.body;
+    const validacion = validarCamposEvento(req.body || {}, { crear: true });
 
-    const tituloFinal = (titulo || nombre || '').trim();
-
-    if (typeof titulo !== 'string' || !titulo.trim()) {
+    if (validacion.error) {
       return res.status(400).json({
         success: false,
-        message: 'El título o nombre del evento es obligatorio',
+        message: validacion.error,
       });
     }
 
-    if (tituloFinal.length > 200) {
-      return res.status(400).json({
-        success: false,
-        message: 'El título no puede superar los 200 caracteres',
-      });
-    }
-
-    if (!fecha) {
-      return res.status(400).json({
-        success: false,
-        message: 'El campo "fecha" es obligatorio',
-      });
-    }
-
-    if (!esFechaValida(fecha)) {
-      return res.status(400).json({
-        success: false,
-        message: 'El campo "fecha" debe contener una fecha válida',
-      });
-    }
-
-    if (
-      lugar !== undefined &&
-      lugar !== null &&
-      typeof lugar !== 'string'
-    ) {
-      return res.status(400).json({
-        success: false,
-        message: 'El lugar debe ser una cadena de texto',
-      });
-    }
-
-    if (typeof lugar === 'string' && lugar.trim().length > 200) {
-      return res.status(400).json({
-        success: false,
-        message: 'El lugar no puede superar los 200 caracteres',
-      });
-    }
-
-    const tituloLimpio = titulo.trim();
-
-    const descripcionLimpia =
-      descripcion == null
-        ? null
-        : String(descripcion).trim() || null;
-
-    const lugarLimpio =
-      typeof lugar === 'string' ? lugar.trim() || null : null;
-
-    const fechaSQL = formatearFechaSQL(fecha);
-    const imagenLimpia = imagen ? String(imagen).trim() : null;
-    const categoriaLimpia = categoria ? String(categoria).trim() : null;
-    const precioFinal = precio_min !== undefined ? Number(precio_min) : (precio !== undefined ? Number(precio) : 0);
-    const estadoValido = ['disponible', 'agotado', 'proximo', 'cancelado'].includes(estado) ? estado : 'disponible';
+    const ev = validacion.valor;
 
     const resultado = await databaseService.queryParams(
-      'INSERT INTO eventos (titulo, descripcion, lugar, fecha, imagen, categoria, precio_min, estado) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-      [tituloFinal, descripcionLimpia, lugarLimpio, fechaSQL, imagenLimpia, categoriaLimpia, precioFinal, estadoValido]
+      `INSERT INTO eventos
+        (titulo, descripcion, lugar, fecha, imagen, categoria, precio_min, estado)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        ev.titulo,
+        ev.descripcion ?? null,
+        ev.lugar ?? null,
+        ev.fecha,
+        ev.imagen ?? null,
+        ev.categoria ?? null,
+        ev.precio_min ?? 0,
+        ev.estado ?? 'disponible',
+      ]
     );
 
     const nuevoId = resultado.result?.insertId;
@@ -225,19 +306,25 @@ async function crearEvento(req, res) {
     }
 
     const eventoCreado = await databaseService.queryParams(
-      'SELECT id, titulo, descripcion, lugar, fecha, imagen, categoria, precio_min, estado, created_at FROM eventos WHERE id = ?',
+      `SELECT ${COLUMNAS_EVENTO} FROM eventos WHERE id = ?`,
       [nuevoId]
     );
 
+    const evento = eventoCreado.result?.[0] || {
+      id: nuevoId,
+      titulo: ev.titulo,
+      descripcion: ev.descripcion ?? null,
+      lugar: ev.lugar ?? null,
+      fecha: ev.fecha,
+      imagen: ev.imagen ?? null,
+      categoria: ev.categoria ?? null,
+      precio_min: ev.precio_min ?? 0,
+      estado: ev.estado ?? 'disponible',
+    };
+
     return res.status(201).json({
       success: true,
-      data: eventoCreado.result?.[0] || {
-        id: nuevoId,
-        titulo: tituloLimpio,
-        descripcion: descripcionLimpia,
-        lugar: lugarLimpio,
-        fecha: fechaSQL,
-      },
+      data: formatearEventoParaRespuesta(evento),
     });
   } catch (error) {
     console.error('Error al crear evento:', error);
@@ -249,15 +336,12 @@ async function crearEvento(req, res) {
   }
 }
 
-/**
- * PUT /api/eventos/:id
- * Actualiza un evento existente.
- */
+/** PUT /api/eventos/:id */
 async function actualizarEvento(req, res) {
   try {
-    const idNumero = Number.parseInt(req.params.id, 10);
+    const idNumero = validarIdEvento(req.params.id);
 
-    if (!Number.isInteger(idNumero) || idNumero <= 0) {
+    if (!idNumero) {
       return res.status(400).json({
         success: false,
         message: 'El ID del evento debe ser un número válido',
@@ -265,7 +349,7 @@ async function actualizarEvento(req, res) {
     }
 
     const eventoExistente = await databaseService.queryParams(
-      'SELECT id, titulo, descripcion, lugar, fecha, imagen, categoria, precio_min, estado, created_at FROM eventos WHERE id = ?',
+      `SELECT ${COLUMNAS_EVENTO} FROM eventos WHERE id = ?`,
       [idNumero]
     );
 
@@ -276,110 +360,110 @@ async function actualizarEvento(req, res) {
       });
     }
 
-    const { titulo, descripcion, lugar, fecha } = req.body;
+    const body = req.body || {};
 
-    if (
-      titulo === undefined &&
-      descripcion === undefined &&
-      lugar === undefined &&
-      fecha === undefined
-    ) {
+    const camposPermitidos = [
+      'titulo',
+      'nombre',
+      'descripcion',
+      'lugar',
+      'fecha',
+      'imagen',
+      'categoria',
+      'precio',
+      'precio_min',
+      'estado',
+    ];
+
+    if (!camposPermitidos.some((campo) => body[campo] !== undefined)) {
       return res.status(400).json({
         success: false,
         message: 'Debe enviar al menos un campo para actualizar',
       });
     }
 
-    if (titulo !== undefined) {
-      if (typeof titulo !== 'string' || !titulo.trim()) {
-        return res.status(400).json({
-          success: false,
-          message: 'El título no puede estar vacío',
-        });
-      }
+    const validacion = validarCamposEvento(body);
 
-      if (titulo.trim().length > 200) {
-        return res.status(400).json({
-          success: false,
-          message: 'El título no puede superar los 200 caracteres',
-        });
-      }
-    }
-
-    if (fecha !== undefined && !esFechaValida(fecha)) {
+    if (validacion.error) {
       return res.status(400).json({
         success: false,
-        message: 'El campo "fecha" debe contener una fecha válida',
+        message: validacion.error,
       });
     }
 
-    if (
-      lugar !== undefined &&
-      lugar !== null &&
-      typeof lugar !== 'string'
-    ) {
-      return res.status(400).json({
-        success: false,
-        message: 'El lugar debe ser una cadena de texto',
-      });
-    }
+    const actual = eventoExistente.result[0];
+    const ev = validacion.valor;
 
-    if (typeof lugar === 'string' && lugar.trim().length > 200) {
-      return res.status(400).json({
-        success: false,
-        message: 'El lugar no puede superar los 200 caracteres',
-      });
-    }
+    const nuevoTitulo = ev.titulo !== undefined
+      ? ev.titulo
+      : actual.titulo;
 
-    const eventoActual = eventoExistente.result[0];
+    const nuevaDescripcion = ev.descripcion !== undefined
+      ? ev.descripcion
+      : actual.descripcion;
 
-    const nuevoTitulo =
-      titulo !== undefined ? titulo.trim() : eventoActual.titulo;
+    const nuevoLugar = ev.lugar !== undefined
+      ? ev.lugar
+      : actual.lugar;
 
-    const nuevaDescripcion =
-      descripcion !== undefined
-        ? descripcion == null
-          ? null
-          : String(descripcion).trim() || null
-        : eventoActual.descripcion;
+    const nuevaFecha = ev.fecha !== undefined
+      ? ev.fecha
+      : formatearFechaSQL(actual.fecha);
 
-    const nuevoLugar =
-      lugar !== undefined
-        ? typeof lugar === 'string'
-          ? lugar.trim() || null
-          : null
-        : eventoActual.lugar;
+    const nuevaImagen = ev.imagen !== undefined
+      ? ev.imagen
+      : actual.imagen ?? null;
 
-    const nuevaFecha =
-      fecha !== undefined
-        ? formatearFechaSQL(fecha)
-        : formatearFechaSQL(eventoActual.fecha);
+    const nuevaCategoria = ev.categoria !== undefined
+      ? ev.categoria
+      : actual.categoria ?? null;
+
+    const nuevoPrecio = ev.precio_min !== undefined
+      ? ev.precio_min
+      : Number(actual.precio_min ?? 0);
+
+    const nuevoEstado = ev.estado !== undefined
+      ? ev.estado
+      : (actual.estado || 'disponible');
 
     await databaseService.queryParams(
-      'UPDATE eventos SET titulo = ?, descripcion = ?, lugar = ?, fecha = ? WHERE id = ?',
+      `UPDATE eventos
+       SET titulo = ?, descripcion = ?, lugar = ?, fecha = ?,
+           imagen = ?, categoria = ?, precio_min = ?, estado = ?
+       WHERE id = ?`,
       [
         nuevoTitulo,
         nuevaDescripcion,
         nuevoLugar,
         nuevaFecha,
+        nuevaImagen,
+        nuevaCategoria,
+        nuevoPrecio,
+        nuevoEstado,
         idNumero,
       ]
     );
 
     const eventoActualizado = await databaseService.queryParams(
-      'SELECT id, titulo, descripcion, lugar, fecha, imagen, categoria, precio_min, estado, created_at FROM eventos WHERE id = ?',
+      `SELECT ${COLUMNAS_EVENTO} FROM eventos WHERE id = ?`,
       [idNumero]
     );
 
+    const evento = eventoActualizado.result?.[0] || {
+      id: idNumero,
+      titulo: nuevoTitulo,
+      descripcion: nuevaDescripcion,
+      lugar: nuevoLugar,
+      fecha: nuevaFecha,
+      imagen: nuevaImagen,
+      categoria: nuevaCategoria,
+      precio_min: nuevoPrecio,
+      estado: nuevoEstado,
+    };
+
     return res.json({
       success: true,
-      data: eventoActualizado.result?.[0] || {
-        id: idNumero,
-        titulo: nuevoTitulo,
-        descripcion: nuevaDescripcion,
-        lugar: nuevoLugar,
-        fecha: nuevaFecha,
-      },
+      data: formatearEventoParaRespuesta(evento),
     });
   } catch (error) {
     console.error('Error al actualizar evento:', error);
@@ -391,15 +475,12 @@ async function actualizarEvento(req, res) {
   }
 }
 
-/**
- * DELETE /api/eventos/:id
- * Elimina un evento si no tiene entradas asociadas.
- */
+/** DELETE /api/eventos/:id */
 async function eliminarEvento(req, res) {
   try {
-    const idNumero = Number.parseInt(req.params.id, 10);
+    const idNumero = validarIdEvento(req.params.id);
 
-    if (!Number.isInteger(idNumero) || idNumero <= 0) {
+    if (!idNumero) {
       return res.status(400).json({
         success: false,
         message: 'El ID del evento debe ser un número válido',

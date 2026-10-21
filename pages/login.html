@@ -1,376 +1,147 @@
-<!DOCTYPE html>
-<html lang="es-AR">
-
+﻿<!DOCTYPE html>
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Iniciá sesión en EntradaWeb para acceder al panel de administración y gestionar tus entradas.">
-    <title>Iniciar Sesión — EntradaWeb Argentina</title>
-
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- Design System -->
-    <link rel="stylesheet" href="../css/design-tokens.css">
-    <link rel="stylesheet" href="../css/base.css">
-    <link rel="stylesheet" href="../css/layout.css">
-    <link rel="stylesheet" href="../css/components.css">
-
-    <style>
-        .login-wrapper {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            background: radial-gradient(circle at 50% 20%, rgba(249, 115, 22, 0.08) 0%, transparent 70%),
-                        var(--color-bg-base);
-        }
-
-        .login-main {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: var(--space-8) var(--space-4);
-        }
-
-        .login-card {
-            width: 100%;
-            max-width: 440px;
-            background: var(--color-bg-surface);
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius-2xl);
-            padding: var(--space-8);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
-            backdrop-filter: blur(12px);
-            transition: border-color var(--transition-base);
-        }
-
-        .login-card:hover {
-            border-color: rgba(249, 115, 22, 0.3);
-        }
-
-        .login-card__header {
-            text-align: center;
-            margin-bottom: var(--space-6);
-        }
-
-        .login-card__logo {
-            font-size: var(--text-2xl);
-            font-weight: var(--font-weight-bold);
-            color: var(--color-text-primary);
-            text-decoration: none;
-            display: inline-block;
-            margin-bottom: var(--space-2);
-        }
-
-        .login-card__logo span {
-            color: var(--color-brand-orange);
-        }
-
-        .login-card__title {
-            font-size: var(--text-xl);
-            font-weight: var(--font-weight-bold);
-            color: var(--color-text-primary);
-            margin-bottom: var(--space-2);
-        }
-
-        .login-card__subtitle {
-            font-size: var(--text-sm);
-            color: var(--color-text-secondary);
-        }
-
-        .login-alert {
-            display: none;
-            padding: var(--space-3) var(--space-4);
-            border-radius: var(--radius-lg);
-            font-size: var(--text-sm);
-            margin-bottom: var(--space-5);
-            align-items: flex-start;
-            gap: var(--space-3);
-        }
-
-        .login-alert--error {
-            background: rgba(239, 68, 68, 0.12);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            color: #fca5a5;
-        }
-
-        .login-alert--success {
-            background: rgba(34, 197, 94, 0.12);
-            border: 1px solid rgba(34, 197, 94, 0.3);
-            color: #86efac;
-        }
-
-        .password-input-wrap {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-
-        .password-toggle-btn {
-            position: absolute;
-            right: var(--space-3);
-            background: transparent;
-            border: none;
-            color: var(--color-text-secondary);
-            cursor: pointer;
-            padding: var(--space-1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: var(--radius-sm);
-            transition: color var(--transition-fast);
-        }
-
-        .password-toggle-btn:hover {
-            color: var(--color-text-primary);
-        }
-
-        .login-footer-links {
-            margin-top: var(--space-6);
-            padding-top: var(--space-6);
-            border-top: 1px solid var(--color-border);
-            text-align: center;
-            font-size: var(--text-sm);
-            color: var(--color-text-secondary);
-        }
-
-        .login-footer-links a {
-            color: var(--color-brand-orange);
-            text-decoration: none;
-            font-weight: var(--font-weight-medium);
-        }
-
-        .login-footer-links a:hover {
-            text-decoration: underline;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Iniciar sesión | EntradaWeb</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      font-family: Inter, system-ui, sans-serif;
+      color: #172033;
+      background: linear-gradient(135deg, #fff7ed, #eef2ff);
+    }
+    .card {
+      width: 100%;
+      max-width: 420px;
+      padding: 34px;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 18px 60px #17203318;
+    }
+    .brand { color: #ea580c; font-weight: 800; font-size: 24px; }
+    h1 { margin: 24px 0 8px; font-size: 28px; }
+    .subtitle { color: #64748b; line-height: 1.5; margin-bottom: 26px; }
+    label { display: block; margin: 16px 0 7px; font-weight: 600; }
+    input {
+      width: 100%;
+      padding: 13px 14px;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      font: inherit;
+    }
+    input:focus {
+      outline: 2px solid #fb923c;
+      border-color: #ea580c;
+    }
+    button {
+      width: 100%;
+      margin-top: 24px;
+      padding: 14px;
+      border: 0;
+      border-radius: 10px;
+      background: #ea580c;
+      color: white;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    button:disabled { opacity: .65; cursor: wait; }
+    #mensaje { margin-top: 16px; line-height: 1.5; }
+    .error { color: #b91c1c; }
+    .success { color: #166534; }
+    .back { display: block; margin-top: 22px; text-align: center; color: #475569; }
+  </style>
 </head>
+<body>
+  <main class="card">
+    <a class="brand" href="../index.html" style="text-decoration:none">EntradaWeb</a>
+    <h1>Iniciar sesión</h1>
+    <p class="subtitle">Ingresá con tu cuenta para continuar.</p>
 
-<body class="login-wrapper">
+    <form id="login-form">
+      <label for="email">Correo electrónico</label>
+      <input id="email" name="email" type="email"
+             autocomplete="username" required>
 
-    <!-- ═══════════════════════════════════════════
-         HEADER
-    ═══════════════════════════════════════════ -->
-    <header class="site-header" style="position: static; border-bottom: 1px solid var(--color-border);">
-        <div class="container site-header__inner" style="justify-content: space-between;">
-            <a href="../index.html" class="site-header__logo" aria-label="EntradaWeb — Ir al inicio">
-                <div class="site-header__logo-text">
-                    Entrada<span style="color: var(--color-brand-orange);">Web</span>
-                </div>
-            </a>
-            <a href="../index.html" class="btn btn--ghost btn--sm">
-                ← Volver al sitio
-            </a>
-        </div>
-    </header>
+      <label for="password">Contraseña</label>
+      <input id="password" name="password" type="password"
+             autocomplete="current-password" required>
 
-    <!-- ═══════════════════════════════════════════
-         LOGIN FORM
-    ═══════════════════════════════════════════ -->
-    <main class="login-main" id="main-content">
-        <div class="login-card">
-            <div class="login-card__header">
-                <h1 class="login-card__title">Acceso de Administrador</h1>
-                <p class="login-card__subtitle">Ingresá tus credenciales para administrar eventos y entradas</p>
-            </div>
+      <button id="submit" type="submit">Ingresar</button>
+      <p id="mensaje" role="status" aria-live="polite"></p>
+    </form>
 
-            <!-- Alerta de mensajes -->
-            <div id="login-alert" class="login-alert" role="alert" aria-live="assertive">
-                <span id="login-alert-icon">⚠️</span>
-                <span id="login-alert-text"></span>
-            </div>
+    <a class="back" href="../index.html">Volver al inicio</a>
+  </main>
 
-            <form id="login-form" novalidate>
-                <div class="form-group">
-                    <label class="form-label form-label--required" for="login-email">Correo electrónico</label>
-                    <input
-                        type="email"
-                        id="login-email"
-                        name="email"
-                        class="form-input"
-                        placeholder="admin@entradaweb.com"
-                        required
-                        autocomplete="email"
-                        aria-required="true"
-                    >
-                    <span class="form-error" id="email-error" style="display: none;"></span>
-                </div>
+  <script>
+    const form = document.getElementById('login-form');
+    const button = document.getElementById('submit');
+    const message = document.getElementById('mensaje');
 
-                <div class="form-group">
-                    <label class="form-label form-label--required" for="login-password">Contraseña</label>
-                    <div class="password-input-wrap">
-                        <input
-                            type="password"
-                            id="login-password"
-                            name="password"
-                            class="form-input"
-                            placeholder="••••••••"
-                            required
-                            autocomplete="current-password"
-                            aria-required="true"
-                            style="padding-right: 44px;"
-                        >
-                        <button
-                            type="button"
-                            id="btn-toggle-password"
-                            class="password-toggle-btn"
-                            aria-label="Mostrar contraseña"
-                            title="Mostrar/Ocultar contraseña"
-                        >
-                            <svg id="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
-                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                <circle cx="12" cy="12" r="3"></circle>
-                            </svg>
-                        </button>
-                    </div>
-                    <span class="form-error" id="password-error" style="display: none;"></span>
-                </div>
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      message.textContent = '';
+      message.className = '';
+      button.disabled = true;
+      button.textContent = 'Ingresando...';
 
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-6);">
-                    <label style="display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-sm); color: var(--color-text-secondary); cursor: pointer;">
-                        <input type="checkbox" id="remember-me" style="accent-color: var(--color-brand-orange); cursor: pointer;">
-                        Recordar mi sesión
-                    </label>
-                </div>
-
-                <button
-                    type="submit"
-                    id="btn-login-submit"
-                    class="btn btn--orange btn--full"
-                    style="height: 48px; font-size: var(--text-base);"
-                >
-                    <span id="btn-submit-text">Iniciar Sesión</span>
-                    <span id="btn-submit-spinner" style="display: none;">Conectando...</span>
-                </button>
-            </form>
-
-            <div class="login-footer-links">
-                <p>¿Tenés problemas para ingresar? Contactá al equipo de soporte en <a href="mailto:soporte@entradaweb.com.ar">soporte@entradaweb.com.ar</a></p>
-            </div>
-        </div>
-    </main>
-
-    <script>
-    (function () {
-        'use strict';
-
-        const loginForm = document.getElementById('login-form');
-        const emailInput = document.getElementById('login-email');
-        const passwordInput = document.getElementById('login-password');
-        const togglePasswordBtn = document.getElementById('btn-toggle-password');
-        const submitBtn = document.getElementById('btn-login-submit');
-        const submitText = document.getElementById('btn-submit-text');
-        const submitSpinner = document.getElementById('btn-submit-spinner');
-        const alertBox = document.getElementById('login-alert');
-        const alertText = document.getElementById('login-alert-text');
-        const rememberCheckbox = document.getElementById('remember-me');
-
-        // Toggle visualización de contraseña
-        togglePasswordBtn?.addEventListener('click', () => {
-            const isPassword = passwordInput.getAttribute('type') === 'password';
-            passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
-            togglePasswordBtn.setAttribute('aria-label', isPassword ? 'Ocultar contraseña' : 'Mostrar contraseña');
-            togglePasswordBtn.innerHTML = isPassword
-                ? `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`
-                : `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+      try {
+        const response = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: document.getElementById('email').value.trim(),
+            password: document.getElementById('password').value
+          })
         });
 
-        function showAlert(msg, isError = true) {
-            alertBox.className = `login-alert ${isError ? 'login-alert--error' : 'login-alert--success'}`;
-            alertBox.style.display = 'flex';
-            alertText.textContent = msg;
+        const result = await response.json();
+
+        if (!response.ok || result.success !== true || !result.data?.token) {
+          throw new Error(result.message || 'No se pudo iniciar sesión.');
         }
 
-        function hideAlert() {
-            alertBox.style.display = 'none';
-            alertText.textContent = '';
+        const { token, user } = result.data;
+        sessionStorage.setItem('ew_token', token);
+        sessionStorage.setItem('ew_user', JSON.stringify({ user, token }));
+
+        const params = new URLSearchParams(window.location.search);
+        const requested = params.get('returnTo') || '../index.html';
+
+        // Solo permitir destinos relativos dentro de este mismo sitio.
+        const destination = new URL(requested, window.location.href);
+        if (destination.origin !== window.location.origin) {
+          throw new Error('La dirección de retorno no es válida.');
         }
 
-        // Revisar si ya hay un token guardado y válido
-        const existingToken = sessionStorage.getItem('entradaweb_token') || localStorage.getItem('entradaweb_token');
-        const existingUser = JSON.parse(sessionStorage.getItem('entradaweb_user') || localStorage.getItem('entradaweb_user') || 'null');
+        const isAdminPage = destination.pathname.endsWith('/admin-showcase.html');
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const redirectParam = urlParams.get('redirect') || 'admin-showcase.html';
-        const expired = urlParams.get('expired');
-
-        if (expired) {
-            showAlert('Tu sesión ha expirado. Por favor, iniciá sesión nuevamente.', true);
-        } else if (existingToken && existingUser && existingUser.rol === 'admin') {
-            window.location.href = redirectParam;
+        if (isAdminPage && user?.rol !== 'admin') {
+          message.className = 'error';
+          message.textContent =
+            'Tu sesión se inició, pero tu usuario no tiene permisos de administrador.';
+          return;
         }
 
-        loginForm?.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            hideAlert();
-
-            const email = emailInput.value.trim();
-            const password = passwordInput.value;
-
-            if (!email || !email.includes('@')) {
-                showAlert('Por favor ingresá un correo electrónico válido.');
-                emailInput.focus();
-                return;
-            }
-
-            if (!password) {
-                showAlert('Por favor ingresá tu contraseña.');
-                passwordInput.focus();
-                return;
-            }
-
-            // Estado cargando
-            submitBtn.disabled = true;
-            submitText.style.display = 'none';
-            submitSpinner.style.display = 'inline';
-
-            try {
-                const response = await fetch('/api/auth/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password }),
-                });
-
-                const data = await response.json();
-
-                if (!response.ok || !data.success) {
-                    throw new Error(data.message || 'Credenciales inválidas');
-                }
-
-                const { token, user } = data.data;
-
-                if (user.rol !== 'admin') {
-                    throw new Error('Tu cuenta no tiene permisos de administrador.');
-                }
-
-                // Guardar token y user
-                const storage = rememberCheckbox.checked ? localStorage : sessionStorage;
-                storage.setItem('entradaweb_token', token);
-                storage.setItem('entradaweb_user', JSON.stringify(user));
-
-                // También guardar en sessionStorage para la sesión activa
-                sessionStorage.setItem('entradaweb_token', token);
-                sessionStorage.setItem('entradaweb_user', JSON.stringify(user));
-
-                showAlert(`¡Bienvenido, ${user.nombre}! Redirigiendo al panel...`, false);
-
-                setTimeout(() => {
-                    window.location.href = redirectParam;
-                }, 800);
-
-            } catch (err) {
-                showAlert(err.message || 'Error al conectar con el servidor.');
-                submitBtn.disabled = false;
-                submitText.style.display = 'inline';
-                submitSpinner.style.display = 'none';
-            }
-        });
-
-    })();
-    </script>
+        message.className = 'success';
+        message.textContent = 'Sesión iniciada correctamente.';
+        window.location.assign(destination.href);
+      } catch (error) {
+        message.className = 'error';
+        message.textContent = error.message ||
+          'No se pudo conectar con el servidor.';
+      } finally {
+        button.disabled = false;
+        button.textContent = 'Ingresar';
+      }
+    });
+  </script>
 </body>
-
 </html>
