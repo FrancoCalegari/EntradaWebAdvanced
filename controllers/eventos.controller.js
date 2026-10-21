@@ -40,18 +40,43 @@ function formatearFechaSQL(fecha) {
 }
 
 /**
+ * Normaliza el objeto evento para que sea 100% compatible con cualquier frontend
+ * que espere 'titulo' o 'nombre', 'precio_min' o 'precio'.
+ */
+function formatearEventoParaRespuesta(ev) {
+  if (!ev) return ev;
+  return {
+    ...ev,
+    nombre: ev.titulo,
+    precio: ev.precio_min !== undefined ? Number(ev.precio_min) : 0,
+  };
+}
+
+/**
  * GET /api/eventos
  * Lista todos los eventos ordenados por fecha.
  */
 async function obtenerEventos(req, res) {
   try {
-    const resultado = await databaseService.query(
-      'SELECT id, titulo, descripcion, lugar, fecha, created_at FROM eventos ORDER BY fecha ASC'
-    );
+    // Soporte para ?limit=N desde el frontend (ej: home.js pide ?limit=8)
+    let sql = 'SELECT id, titulo, descripcion, lugar, fecha, imagen, categoria, precio_min, estado, created_at FROM eventos ORDER BY fecha ASC';
+    const params = [];
+
+    const limit = parseInt(req.query.limit, 10);
+    if (!isNaN(limit) && limit > 0) {
+      sql += ' LIMIT ?';
+      params.push(limit);
+    }
+
+    const resultado = params.length > 0
+      ? await databaseService.queryParams(sql, params)
+      : await databaseService.query(sql);
+
+    const eventos = (resultado.result || []).map(formatearEventoParaRespuesta);
 
     return res.json({
       success: true,
-      data: resultado.result || [],
+      data: eventos,
     });
   } catch (error) {
     console.error('ERROR COMPLETO AL OBTENER EVENTOS:', error);
@@ -79,7 +104,7 @@ async function obtenerEventoPorId(req, res) {
     }
 
     const resultado = await databaseService.queryParams(
-      'SELECT id, titulo, descripcion, lugar, fecha, created_at FROM eventos WHERE id = ?',
+      'SELECT id, titulo, descripcion, lugar, fecha, imagen, categoria, precio_min, estado, created_at FROM eventos WHERE id = ?',
       [idNumero]
     );
 
@@ -92,7 +117,7 @@ async function obtenerEventoPorId(req, res) {
 
     return res.json({
       success: true,
-      data: resultado.result[0],
+      data: formatearEventoParaRespuesta(resultado.result[0]),
     });
   } catch (error) {
     console.error('Error al obtener evento por ID:', error);
@@ -111,16 +136,29 @@ async function obtenerEventoPorId(req, res) {
  */
 async function crearEvento(req, res) {
   try {
-    const { titulo, descripcion, lugar, fecha } = req.body;
+    const {
+      titulo,
+      nombre,
+      descripcion,
+      lugar,
+      fecha,
+      imagen,
+      categoria,
+      precio,
+      precio_min,
+      estado,
+    } = req.body;
+
+    const tituloFinal = (titulo || nombre || '').trim();
 
     if (typeof titulo !== 'string' || !titulo.trim()) {
       return res.status(400).json({
         success: false,
-        message: 'El campo "titulo" es obligatorio',
+        message: 'El título o nombre del evento es obligatorio',
       });
     }
 
-    if (titulo.trim().length > 200) {
+    if (tituloFinal.length > 200) {
       return res.status(400).json({
         success: false,
         message: 'El título no puede superar los 200 caracteres',
@@ -170,10 +208,14 @@ async function crearEvento(req, res) {
       typeof lugar === 'string' ? lugar.trim() || null : null;
 
     const fechaSQL = formatearFechaSQL(fecha);
+    const imagenLimpia = imagen ? String(imagen).trim() : null;
+    const categoriaLimpia = categoria ? String(categoria).trim() : null;
+    const precioFinal = precio_min !== undefined ? Number(precio_min) : (precio !== undefined ? Number(precio) : 0);
+    const estadoValido = ['disponible', 'agotado', 'proximo', 'cancelado'].includes(estado) ? estado : 'disponible';
 
     const resultado = await databaseService.queryParams(
-      'INSERT INTO eventos (titulo, descripcion, lugar, fecha) VALUES (?, ?, ?, ?)',
-      [tituloLimpio, descripcionLimpia, lugarLimpio, fechaSQL]
+      'INSERT INTO eventos (titulo, descripcion, lugar, fecha, imagen, categoria, precio_min, estado) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      [tituloFinal, descripcionLimpia, lugarLimpio, fechaSQL, imagenLimpia, categoriaLimpia, precioFinal, estadoValido]
     );
 
     const nuevoId = resultado.result?.insertId;
@@ -183,7 +225,7 @@ async function crearEvento(req, res) {
     }
 
     const eventoCreado = await databaseService.queryParams(
-      'SELECT id, titulo, descripcion, lugar, fecha, created_at FROM eventos WHERE id = ?',
+      'SELECT id, titulo, descripcion, lugar, fecha, imagen, categoria, precio_min, estado, created_at FROM eventos WHERE id = ?',
       [nuevoId]
     );
 
@@ -223,7 +265,7 @@ async function actualizarEvento(req, res) {
     }
 
     const eventoExistente = await databaseService.queryParams(
-      'SELECT id, titulo, descripcion, lugar, fecha, created_at FROM eventos WHERE id = ?',
+      'SELECT id, titulo, descripcion, lugar, fecha, imagen, categoria, precio_min, estado, created_at FROM eventos WHERE id = ?',
       [idNumero]
     );
 
@@ -252,7 +294,7 @@ async function actualizarEvento(req, res) {
       if (typeof titulo !== 'string' || !titulo.trim()) {
         return res.status(400).json({
           success: false,
-          message: 'El campo "titulo" no puede estar vacío',
+          message: 'El título no puede estar vacío',
         });
       }
 
@@ -325,7 +367,7 @@ async function actualizarEvento(req, res) {
     );
 
     const eventoActualizado = await databaseService.queryParams(
-      'SELECT id, titulo, descripcion, lugar, fecha, created_at FROM eventos WHERE id = ?',
+      'SELECT id, titulo, descripcion, lugar, fecha, imagen, categoria, precio_min, estado, created_at FROM eventos WHERE id = ?',
       [idNumero]
     );
 

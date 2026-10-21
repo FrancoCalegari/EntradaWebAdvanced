@@ -6,7 +6,11 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "db:init": "node scripts/init-database.js"
+    "db:init": "node scripts/init-database.js",
+    "db:migrate": "node scripts/migrate-columns.js",
+    "db:seed": "node scripts/seed-events.js",
+    "admin:create": "node scripts/create-admin.js",
+    "test:e2e": "node scripts/test-integration.js"
   },
   "keywords": [],
   "author": "Carla Fassaneli",
