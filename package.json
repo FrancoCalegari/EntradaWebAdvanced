@@ -3,14 +3,16 @@
   "version": "1.0.0",
   "description": "Backend para EntradaWeb - Plataforma de venta de entradas para eventos",
   "main": "server.js",
- "scripts": {
-  "start": "node server.js",
-  "db:init": "node scripts/init-database.js",
-  "db:migrate": "node scripts/migrate-columns.js",
-  "db:seed": "node scripts/seed-events.js",
-  "admin:create": "node scripts/create-admin.js",
-  "test:e2e": "node scripts/test-integration.js"
-},
+  "scripts": {
+    "start": "node server.js",
+    "db:init": "node scripts/init-database.js",
+    "db:migrate": "node scripts/migrate-columns.js",
+    "db:seed": "node scripts/seed-events.js",
+    "admin:create": "node scripts/create-admin.js",
+    "test:e2e": "node scripts/test-integration.js",
+    "test:vercel": "node scripts/verify-vercel.js",
+    "test": "node scripts/test-integration.js && node scripts/verify-vercel.js"
+  },
   "keywords": [],
   "author": "Carla Fassaneli",
   "license": "ISC",

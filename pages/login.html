@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -111,9 +111,11 @@
         const { token, user } = result.data;
         sessionStorage.setItem('ew_token', token);
         sessionStorage.setItem('ew_user', JSON.stringify({ user, token }));
+        sessionStorage.setItem('entradaweb_token', token);
+        sessionStorage.setItem('entradaweb_user', JSON.stringify(user));
 
         const params = new URLSearchParams(window.location.search);
-        const requested = params.get('returnTo') || '../index.html';
+        const requested = params.get('returnTo') || params.get('redirect') || '../index.html';
 
         // Solo permitir destinos relativos dentro de este mismo sitio.
         const destination = new URL(requested, window.location.href);

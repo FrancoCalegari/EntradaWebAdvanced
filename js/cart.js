@@ -9,7 +9,7 @@
   'use strict';
 
   const CART_KEY = 'ew_cart';
-  const API_URL = 'http://localhost:3000/api';
+  const API_URL = '/api';
   const FEE_RATE = 0.10;
 
   const VALID_COUPONS = {

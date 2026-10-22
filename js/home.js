@@ -359,10 +359,49 @@
   }
 
   /* ─────────────────────────────────────────────────────────────────
-     7. INICIALIZACIÓN
+     7. INICIALIZACIÓN Y SESIÓN DE USUARIO
   ───────────────────────────────────────────────────────────────── */
+
+  function updateAuthHeader() {
+    const token = sessionStorage.getItem('ew_token') || localStorage.getItem('ew_token') || sessionStorage.getItem('entradaweb_token');
+    const rawUser = sessionStorage.getItem('ew_user') || localStorage.getItem('ew_user') || sessionStorage.getItem('entradaweb_user');
+    let user = null;
+    if (rawUser) {
+      try {
+        const parsed = JSON.parse(rawUser);
+        user = parsed.user || parsed;
+      } catch (_) {}
+    }
+
+    const headerActions = document.querySelector('.site-header__actions');
+    if (!headerActions || !token || !user) return;
+
+    const nombre = user.nombre || 'Mi cuenta';
+    const isAdmin = user.rol === 'admin';
+    const panelUrl = isAdmin ? './pages/admin-showcase.html' : './pages/mis-compras.html';
+    const panelLabel = isAdmin ? 'Panel Admin' : 'Mis compras';
+
+    headerActions.innerHTML = `
+      <a href="${panelUrl}" class="btn btn--ghost btn--sm" style="display:inline-flex; align-items:center; gap:6px;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span>${nombre.split(' ')[0]} (${panelLabel})</span>
+      </a>
+      <button id="btn-home-logout" class="btn btn--ghost btn--sm" title="Cerrar sesión" style="padding:6px 10px; cursor:pointer;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </button>
+    `;
+
+    document.getElementById('btn-home-logout')?.addEventListener('click', () => {
+      ['ew_token', 'entradaweb_token', 'token', 'ew_user', 'entradaweb_user', 'user'].forEach(k => {
+        sessionStorage.removeItem(k);
+        localStorage.removeItem(k);
+      });
+      window.location.reload();
+    });
+  }
 
   // Cargar eventos al cargar la página
   loadFeaturedEvents();
+  updateAuthHeader();
 
 })();

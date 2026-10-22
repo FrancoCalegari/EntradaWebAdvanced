@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EntradaWeb â€” Panel de AdministraciÃ³n</title>
+  <title>EntradaWeb — Panel de Administración</title>
   <meta name="robots" content="noindex, nofollow">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="../css/layout.css">
   <link rel="stylesheet" href="../css/components.css">
   <style>
-    /* â”€â”€â”€ ADMIN LAYOUT â”€â”€â”€ */
+    /* ─── ADMIN LAYOUT ─── */
     .admin-wrapper {
       min-height: 100vh;
       display: flex;
@@ -55,7 +55,7 @@
     }
     .admin-header__actions { display: flex; align-items: center; gap: var(--space-3); }
 
-    /* â”€â”€â”€ TAB BAR â”€â”€â”€ */
+    /* ─── TAB BAR ─── */
     .admin-tabs {
       background: var(--color-bg-surface);
       border-bottom: 1px solid var(--color-border);
@@ -85,7 +85,7 @@
     }
     .admin-tab svg { flex-shrink: 0; }
 
-    /* â”€â”€â”€ TAB CONTENT â”€â”€â”€ */
+    /* ─── TAB CONTENT ─── */
     .admin-content {
       flex: 1;
       padding: var(--space-8) var(--space-6);
@@ -96,7 +96,7 @@
     .admin-panel { display: none; }
     .admin-panel.is-active { display: block; }
 
-    /* â”€â”€â”€ PANEL: EVENTOS â”€â”€â”€ */
+    /* ─── PANEL: EVENTOS ─── */
     .admin-toolbar {
       display: flex;
       align-items: center;
@@ -208,7 +208,7 @@
     }
     .admin-table__empty p { margin-top: var(--space-3); font-size: var(--text-sm); }
 
-    /* â”€â”€â”€ MODAL â”€â”€â”€ */
+    /* ─── MODAL ─── */
     .admin-modal-backdrop {
       position: fixed;
       inset: 0;
@@ -277,7 +277,7 @@
       border-top: 1px solid var(--color-border);
     }
 
-    /* â”€â”€â”€ PANEL: CONFIGURACIÃ“N â”€â”€â”€ */
+    /* ─── PANEL: CONFIGURACIÓN ─── */
     .config-grid {
       display: grid;
       grid-template-columns: 1fr;
@@ -339,7 +339,7 @@
       margin-top: var(--space-8);
     }
 
-    /* â”€â”€â”€ RESPONSIVE â”€â”€â”€ */
+    /* ─── RESPONSIVE ─── */
     @media (max-width: 480px) {
       .admin-content { padding: var(--space-4); }
       .admin-header { padding: 0 var(--space-4); }
@@ -351,20 +351,27 @@
 
   <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
 
-  <!-- â”€â”€ HEADER ADMIN â”€â”€ -->
+  <!-- ── HEADER ADMIN ── -->
   <header class="admin-header">
     <a href="../index.html" class="admin-header__logo">Entrada<span>Web</span></a>
     <span class="admin-badge">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-      Panel de AdministraciÃ³n
+      Panel de Administración
     </span>
     <div class="admin-header__actions">
-      <a href="../index.html" class="btn btn--ghost btn--sm">â† Volver al sitio</a>
+      <span id="admin-user-display" style="font-size: var(--text-sm); color: var(--color-text-secondary); display: inline-flex; align-items: center; gap: var(--space-2);">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span id="admin-user-name">Admin</span>
+      </span>
+      <button id="btn-admin-logout" class="btn btn--ghost btn--sm" style="color: var(--color-error); border-color: rgba(239,68,68,0.3);">
+        Cerrar sesión
+      </button>
+      <a href="../index.html" class="btn btn--ghost btn--sm">← Volver al sitio</a>
     </div>
   </header>
 
-  <!-- â”€â”€ PESTAÃ‘AS â”€â”€ -->
-  <nav class="admin-tabs" role="tablist" aria-label="Secciones del panel de administraciÃ³n">
+  <!-- ── PESTAÑAS ── -->
+  <nav class="admin-tabs" role="tablist" aria-label="Secciones del panel de administración">
     <button
       id="tab-eventos"
       class="admin-tab is-active"
@@ -376,6 +383,16 @@
       Eventos
     </button>
     <button
+      id="tab-entradas"
+      class="admin-tab"
+      role="tab"
+      aria-selected="false"
+      aria-controls="panel-entradas"
+    >
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/><line x1="9" y1="15" x2="9.01" y2="15"/><line x1="15" y1="15" x2="15.01" y2="15"/></svg>
+      Entradas / Tipos
+    </button>
+    <button
       id="tab-config"
       class="admin-tab"
       role="tab"
@@ -383,33 +400,33 @@
       aria-controls="panel-config"
     >
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93A10 10 0 1 0 4.93 19.07"/><path d="M19.07 4.93l-1.06 1.06"/></svg>
-      ConfiguraciÃ³n
+      Configuración
     </button>
   </nav>
 
-  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  <!-- ══════════════════════════════════════════
        CONTENIDO PRINCIPAL
-  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+  ══════════════════════════════════════════ -->
   <main id="main-content" class="admin-content">
 
-    <!-- â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    <!-- ────────────────────────────────────────
          PANEL: EVENTOS
-    â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+    ──────────────────────────────────────── -->
     <div id="panel-eventos" class="admin-panel is-active" role="tabpanel" aria-labelledby="tab-eventos">
 
       <!-- Toolbar -->
       <div class="admin-toolbar">
         <h1 style="font-size:var(--text-2xl); font-weight:var(--font-weight-bold); color:var(--color-text-primary);">
-          GestiÃ³n de Eventos
+          Gestión de Eventos
         </h1>
         <div style="display:flex; align-items:center; gap:var(--space-3); flex-wrap:wrap;">
-          <!-- BÃºsqueda -->
+          <!-- Búsqueda -->
           <div class="admin-toolbar__search" role="search">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
             <input
               type="search"
               id="admin-search-eventos"
-              placeholder="Buscar por nombre, categorÃ­a..."
+              placeholder="Buscar por nombre, categoría..."
               aria-label="Buscar eventos"
               autocomplete="off"
             >
@@ -429,7 +446,7 @@
             <tr>
               <th scope="col">Imagen</th>
               <th scope="col">Nombre</th>
-              <th scope="col">CategorÃ­a</th>
+              <th scope="col">Categoría</th>
               <th scope="col">Fecha</th>
               <th scope="col">Lugar</th>
               <th scope="col">Precio</th>
@@ -459,18 +476,74 @@
     </div><!-- /panel-eventos -->
 
 
-    <!-- â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-         PANEL: CONFIGURACIÃ“N
-    â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+    <!-- ────────────────────────────────────────
+         PANEL: ENTRADAS / TICKETS
+    ──────────────────────────────────────── -->
+    <div id="panel-entradas" class="admin-panel" role="tabpanel" aria-labelledby="tab-entradas">
+
+      <div class="admin-toolbar">
+        <h1 style="font-size:var(--text-2xl); font-weight:var(--font-weight-bold); color:var(--color-text-primary);">
+          Gestión de Entradas / Tickets
+        </h1>
+        <div style="display:flex; align-items:center; gap:var(--space-3); flex-wrap:wrap;">
+          <!-- Búsqueda -->
+          <div class="admin-toolbar__search" role="search">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input
+              type="search"
+              id="admin-search-entradas"
+              placeholder="Buscar por tipo o evento..."
+              aria-label="Buscar entradas"
+            >
+          </div>
+          <!-- Botón nueva entrada -->
+          <button class="btn btn--orange btn--sm" id="btn-agregar-entrada">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Agregar entrada
+          </button>
+        </div>
+      </div>
+
+      <!-- Tabla Entradas -->
+      <div class="admin-table-wrap">
+        <table class="admin-table" aria-label="Listado de entradas">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Evento</th>
+              <th>Tipo de entrada</th>
+              <th>Precio</th>
+              <th>Stock</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="admin-entradas-tbody">
+            <tr>
+              <td colspan="6">
+                <div class="admin-table__empty">
+                  <p>Cargando entradas...</p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div><!-- /panel-entradas -->
+
+
+    <!-- ────────────────────────────────────────
+         PANEL: CONFIGURACIÓN
+    ──────────────────────────────────────── -->
     <div id="panel-config" class="admin-panel" role="tabpanel" aria-labelledby="tab-config">
 
       <h1 style="font-size:var(--text-2xl); font-weight:var(--font-weight-bold); color:var(--color-text-primary); margin-bottom:var(--space-6);">
-        ConfiguraciÃ³n del sitio
+        Configuración del sitio
       </h1>
 
       <div class="config-grid">
 
-        <!-- â”€â”€ Color de acento â”€â”€ -->
+        <!-- ── Color de acento ── -->
         <div class="config-card">
           <h2 class="config-card__title">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
@@ -540,7 +613,7 @@
           </div>
         </div>
 
-        <!-- â”€â”€ Redes sociales â”€â”€ -->
+        <!-- ── Redes sociales ── -->
         <div class="config-card">
           <h2 class="config-card__title">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
@@ -618,9 +691,9 @@
   </main>
 
 
-  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-       MODAL â€” AGREGAR / EDITAR EVENTO
-  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+  <!-- ══════════════════════════════════════════
+       MODAL — AGREGAR / EDITAR EVENTO
+  ══════════════════════════════════════════ -->
   <div
     class="admin-modal-backdrop"
     id="evento-modal-backdrop"
@@ -647,10 +720,10 @@
 
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:var(--space-4);">
           <div class="form-group">
-            <label class="form-label form-label--required" for="evento-categoria">CategorÃ­a</label>
+            <label class="form-label form-label--required" for="evento-categoria">Categoría</label>
             <select id="evento-categoria" class="form-select" required aria-required="true">
-              <option value="">SeleccionÃ¡...</option>
-              <option value="musica">MÃºsica</option>
+              <option value="">Seleccioná...</option>
+              <option value="musica">Música</option>
               <option value="teatro">Teatro</option>
               <option value="deportes">Deportes</option>
               <option value="cine">Cine</option>
@@ -666,12 +739,12 @@
 
         <div class="form-group">
           <label class="form-label form-label--required" for="evento-lugar">Lugar / Venue</label>
-          <input type="text" id="evento-lugar" class="form-input" placeholder="Ej: Estadio VÃ©lez SÃ¡rsfield, Buenos Aires" required aria-required="true">
+          <input type="text" id="evento-lugar" class="form-input" placeholder="Ej: Estadio Vélez Sársfield, Buenos Aires" required aria-required="true">
         </div>
 
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:var(--space-4);">
           <div class="form-group">
-            <label class="form-label" for="evento-precio">Precio mÃ­nimo (ARS)</label>
+            <label class="form-label" for="evento-precio">Precio mínimo (ARS)</label>
             <input type="number" id="evento-precio" class="form-input" placeholder="0" min="0">
           </div>
           <div class="form-group">
@@ -679,27 +752,24 @@
             <select id="evento-estado" class="form-select">
               <option value="disponible">Disponible</option>
               <option value="agotado">Agotado</option>
-              <option value="proximo">PrÃ³ximamente</option>
+              <option value="proximo">Próximamente</option>
               <option value="cancelado">Cancelado</option>
             </select>
           </div>
         </div>
 
         <div class="form-group">
-          <label class="form-label" for="evento-imagen-archivo">Seleccionar imagen del evento</label>
-          <input type="file" id="evento-imagen-archivo" class="form-input" accept="image/jpeg,image/png,image/webp,image/gif">
-          <div id="evento-imagen-preview" style="margin-top:12px;">
-            <img id="evento-imagen-preview-img" alt="Vista previa de la imagen del evento" style="display:none;max-width:220px;max-height:140px;object-fit:cover;border-radius:10px;">
-          </div>
+          <label class="form-label" for="evento-imagen">URL de imagen</label>
+          <input type="url" id="evento-imagen" class="form-input" placeholder="https://...">
         </div>
 
         <div class="form-group">
-          <label class="form-label" for="evento-descripcion">DescripciÃ³n</label>
+          <label class="form-label" for="evento-descripcion">Descripción</label>
           <textarea
             id="evento-descripcion"
             class="form-input"
             rows="3"
-            placeholder="DescripciÃ³n breve del evento..."
+            placeholder="Descripción breve del evento..."
             style="resize:vertical; min-height:80px;"
           ></textarea>
         </div>
@@ -719,14 +789,152 @@
   </div>
 
 
-  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  <!-- ══════════════════════════════════════════
+       MODAL — AGREGAR / EDITAR ENTRADA
+  ══════════════════════════════════════════ -->
+  <div
+    class="admin-modal-backdrop"
+    id="entrada-modal-backdrop"
+    aria-modal="true"
+    role="dialog"
+    aria-labelledby="entrada-modal-title"
+    aria-hidden="true"
+  >
+    <div class="admin-modal" id="entrada-modal">
+      <div class="admin-modal__header">
+        <h2 class="admin-modal__title" id="entrada-modal-title">Agregar Entrada</h2>
+        <button class="admin-modal__close" id="entrada-modal-close" aria-label="Cerrar modal">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <form class="admin-modal__body" id="entrada-form" novalidate>
+        <input type="hidden" id="entrada-id" value="">
+
+        <div class="form-group">
+          <label class="form-label form-label--required" for="entrada-evento-id">Evento</label>
+          <select id="entrada-evento-id" class="form-input" required aria-required="true" style="background:var(--color-bg-base); color:var(--color-text-primary);">
+            <option value="">Seleccionar un evento...</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label form-label--required" for="entrada-tipo">Tipo de entrada</label>
+          <input type="text" id="entrada-tipo" class="form-input" placeholder="Ej: General, Campo VIP, Platea Alta" required aria-required="true">
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:var(--space-4);">
+          <div class="form-group">
+            <label class="form-label form-label--required" for="entrada-precio">Precio (ARS)</label>
+            <input type="number" id="entrada-precio" class="form-input" min="0" step="100" placeholder="Ej: 25000" required aria-required="true">
+          </div>
+          <div class="form-group">
+            <label class="form-label form-label--required" for="entrada-stock">Stock disponible</label>
+            <input type="number" id="entrada-stock" class="form-input" min="0" step="1" placeholder="Ej: 500" required aria-required="true">
+          </div>
+        </div>
+
+        <!-- Error del formulario de entradas -->
+        <div id="entrada-form-error" class="form-error" role="alert" style="display:none;"></div>
+      </form>
+
+      <div class="admin-modal__footer">
+        <button class="btn btn--ghost btn--sm" id="entrada-modal-cancel" type="button">Cancelar</button>
+        <button class="btn btn--orange btn--sm" id="entrada-form-submit" type="button">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          <span id="entrada-submit-label">Guardar entrada</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════
        SCRIPT
-  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+  ══════════════════════════════════════════ -->
   <script>
   (function () {
     'use strict';
 
-    /* â”€â”€â”€ TABS â”€â”€â”€ */
+    /* ─── VERIFICACIÓN DE AUTENTICACIÓN (JWT) ─── */
+    function getAuthToken() {
+      for (const storage of [sessionStorage, localStorage]) {
+        for (const key of ['ew_token', 'entradaweb_token', 'token', 'authToken', 'jwt', 'access_token']) {
+          const val = storage.getItem(key);
+          if (val && val.trim()) return val.trim();
+        }
+      }
+      return null;
+    }
+
+    function getAuthUser() {
+      for (const storage of [sessionStorage, localStorage]) {
+        for (const key of ['ew_user', 'entradaweb_user', 'user', 'currentUser']) {
+          const raw = storage.getItem(key);
+          if (raw) {
+            try {
+              const parsed = JSON.parse(raw);
+              if (parsed && typeof parsed === 'object') {
+                if (parsed.user) return parsed.user;
+                return parsed;
+              }
+            } catch (_) {}
+          }
+        }
+      }
+      return null;
+    }
+
+    const token = getAuthToken();
+    const currentUser = getAuthUser();
+
+    if (!token || !currentUser || currentUser.rol !== 'admin') {
+      window.location.href = './login.html?returnTo=admin-showcase.html';
+      return;
+    }
+
+    // Mostrar nombre del admin en el header
+    const userNameEl = document.getElementById('admin-user-name');
+    if (userNameEl) {
+      userNameEl.textContent = currentUser.nombre || currentUser.email || 'Admin';
+    }
+
+    function clearAuthSession() {
+      for (const storage of [sessionStorage, localStorage]) {
+        ['ew_token', 'entradaweb_token', 'token', 'authToken', 'jwt', 'access_token', 'ew_user', 'entradaweb_user', 'user', 'currentUser'].forEach(k => storage.removeItem(k));
+      }
+    }
+
+    // Botón Cerrar Sesión
+    document.getElementById('btn-admin-logout')?.addEventListener('click', () => {
+      clearAuthSession();
+      window.location.href = './login.html';
+    });
+
+    /**
+     * Helper para realizar peticiones autenticadas enviando el JWT
+     */
+    async function authFetch(url, options = {}) {
+      const activeToken = getAuthToken() || token;
+      const headers = {
+        'Content-Type': 'application/json',
+        ...(activeToken ? { 'Authorization': `Bearer ${activeToken}` } : {}),
+        ...(options.headers || {}),
+      };
+
+      const res = await fetch(url, { ...options, headers });
+
+      if (res.status === 401) {
+        clearAuthSession();
+        alert('Tu sesión ha expirado o no es válida. Por favor, iniciá sesión nuevamente.');
+        window.location.href = './login.html?returnTo=admin-showcase.html&expired=1';
+        throw new Error('Sesión expirada');
+      }
+
+      return res;
+    }
+
+    /* ─── TABS ─── */
     const tabs   = document.querySelectorAll('.admin-tab');
     const panels = document.querySelectorAll('.admin-panel');
 
@@ -738,13 +946,19 @@
         tab.setAttribute('aria-selected', 'true');
         const target = document.getElementById(tab.getAttribute('aria-controls'));
         target?.classList.add('is-active');
+
+        // Si cambia a la pestaña de entradas, refrescar lista
+        if (tab.id === 'tab-entradas') {
+          cargarEntradas();
+        }
       });
     });
 
-    /* â”€â”€â”€ ESTADO LOCAL (mock de eventos) â”€â”€â”€ */
+    /* ─── ESTADO LOCAL ─── */
     let eventos = [];
+    let entradas = [];
 
-    /* â”€â”€â”€ TABLA DE EVENTOS â”€â”€â”€ */
+    /* ─── TABLA DE EVENTOS ─── */
     const tbody     = document.getElementById('admin-eventos-tbody');
     const searchEl  = document.getElementById('admin-search-eventos');
 
@@ -758,7 +972,7 @@
       const labels = {
         disponible: 'Disponible',
         agotado:    'Agotado',
-        proximo:    'PrÃ³ximamente',
+        proximo:    'Próximamente',
         cancelado:  'Cancelado',
       };
       const cls = map[estado] || 'badge--default';
@@ -766,14 +980,14 @@
     }
 
     function formatDate(iso) {
-      if (!iso) return 'â€”';
+      if (!iso) return '—';
       try {
         return new Intl.DateTimeFormat('es-AR', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(iso));
       } catch { return iso; }
     }
 
     function formatPrice(p) {
-      if (!p && p !== 0) return 'â€”';
+      if (!p && p !== 0) return '—';
       if (p === 0) return 'Gratis';
       return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(p);
     }
@@ -804,9 +1018,9 @@
             }
           </td>
           <td style="font-weight:var(--font-weight-medium); max-width:200px;">${ev.nombre}</td>
-          <td style="text-transform:capitalize;">${ev.categoria || 'â€”'}</td>
+          <td style="text-transform:capitalize;">${ev.categoria || '—'}</td>
           <td style="white-space:nowrap;">${formatDate(ev.fecha)}</td>
-          <td style="max-width:180px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${ev.lugar || 'â€”'}</td>
+          <td style="max-width:180px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${ev.lugar || '—'}</td>
           <td style="white-space:nowrap;">${formatPrice(ev.precio)}</td>
           <td>${getEstadoBadge(ev.estado || 'disponible')}</td>
           <td>
@@ -849,7 +1063,7 @@
 
     searchEl?.addEventListener('input', applySearch);
 
-    /* DelegaciÃ³n de clicks en la tabla */
+    /* Delegación de clicks en la tabla de eventos */
     tbody.addEventListener('click', (e) => {
       const btn = e.target.closest('[data-action]');
       if (!btn) return;
@@ -861,31 +1075,34 @@
       if (action === 'edit') {
         abrirModal(ev);
       } else if (action === 'delete') {
-        if (confirm(`Â¿Eliminar "${ev.nombre}"? Esta acciÃ³n no se puede deshacer.`)) {
+        if (confirm(`¿Eliminar "${ev.nombre}"? Esta acción no se puede deshacer.`)) {
           eliminarEvento(id);
         }
       }
     });
 
-    /* â”€â”€â”€ CARGA DESDE API â”€â”€â”€ */
+    /* ─── CARGA DESDE API: EVENTOS ─── */
     async function cargarEventos() {
-      tbody.innerHTML = `<tr><td colspan="8"><div class="admin-table__empty"><p>Cargando...</p></div></td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="8"><div class="admin-table__empty"><p>Cargando eventos...</p></div></td></tr>`;
       try {
-        const res = await fetch('/api/eventos?limit=50', { signal: AbortSignal.timeout(8000) });
+        const res = await fetch('/api/eventos?limit=100', { signal: AbortSignal.timeout(8000) });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         eventos = (Array.isArray(data) ? data : (data.eventos || data.data || [])).map((ev, i) => ({
           id: ev.id || ev._id || i,
           nombre: ev.nombre || ev.titulo || 'Sin nombre',
+          titulo: ev.titulo || ev.nombre || 'Sin nombre',
           categoria: ev.categoria || '',
           fecha: ev.fecha || ev.fecha_inicio || '',
           lugar: ev.lugar || ev.ubicacion || '',
-          precio: ev.precio_min || ev.precio || 0,
+          precio: ev.precio_min !== undefined ? Number(ev.precio_min) : (Number(ev.precio) || 0),
+          precio_min: ev.precio_min !== undefined ? Number(ev.precio_min) : (Number(ev.precio) || 0),
           estado: ev.estado || 'disponible',
           imagen: ev.imagen || ev.imagen_url || '',
           descripcion: ev.descripcion || '',
         }));
         renderTabla(eventos);
+        actualizarSelectEventos();
       } catch (err) {
         console.warn('[Admin] No se pudieron cargar eventos:', err.message);
         tbody.innerHTML = `
@@ -898,10 +1115,19 @@
       }
     }
 
+    function actualizarSelectEventos() {
+      const select = document.getElementById('entrada-evento-id');
+      if (!select) return;
+      const currentVal = select.value;
+      select.innerHTML = `<option value="">Seleccionar un evento...</option>` +
+        eventos.map(e => `<option value="${e.id}">${e.nombre} (#${e.id})</option>`).join('');
+      if (currentVal) select.value = currentVal;
+    }
+
     window.__adminCargarEventos = cargarEventos;
     cargarEventos();
 
-    /* â”€â”€â”€ MODAL â”€â”€â”€ */
+    /* ─── MODAL EVENTO ─── */
     const backdrop    = document.getElementById('evento-modal-backdrop');
     const modalTitle  = document.getElementById('evento-modal-title');
     const submitLabel = document.getElementById('evento-submit-label');
@@ -944,70 +1170,36 @@
     backdrop.addEventListener('click', (e) => { if (e.target === backdrop) cerrarModal(); });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && backdrop.classList.contains('is-open')) cerrarModal(); });
 
-    /* PREVIEW_IMAGEN_EVENTO_V1 */
-    (() => {
-      const selector = document.getElementById('evento-imagen-archivo');
-      const preview = document.getElementById('evento-imagen-preview-img');
-      let urlTemporal = null;
-
-      if (!selector || !preview) return;
-
-      selector.addEventListener('change', () => {
-        const archivo = selector.files?.[0];
-
-        if (urlTemporal) {
-          URL.revokeObjectURL(urlTemporal);
-          urlTemporal = null;
-        }
-
-        preview.removeAttribute('src');
-        preview.style.display = 'none';
-
-        if (!archivo) return;
-
-        const tiposPermitidos = [
-          'image/jpeg',
-          'image/png',
-          'image/webp',
-          'image/gif'
-        ];
-
-        if (!tiposPermitidos.includes(archivo.type)) {
-          selector.value = '';
-          alert('Eleg? una imagen JPG, PNG, WEBP o GIF.');
-          return;
-        }
-
-        if (archivo.size > 5 * 1024 * 1024) {
-          selector.value = '';
-          alert('La imagen no puede superar los 5 MB.');
-          return;
-        }
-
-        urlTemporal = URL.createObjectURL(archivo);
-        preview.src = urlTemporal;
-        preview.style.display = 'block';
-      });
-    })();
-
-    /* Submit del modal */
+    /* Submit del modal de eventos con JWT */
     document.getElementById('evento-form-submit')?.addEventListener('click', async () => {
       const nombre = document.getElementById('evento-nombre').value.trim();
       if (!nombre) {
-        formError.textContent = 'El nombre del evento es obligatorio.';
+        formError.textContent = 'El nombre o título del evento es obligatorio.';
         formError.style.display = 'block';
         document.getElementById('evento-nombre').focus();
         return;
       }
 
+      const fecha = document.getElementById('evento-fecha').value;
+      if (!fecha) {
+        formError.textContent = 'La fecha del evento es obligatoria.';
+        formError.style.display = 'block';
+        document.getElementById('evento-fecha').focus();
+        return;
+      }
+
+      const precio = Number(document.getElementById('evento-precio').value) || 0;
+
       const payload = {
-        titulo: nombre,
-        categoria: document.getElementById('evento-categoria').value,
-        fecha:     document.getElementById('evento-fecha').value,
-        lugar:     document.getElementById('evento-lugar').value.trim(),
-        precio:    Number(document.getElementById('evento-precio').value) || 0,
-        estado:    document.getElementById('evento-estado').value,
-        imagen:    document.getElementById('evento-imagen').value.trim(),
+        titulo:      nombre,
+        nombre:      nombre,
+        categoria:   document.getElementById('evento-categoria').value,
+        fecha:       fecha,
+        lugar:       document.getElementById('evento-lugar').value.trim(),
+        precio:      precio,
+        precio_min:  precio,
+        estado:      document.getElementById('evento-estado').value,
+        imagen:      document.getElementById('evento-imagen').value.trim(),
         descripcion: document.getElementById('evento-descripcion').value.trim(),
       };
 
@@ -1015,19 +1207,13 @@
         const id = document.getElementById('evento-id').value;
         let res;
         if (modoEdicion && id) {
-          res = await fetch(`/api/eventos/${id}`, {
+          res = await authFetch(`/api/eventos/${id}`, {
             method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-            },
             body: JSON.stringify(payload),
           });
         } else {
-          res = await fetch('/api/eventos', {
+          res = await authFetch('/api/eventos', {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
             body: JSON.stringify(payload),
           });
         }
@@ -1045,22 +1231,240 @@
       }
     });
 
-    /* â”€â”€â”€ ELIMINAR EVENTO â”€â”€â”€ */
+    /* ─── ELIMINAR EVENTO (con JWT) ─── */
     async function eliminarEvento(id) {
       try {
-        const res = await fetch(`/api/eventos/${id}`, {
-          method: 'DELETE',
-          headers: {
-          },
-        });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const res = await authFetch(`/api/eventos/${id}`, { method: 'DELETE' });
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.message || `HTTP ${res.status}`);
+        }
         await cargarEventos();
       } catch (err) {
         alert(`No se pudo eliminar el evento: ${err.message}`);
       }
     }
 
-    /* â”€â”€â”€ CONFIGURACIÃ“N: COLORES â”€â”€â”€ */
+
+    /* ─── GESTIÓN DE ENTRADAS / TICKETS ─── */
+    const tbodyEntradas = document.getElementById('admin-entradas-tbody');
+    const searchEntradas = document.getElementById('admin-search-entradas');
+    const entradaBackdrop = document.getElementById('entrada-modal-backdrop');
+    const entradaModalTitle = document.getElementById('entrada-modal-title');
+    const entradaSubmitLabel = document.getElementById('entrada-submit-label');
+    const entradaFormError = document.getElementById('entrada-form-error');
+    let modoEdicionEntrada = false;
+
+    function renderTablaEntradas(lista) {
+      if (!tbodyEntradas) return;
+      if (!lista.length) {
+        tbodyEntradas.innerHTML = `
+          <tr><td colspan="6">
+            <div class="admin-table__empty">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" style="margin:0 auto;display:block;color:var(--color-text-disabled)" aria-hidden="true">
+                <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z"/>
+              </svg>
+              <p>No se encontraron entradas registradas.</p>
+            </div>
+          </td></tr>`;
+        return;
+      }
+
+      tbodyEntradas.innerHTML = lista.map(ent => {
+        const ev = eventos.find(e => String(e.id) === String(ent.evento_id));
+        const eventName = ev ? ev.nombre : `Evento #${ent.evento_id}`;
+        return `
+          <tr>
+            <td>#${ent.id}</td>
+            <td style="font-weight:var(--font-weight-medium);">${eventName}</td>
+            <td><span class="badge badge--default">${ent.tipo}</span></td>
+            <td style="white-space:nowrap;">${formatPrice(parseFloat(ent.precio))}</td>
+            <td>
+              <span class="${ent.stock > 0 ? '' : 'text-danger'}" style="font-weight:600;">
+                ${ent.stock > 0 ? `${ent.stock} disp.` : 'Agotado'}
+              </span>
+            </td>
+            <td>
+              <div class="admin-table__actions">
+                <button
+                  class="admin-btn-icon admin-btn-icon--edit"
+                  aria-label="Editar entrada ${ent.tipo}"
+                  data-entrada-action="edit"
+                  data-id="${ent.id}"
+                  title="Editar"
+                >
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                </button>
+                <button
+                  class="admin-btn-icon admin-btn-icon--delete"
+                  aria-label="Eliminar entrada ${ent.tipo}"
+                  data-entrada-action="delete"
+                  data-id="${ent.id}"
+                  title="Eliminar"
+                >
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function cargarEntradas() {
+      if (!tbodyEntradas) return;
+      tbodyEntradas.innerHTML = `<tr><td colspan="6"><div class="admin-table__empty"><p>Cargando entradas...</p></div></td></tr>`;
+      try {
+        const res = await fetch('/api/entradas');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        entradas = data.data || [];
+        renderTablaEntradas(entradas);
+      } catch (err) {
+        console.warn('[Admin] Error al cargar entradas:', err.message);
+        tbodyEntradas.innerHTML = `<tr><td colspan="6"><div class="admin-table__empty"><p style="color:var(--color-error);">No se pudieron cargar las entradas.</p></div></td></tr>`;
+      }
+    }
+
+    searchEntradas?.addEventListener('input', () => {
+      const q = (searchEntradas.value || '').toLowerCase().trim();
+      const filtered = q
+        ? entradas.filter(ent => {
+            const ev = eventos.find(e => String(e.id) === String(ent.evento_id));
+            const evName = (ev?.nombre || '').toLowerCase();
+            return (ent.tipo || '').toLowerCase().includes(q) || evName.includes(q);
+          })
+        : entradas;
+      renderTablaEntradas(filtered);
+    });
+
+    tbodyEntradas?.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-entrada-action]');
+      if (!btn) return;
+      const action = btn.dataset.entradaAction;
+      const id = btn.dataset.id;
+      const ent = entradas.find(x => String(x.id) === String(id));
+      if (!ent) return;
+
+      if (action === 'edit') {
+        abrirModalEntrada(ent);
+      } else if (action === 'delete') {
+        if (confirm(`¿Eliminar la entrada "${ent.tipo}"?`)) {
+          eliminarEntrada(id);
+        }
+      }
+    });
+
+    function abrirModalEntrada(ent = null) {
+      modoEdicionEntrada = !!ent;
+      actualizarSelectEventos();
+      entradaModalTitle.textContent = ent ? 'Editar Entrada' : 'Agregar Entrada';
+      entradaSubmitLabel.textContent = ent ? 'Guardar cambios' : 'Agregar entrada';
+
+      document.getElementById('entrada-id').value = ent?.id ?? '';
+      document.getElementById('entrada-evento-id').value = ent?.evento_id ?? '';
+      document.getElementById('entrada-tipo').value = ent?.tipo ?? '';
+      document.getElementById('entrada-precio').value = ent?.precio ?? '';
+      document.getElementById('entrada-stock').value = ent?.stock ?? '100';
+      entradaFormError.style.display = 'none';
+      entradaFormError.textContent = '';
+
+      // Si es edición, no permitir cambiar de evento
+      const selectEv = document.getElementById('entrada-evento-id');
+      if (selectEv) selectEv.disabled = modoEdicionEntrada;
+
+      entradaBackdrop.classList.add('is-open');
+      entradaBackdrop.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      document.getElementById('entrada-tipo').focus();
+    }
+
+    function cerrarModalEntrada() {
+      entradaBackdrop.classList.remove('is-open');
+      entradaBackdrop.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      document.getElementById('btn-agregar-entrada')?.focus();
+    }
+
+    document.getElementById('btn-agregar-entrada')?.addEventListener('click', () => abrirModalEntrada());
+    document.getElementById('entrada-modal-close')?.addEventListener('click', cerrarModalEntrada);
+    document.getElementById('entrada-modal-cancel')?.addEventListener('click', cerrarModalEntrada);
+    entradaBackdrop?.addEventListener('click', (e) => { if (e.target === entradaBackdrop) cerrarModalEntrada(); });
+
+    document.getElementById('entrada-form-submit')?.addEventListener('click', async () => {
+      const eventoId = document.getElementById('entrada-evento-id').value;
+      const tipo = document.getElementById('entrada-tipo').value.trim();
+      const precio = parseFloat(document.getElementById('entrada-precio').value);
+      const stock = parseInt(document.getElementById('entrada-stock').value, 10);
+
+      if (!eventoId && !modoEdicionEntrada) {
+        entradaFormError.textContent = 'Debe seleccionar un evento.';
+        entradaFormError.style.display = 'block';
+        return;
+      }
+
+      if (!tipo) {
+        entradaFormError.textContent = 'El tipo de entrada es obligatorio.';
+        entradaFormError.style.display = 'block';
+        return;
+      }
+
+      if (isNaN(precio) || precio < 0) {
+        entradaFormError.textContent = 'Ingrese un precio válido mayor o igual a 0.';
+        entradaFormError.style.display = 'block';
+        return;
+      }
+
+      if (isNaN(stock) || stock < 0) {
+        entradaFormError.textContent = 'Ingrese un stock válido mayor o igual a 0.';
+        entradaFormError.style.display = 'block';
+        return;
+      }
+
+      const id = document.getElementById('entrada-id').value;
+
+      try {
+        let res;
+        if (modoEdicionEntrada && id) {
+          res = await authFetch(`/api/entradas/${id}`, {
+            method: 'PUT',
+            body: JSON.stringify({ tipo, precio, stock }),
+          });
+        } else {
+          res = await authFetch(`/api/eventos/${eventoId}/entradas`, {
+            method: 'POST',
+            body: JSON.stringify({ tipo, precio, stock }),
+          });
+        }
+
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.message || `Error ${res.status}`);
+        }
+
+        cerrarModalEntrada();
+        await cargarEntradas();
+      } catch (err) {
+        entradaFormError.textContent = `No se pudo guardar: ${err.message}`;
+        entradaFormError.style.display = 'block';
+      }
+    });
+
+    async function eliminarEntrada(id) {
+      try {
+        const res = await authFetch(`/api/entradas/${id}`, { method: 'DELETE' });
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.message || `HTTP ${res.status}`);
+        }
+        await cargarEntradas();
+      } catch (err) {
+        alert(`No se pudo eliminar la entrada: ${err.message}`);
+      }
+    }
+
+
+    /* ─── CONFIGURACIÓN: COLORES ─── */
     const colorPrimary    = document.getElementById('color-accent-primary');
     const colorPrimaryHex = document.getElementById('color-accent-primary-hex');
     const colorSecondary    = document.getElementById('color-accent-secondary');
@@ -1097,9 +1501,8 @@
       updateColorPreview();
     });
 
-    /* â”€â”€â”€ CONFIGURACIÃ“N: GUARDAR â”€â”€â”€ */
+    /* ─── CONFIGURACIÓN: GUARDAR ─── */
     document.getElementById('btn-config-save')?.addEventListener('click', () => {
-      // Por ahora guarda en localStorage como demo
       const config = {
         colorPrimary: colorPrimary?.value,
         colorSecondary: colorSecondary?.value,
@@ -1111,11 +1514,11 @@
         socialEmail:     document.getElementById('social-email')?.value,
       };
       localStorage.setItem('entradaweb_config', JSON.stringify(config));
-      alert('âœ… ConfiguraciÃ³n guardada localmente. IntegrÃ¡ con el backend para persistencia.');
+      alert('✅ Configuración guardada localmente.');
     });
 
     document.getElementById('btn-config-reset')?.addEventListener('click', () => {
-      if (confirm('Â¿DescartÃ¡r todos los cambios no guardados?')) location.reload();
+      if (confirm('¿Descartar todos los cambios no guardados?')) location.reload();
     });
 
     /* Restaurar config guardada */

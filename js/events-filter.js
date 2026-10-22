@@ -3,11 +3,13 @@
  * Rol: Santiago Morales (Frontend)
  *
  * Implementa:
+ * - Carga dinámica desde /api/eventos con fallback a contenido estático
+ * - Lectura del parámetro ?categoria= en la URL para filtro inicial automático
  * - Chips de categoría con aria-pressed
  * - Filtrado visual de tarjetas por data-category
- * - Ordenamiento (preparado para datos reales del backend)
+ * - Ordenamiento por fecha / precio
  * - Contador de resultados con aria-live para lectores de pantalla
- * - Validación de rango de fechas en el buscador (fecha "hasta" >= "desde")
+ * - Validación de rango de fechas en el buscador
  */
 
 (function () {
@@ -23,41 +25,121 @@
   const searchTo      = document.getElementById('search-to');
 
   // ─── Estado actual ────────────────────────────────────────────
-  let activeCategory = 'all';
+  const urlCategory = new URLSearchParams(window.location.search).get('categoria');
+  let activeCategory = urlCategory ? urlCategory.toLowerCase().trim() : 'all';
 
-    // ─── Eventos desde el backend ────────────────────────────────
+  function formatPrice(value) {
+    return '$' + Math.round(Number(value) || 0).toLocaleString('es-AR');
+  }
+
+  function formatDate(value) {
+    if (!value) return '';
+    const d = new Date(value);
+    if (isNaN(d.getTime())) return String(value);
+    return d.toLocaleDateString('es-AR', {
+      weekday: 'short',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+  }
+
+  function renderEventCard(ev) {
+    const id = ev.id || '';
+    const titulo = ev.titulo || ev.nombre || 'Evento sin título';
+    const categoria = (ev.categoria || 'musica').toLowerCase();
+    const lugar = ev.lugar || ev.ubicacion || '';
+    const fecha = formatDate(ev.fecha || ev.fecha_inicio);
+    const precio = formatPrice(ev.precio_min !== undefined ? ev.precio_min : ev.precio);
+    const estado = ev.estado || 'disponible';
+    const imagen = ev.imagen || `https://placehold.co/400x225/132338/EA580C?text=${encodeURIComponent(titulo)}`;
+
+    return `
+      <article class="event-card" data-category="${categoria}" tabindex="0" aria-label="${titulo}">
+        <div class="event-card__img-wrapper">
+          <img
+            src="${imagen}"
+            alt="${titulo}"
+            class="event-card__img"
+            loading="lazy"
+            width="400"
+            height="225"
+          >
+          <span class="event-card__category">
+            <span class="badge badge--primary">${categoria.toUpperCase()}</span>
+          </span>
+          <span class="event-card__status">
+            <span class="badge badge--success">${estado.charAt(0).toUpperCase() + estado.slice(1)}</span>
+          </span>
+        </div>
+        <div class="event-card__body">
+          <h2 class="event-card__title">${titulo}</h2>
+          <div class="event-card__meta">
+            ${fecha ? `
+            <div class="event-card__meta-item">
+              <span class="event-card__meta-icon" aria-hidden="true">📅</span>
+              <time class="event-card__date">${fecha}</time>
+            </div>` : ''}
+            ${lugar ? `
+            <div class="event-card__meta-item">
+              <span class="event-card__meta-icon" aria-hidden="true">📍</span>
+              <span>${lugar}</span>
+            </div>` : ''}
+          </div>
+        </div>
+        <div class="event-card__footer">
+          <div class="event-card__price-block">
+            <span class="event-card__price-label">Desde</span>
+            <span class="event-card__price">${precio}</span>
+          </div>
+          <a href="./evento-detalle.html?id=${id}" class="btn btn--primary btn--sm">Comprar</a>
+        </div>
+      </article>
+    `;
+  }
+
+  // ─── Carga de eventos desde API ───────────────────────────────
   async function cargarEventos() {
     try {
       const response = await fetch('/api/eventos');
-
-      if (!response.ok) {
-        throw new Error(`Error HTTP: ${response.status}`);
-      }
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
       const resultado = await response.json();
+      const eventos = Array.isArray(resultado) ? resultado : (resultado.data || resultado.eventos || []);
 
-      if (!resultado.success) {
-        throw new Error(resultado.message || 'No se pudieron cargar los eventos');
+      if (eventos.length > 0 && eventsGrid) {
+        eventsGrid.innerHTML = eventos.map(renderEventCard).join('');
+        // Aplicar transiciones CSS
+        document.querySelectorAll('.event-card').forEach(card => {
+          card.style.transition = 'opacity 200ms ease, transform 200ms ease';
+        });
       }
 
-      console.log('[EntradaWeb] Eventos recibidos:', resultado.data);
-
+      filterEvents();
     } catch (error) {
-      console.error('[EntradaWeb] Error al cargar eventos:', error);
+      console.warn('[EntradaWeb] Utilizando eventos predeterminados:', error.message);
+      filterEvents();
     }
   }
 
-  // ─── Chips de categoría ───────────────────────────────────────
+  // ─── Inicializar chips según categoría activa ────────────────
   if (categoryChips.length > 0) {
     categoryChips.forEach(chip => {
+      const chipCat = chip.dataset.category;
+      if (chipCat === activeCategory) {
+        chip.classList.add('chip--selected');
+        chip.setAttribute('aria-pressed', 'true');
+      } else if (activeCategory !== 'all' && chipCat === 'all') {
+        chip.classList.remove('chip--selected');
+        chip.setAttribute('aria-pressed', 'false');
+      }
+
       chip.addEventListener('click', () => {
-        // Desactivar todos
         categoryChips.forEach(c => {
           c.classList.remove('chip--selected');
           c.setAttribute('aria-pressed', 'false');
         });
 
-        // Activar el seleccionado
         chip.classList.add('chip--selected');
         chip.setAttribute('aria-pressed', 'true');
         activeCategory = chip.dataset.category;
@@ -65,7 +147,6 @@
         filterEvents();
       });
 
-      // Permitir activación con teclado (Space/Enter) además del click
       chip.addEventListener('keydown', (e) => {
         if (e.key === ' ' || e.key === 'Enter') {
           e.preventDefault();
@@ -79,15 +160,13 @@
   function filterEvents() {
     if (!eventsGrid) return;
 
-    // Obtener tarjetas reales (no skeletons ni aria-hidden)
     const cards = eventsGrid.querySelectorAll('.event-card:not([aria-hidden="true"])');
     let visibleCount = 0;
 
     cards.forEach(card => {
-      const cardCategory = card.dataset.category || 'all';
+      const cardCategory = (card.dataset.category || 'all').toLowerCase();
       const show = activeCategory === 'all' || cardCategory === activeCategory;
 
-      // Animación suave de aparición/desaparición
       if (show) {
         card.style.display = '';
         requestAnimationFrame(() => {
@@ -104,26 +183,37 @@
       }
     });
 
-    // Actualizar contador con aria-live (lectores de pantalla lo anunciarán)
     if (eventsCount) {
       eventsCount.innerHTML = `<strong>${visibleCount}</strong> evento${visibleCount !== 1 ? 's' : ''}`;
     }
   }
 
-  // ─── Transición CSS en las tarjetas para el filtrado ─────────
-  // Aplicamos la transición vía JS para que no afecte a la carga inicial
   document.querySelectorAll('.event-card').forEach(card => {
     card.style.transition = 'opacity 200ms ease, transform 200ms ease';
   });
 
   // ─── Ordenamiento ─────────────────────────────────────────────
-  // Nota: La lógica real de ordenamiento será provista por el backend (Lucas Profe / integración).
-  // Aquí preparamos el listener para cuando el backend envíe los datos.
   if (sortSelect) {
     sortSelect.addEventListener('change', () => {
       const value = sortSelect.value;
-      console.info(`[EntradaWeb] Ordenamiento seleccionado: "${value}". Se procesará con datos reales del backend.`);
-      // TODO: conectar con la API una vez que Carla termine el endpoint /api/v1/query
+      if (!eventsGrid) return;
+      const cards = Array.from(eventsGrid.querySelectorAll('.event-card'));
+
+      if (value === 'price-asc') {
+        cards.sort((a, b) => {
+          const pA = Number((a.querySelector('.event-card__price')?.textContent || '').replace(/[^\d]/g, '')) || 0;
+          const pB = Number((b.querySelector('.event-card__price')?.textContent || '').replace(/[^\d]/g, '')) || 0;
+          return pA - pB;
+        });
+        cards.forEach(c => eventsGrid.appendChild(c));
+      } else if (value === 'price-desc') {
+        cards.sort((a, b) => {
+          const pA = Number((a.querySelector('.event-card__price')?.textContent || '').replace(/[^\d]/g, '')) || 0;
+          const pB = Number((b.querySelector('.event-card__price')?.textContent || '').replace(/[^\d]/g, '')) || 0;
+          return pB - pA;
+        });
+        cards.forEach(c => eventsGrid.appendChild(c));
+      }
     });
   }
 
@@ -136,18 +226,16 @@
           searchTo.setAttribute('aria-invalid', 'true');
           searchTo.setAttribute('aria-describedby', 'date-range-error');
 
-          // Crear o actualizar mensaje de error
           let errorMsg = document.getElementById('date-range-error');
           if (!errorMsg) {
             errorMsg = document.createElement('span');
             errorMsg.id = 'date-range-error';
             errorMsg.className = 'form-error';
             errorMsg.setAttribute('role', 'alert');
-            searchTo.closest('.date-search__field').appendChild(errorMsg);
+            searchTo.closest('.date-search__field')?.appendChild(errorMsg);
           }
           errorMsg.textContent = 'La fecha de fin debe ser posterior a la de inicio.';
         } else {
-          // Limpiar error
           searchTo.classList.remove('form-input--error');
           searchTo.removeAttribute('aria-invalid');
           searchTo.removeAttribute('aria-describedby');
@@ -158,25 +246,33 @@
     });
   }
 
-  // ─── Botón de búsqueda ────────────────────────────────────────
+  // ─── Botón de búsqueda de texto ──────────────────────────────
   if (searchBtn) {
     searchBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      const query   = document.getElementById('search-event')?.value?.trim();
-      const fromVal = searchFrom?.value;
-      const toVal   = searchTo?.value;
+      const query = (document.getElementById('search-event')?.value || '').toLowerCase().trim();
+      if (!eventsGrid) return;
 
-      // Validación básica de rango
-      if (fromVal && toVal && toVal < fromVal) {
-        if (searchTo) {
-          searchTo.focus();
-          searchTo.classList.add('form-input--error');
+      const cards = eventsGrid.querySelectorAll('.event-card');
+      let count = 0;
+      cards.forEach(card => {
+        const title = (card.querySelector('.event-card__title')?.textContent || '').toLowerCase();
+        const matchesQuery = !query || title.includes(query);
+        const cardCategory = (card.dataset.category || 'all').toLowerCase();
+        const matchesCategory = activeCategory === 'all' || cardCategory === activeCategory;
+
+        if (matchesQuery && matchesCategory) {
+          card.style.display = '';
+          card.style.opacity = '1';
+          count++;
+        } else {
+          card.style.display = 'none';
         }
-        return;
-      }
+      });
 
-      // TODO: enviar parámetros al endpoint de búsqueda del backend
-      console.info('[EntradaWeb] Búsqueda iniciada:', { query, from: fromVal, to: toVal });
+      if (eventsCount) {
+        eventsCount.innerHTML = `<strong>${count}</strong> evento${count !== 1 ? 's' : ''}`;
+      }
     });
   }
 
