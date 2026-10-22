@@ -27,6 +27,21 @@ const {
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Normalización de ruta para Serverless en Vercel con rewrites internos
+app.use((req, res, next) => {
+  const forwardedUri = req.headers['x-forwarded-uri'] || req.headers['x-matched-path'];
+  if (forwardedUri && (req.url === '/api/index.js' || req.url === '/api/index' || req.url.startsWith('/api/index.js') || req.url.startsWith('/api/index'))) {
+    let target = forwardedUri;
+    if (!target.includes('?') && req.url.includes('?')) {
+      target += req.url.slice(req.url.indexOf('?'));
+    }
+    req.url = target;
+  } else if (req.originalUrl && req.originalUrl !== req.url && (req.url === '/api/index.js' || req.url === '/api/index')) {
+    req.url = req.originalUrl;
+  }
+  next();
+});
+
 // Permitir recibir peticiones JSON.
 app.use(express.json());
 

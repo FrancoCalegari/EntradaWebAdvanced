@@ -47,12 +47,21 @@ async function testVercelAndServer() {
     assert.strictEqual(resOptions.headers.get('access-control-allow-origin'), '*', 'CORS Allow-Origin presente');
     console.log('  ✅ Preflight OPTIONS y CORS funcionando');
 
-    // Test: GET /api/eventos
+    // Test: GET /api/eventos (directo)
     const resEventos = await fetch(`${baseUrl}/api/eventos`);
     assert.strictEqual(resEventos.status, 200, 'GET /api/eventos responde 200');
     const dataEventos = await resEventos.json();
     assert(dataEventos.success && Array.isArray(dataEventos.data), 'GET /api/eventos devuelve lista');
     console.log(`  ✅ GET /api/eventos responde exitosamente (${dataEventos.data.length} eventos)`);
+
+    // Test: Vercel Internal Rewrite simulation (x-forwarded-uri hacia /api/index.js)
+    const resVercelRewrite = await fetch(`${baseUrl}/api/index.js`, {
+      headers: { 'x-forwarded-uri': '/api/eventos' }
+    });
+    assert.strictEqual(resVercelRewrite.status, 200, 'Petición reescrita por Vercel responde 200');
+    const dataRewrite = await resVercelRewrite.json();
+    assert(dataRewrite.success && Array.isArray(dataRewrite.data), 'Vercel rewrite resuelve /api/eventos');
+    console.log('  ✅ Simulación de rewrite interno de Vercel (x-forwarded-uri) funciona correctamente');
 
     // Test: Registro y Login de usuario
     const rand = Date.now();
