@@ -5,8 +5,13 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const databaseService = require('../services/database');
 
-const JWT_SECRET = process.env.JWT_SECRET;
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '24h';
+function getJwtSecret() {
+  return process.env.JWT_SECRET;
+}
+
+function getJwtExpiresIn() {
+  return process.env.JWT_EXPIRES_IN || '24h';
+}
 
 /**
  * POST /api/auth/login
@@ -32,9 +37,11 @@ async function login(req, res) {
       });
     }
 
+    const secret = getJwtSecret();
+
     // ── Validar configuración JWT ──
-    if (!JWT_SECRET) {
-      console.error('JWT_SECRET no está configurado en .env');
+    if (!secret) {
+      console.error('JWT_SECRET no está configurado en las variables de entorno');
       return res.status(500).json({
         success: false,
         message: 'Error interno del servidor',
@@ -79,8 +86,8 @@ async function login(req, res) {
       rol: usuario.rol,
     };
 
-    const token = jwt.sign(payload, JWT_SECRET, {
-      expiresIn: JWT_EXPIRES_IN,
+    const token = jwt.sign(payload, secret, {
+      expiresIn: getJwtExpiresIn(),
     });
 
     // ── Respuesta exitosa — NUNCA incluir password ──

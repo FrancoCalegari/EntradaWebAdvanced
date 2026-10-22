@@ -3,7 +3,9 @@
 
 const jwt = require('jsonwebtoken');
 
-const JWT_SECRET = process.env.JWT_SECRET;
+function getJwtSecret() {
+  return process.env.JWT_SECRET;
+}
 
 /**
  * Middleware de autenticación.
@@ -14,9 +16,11 @@ const JWT_SECRET = process.env.JWT_SECRET;
  *   app.get('/ruta-protegida', authenticate, handler);
  */
 function authenticate(req, res, next) {
+  const secret = getJwtSecret();
+
   // Validar configuración
-  if (!JWT_SECRET) {
-    console.error('JWT_SECRET no está configurado en .env');
+  if (!secret) {
+    console.error('JWT_SECRET no está configurado en las variables de entorno');
     return res.status(500).json({
       success: false,
       message: 'Error interno del servidor',
@@ -47,7 +51,7 @@ function authenticate(req, res, next) {
 
   try {
     // Verificar y decodificar el JWT
-    const decoded = jwt.verify(token, JWT_SECRET);
+    const decoded = jwt.verify(token, secret);
 
     // Colocar información del usuario en req.user
     req.user = {

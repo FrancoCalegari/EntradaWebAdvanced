@@ -5,16 +5,18 @@
 
 const spiderwebClient = require('./spiderweb.client');
 
-const DB_NAME = process.env.SPIDERWEB_DB_NAME;
+function getDbName() {
+  return process.env.SPIDERWEB_DB_NAME;
+}
 
 /**
  * Valida que el nombre de la base de datos esté configurado.
  * @throws {Error} Si SPIDERWEB_DB_NAME no está definida en .env
  */
 function validarBaseDeDatos() {
-  if (!DB_NAME) {
+  if (!getDbName()) {
     throw new Error(
-      'SPIDERWEB_DB_NAME no está configurada. Agregá el nombre de la base de datos en el archivo .env'
+      'SPIDERWEB_DB_NAME no está configurada. Agregá el nombre de la base de datos en las variables de entorno de Vercel o en el archivo .env'
     );
   }
 }
@@ -44,7 +46,7 @@ async function query(sql) {
   }
 
   const response = await spiderwebClient.post('/query', {
-    database: DB_NAME,
+    database: getDbName(),
     query: sql,
   });
 

@@ -2,8 +2,13 @@
 // Cliente centralizado para comunicación con Spider-Web ARG API
 // Todas las peticiones pasan por este módulo.
 
-const SPIDERWEB_API_URL = process.env.SPIDERWEB_API_URL;
-const SPIDERWEB_API_KEY = process.env.SPIDERWEB_API_KEY;
+function getApiUrl() {
+  return process.env.SPIDERWEB_API_URL;
+}
+
+function getApiKey() {
+  return process.env.SPIDERWEB_API_KEY;
+}
 
 // Timeout en milisegundos para las peticiones a Spider-Web
 const REQUEST_TIMEOUT_MS = 15000;
@@ -13,15 +18,15 @@ const REQUEST_TIMEOUT_MS = 15000;
  * Lanza un error descriptivo si falta alguna.
  */
 function validarConfiguracion() {
-  if (!SPIDERWEB_API_URL) {
+  if (!getApiUrl()) {
     throw new Error(
-      'SPIDERWEB_API_URL no está configurada. Revisá el archivo .env'
+      'SPIDERWEB_API_URL no está configurada. Revisá las variables de entorno en Vercel o en el archivo .env'
     );
   }
 
-  if (!SPIDERWEB_API_KEY) {
+  if (!getApiKey()) {
     throw new Error(
-      'SPIDERWEB_API_KEY no está configurada. Agregá tu API Key en el archivo .env'
+      'SPIDERWEB_API_KEY no está configurada. Agregá tu API Key en las variables de entorno en Vercel o en el archivo .env'
     );
   }
 }
@@ -37,14 +42,14 @@ function validarConfiguracion() {
 async function request(endpoint, options = {}) {
   validarConfiguracion();
 
-  const url = `${SPIDERWEB_API_URL}${endpoint}`;
+  const url = `${getApiUrl()}${endpoint}`;
 
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 
   try {
     const headers = {
-      'X-API-KEY': SPIDERWEB_API_KEY,
+      'X-API-KEY': getApiKey(),
       ...options.headers,
     };
 
