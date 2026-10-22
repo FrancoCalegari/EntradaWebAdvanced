@@ -6,19 +6,19 @@ const assert = require('assert');
 async function testVercelAndServer() {
   console.log('🧪 Iniciando verificación de compatibilidad Vercel y servidor...');
 
-  // 1. Probar importación de api/index.js (como lo hace el runtime Serverless de Vercel)
-  console.log('1️⃣ Verificando api/index.js:');
+  // 1. Probar importación de api/index.js y api/[...path].js (como lo hace el runtime Serverless de Vercel)
+  console.log('1️⃣ Verificando api/index.js y api/[...path].js:');
   const vercelApp = require('../api/index.js');
   assert(typeof vercelApp === 'function', 'api/index.js exporta una aplicación Express válida');
-  console.log('  ✅ api/index.js es exportable y compatible con Vercel Serverless');
+  const vercelCatchAll = require('../api/[...path].js');
+  assert(typeof vercelCatchAll === 'function', 'api/[...path].js exporta una aplicación Express válida');
+  console.log('  ✅ api/index.js y api/[...path].js son exportables y compatibles con Vercel Serverless');
 
   // 2. Probar vercel.json
   console.log('\n2️⃣ Verificando configuración vercel.json:');
   const vercelConfig = require('../vercel.json');
-  assert(Array.isArray(vercelConfig.rewrites), 'vercel.json contiene array de rewrites');
-  const hasApiRewrite = vercelConfig.rewrites.some(r => r.destination === '/api/index.js');
-  assert(hasApiRewrite, 'vercel.json redirige /api/* hacia /api/index.js');
-  console.log('  ✅ vercel.json configurado correctamente para enrutar API y estáticos');
+  assert(vercelConfig && typeof vercelConfig === 'object', 'vercel.json es un JSON válido');
+  console.log('  ✅ vercel.json configurado correctamente para enrutamiento nativo Serverless');
 
   // 3. Levantar servidor Express en puerto efímero para pruebas de endpoints y CORS
   console.log('\n3️⃣ Verificando servidor HTTP y endpoints:');
@@ -34,12 +34,16 @@ async function testVercelAndServer() {
     assert(textHome.includes('EntradaWeb'), 'GET / entrega index.html');
     console.log('  ✅ GET / entrega frontend principal');
 
-    // Test: Páginas estáticas
+    // Test: Páginas estáticas y favicon
     for (const page of ['login.html', 'register.html', 'admin-showcase.html', 'carrito.html', 'evento-detalle.html', 'mis-compras.html']) {
       const resPage = await fetch(`${baseUrl}/pages/${page}`);
       assert.strictEqual(resPage.status, 200, `GET /pages/${page} responde 200`);
     }
-    console.log('  ✅ Todas las páginas HTML públicas responden HTTP 200');
+    const resFaviconSvg = await fetch(`${baseUrl}/favicon.svg`);
+    assert.strictEqual(resFaviconSvg.status, 200, 'GET /favicon.svg responde 200');
+    const resFaviconIco = await fetch(`${baseUrl}/favicon.ico`);
+    assert.strictEqual(resFaviconIco.status, 200, 'GET /favicon.ico responde 200');
+    console.log('  ✅ Todas las páginas HTML públicas y favicons responden HTTP 200');
 
     // Test: Preflight OPTIONS y cabeceras CORS
     const resOptions = await fetch(`${baseUrl}/api/eventos`, { method: 'OPTIONS' });

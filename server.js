@@ -27,17 +27,25 @@ const {
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Normalización de ruta para Serverless en Vercel con rewrites internos
+// Normalización de ruta para Serverless en Vercel
 app.use((req, res, next) => {
   const forwardedUri = req.headers['x-forwarded-uri'] || req.headers['x-matched-path'];
-  if (forwardedUri && (req.url === '/api/index.js' || req.url === '/api/index' || req.url.startsWith('/api/index.js') || req.url.startsWith('/api/index'))) {
+  if (forwardedUri && (req.url.includes('/api/index') || req.url.includes('/api/[...path]') || req.url === '/api' || req.url === '/api/')) {
     let target = forwardedUri;
     if (!target.includes('?') && req.url.includes('?')) {
       target += req.url.slice(req.url.indexOf('?'));
     }
     req.url = target;
-  } else if (req.originalUrl && req.originalUrl !== req.url && (req.url === '/api/index.js' || req.url === '/api/index')) {
+  } else if (req.originalUrl && req.originalUrl !== req.url && (req.url.includes('/api/index') || req.url.includes('/api/[...path]'))) {
     req.url = req.originalUrl;
+  }
+
+  // Si la petición llega a la función Serverless sin el prefijo /api (ej: /eventos?limit=8)
+  if (!req.url.startsWith('/api/') && !req.url.startsWith('/pages/') && !req.url.startsWith('/css/') && !req.url.startsWith('/js/')) {
+    const apiPrefixes = ['/eventos', '/auth', '/usuarios', '/entradas', '/compras', '/test'];
+    if (apiPrefixes.some(prefix => req.url.startsWith(prefix))) {
+      req.url = '/api' + req.url;
+    }
   }
   next();
 });
